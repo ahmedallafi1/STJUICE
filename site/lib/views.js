@@ -129,7 +129,7 @@ function renderHome({ data, state }) {
           <p class="hero__body">${escapeHtml(copy.home.hero.body)}</p>
           <div class="button-row">
             <a class="button" href="#/menu">${escapeHtml(copy.home.hero.primaryCta)}</a>
-            <a class="button button--outline" href="#/menu">${escapeHtml(copy.home.hero.secondaryCta)}</a>
+            <a class="button button--outline" href="#/build">${escapeHtml(copy.home.hero.secondaryCta)}</a>
           </div>
           <div class="hero__meta">
             <span>Open from 6:30 AM</span>

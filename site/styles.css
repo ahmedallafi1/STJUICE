@@ -551,7 +551,9 @@ h3 {
   display: grid;
   align-items: center;
   overflow: hidden;
-  background: var(--charcoal);
+  background:
+    radial-gradient(circle at 76% 18%, rgba(183, 216, 108, 0.18), transparent 30rem),
+    linear-gradient(135deg, #111713 0%, #1a231c 52%, #263222 100%);
   color: var(--cream);
 }
 
@@ -569,22 +571,25 @@ h3 {
 
 .hero__image {
   position: absolute;
-  inset: 0;
-  z-index: -3;
-  width: 100%;
+  inset: 0 0 0 auto;
+  z-index: 0;
+  width: min(64%, 68rem);
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: 58% center;
+  opacity: 0.96;
 }
 
 .hero__veil {
   position: absolute;
   inset: 0;
-  z-index: -2;
-  background: linear-gradient(90deg, rgba(13, 16, 14, 0.98) 0%, rgba(13, 16, 14, 0.91) 32%, rgba(13, 16, 14, 0.42) 65%, rgba(13, 16, 14, 0.07) 100%);
+  z-index: 1;
+  background: linear-gradient(90deg, #111713 0%, rgba(17, 23, 19, 0.98) 36%, rgba(17, 23, 19, 0.72) 58%, rgba(17, 23, 19, 0.08) 100%);
 }
 
 .hero__content {
+  position: relative;
+  z-index: 3;
   width: min(100%, calc(var(--max) + 2 * var(--gutter)));
   margin: 0 auto;
   padding: clamp(5rem, 10vw, 8rem) var(--gutter);
@@ -592,10 +597,22 @@ h3 {
 
 .hero__copy {
   max-width: 43rem;
+  padding: clamp(1.4rem, 3vw, 2.25rem);
+  border: 1px solid rgba(255, 248, 231, 0.14);
+  border-radius: 1.75rem;
+  background: rgba(13, 18, 15, 0.48);
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
 }
 
 .hero h1 {
   margin-bottom: 1.35rem;
+  color: #fff8e7;
+  text-wrap: balance;
+}
+
+.hero .eyebrow {
+  color: var(--lime);
 }
 
 .hero__body {
