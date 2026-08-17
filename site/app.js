@@ -42,15 +42,10 @@ const savedService = readStorage(storageKeys.service, readStorage("stjuice-stage
 const savedCart = readStorage(storageKeys.cart, readStorage("stjuice-stage05-cart", []));
 
 function freshCheckout() {
-  const today = new Date();
-  const maxDate = new Date(today); maxDate.setUTCDate(maxDate.getUTCDate() + 6);
   return {
     step: 0,
-    date: today.toISOString().slice(0, 10),
-    minDate: today.toISOString().slice(0, 10),
-    maxDate: maxDate.toISOString().slice(0, 10),
-    slots: [],
-    slot: "",
+    schedule: "asap",
+    paymentMethod: "card",
     address: { street: "", city: "St. Louis", state: "MO", postalCode: "" },
     deliveryCheck: null,
     contact: { name: "", email: "", phone: "", marketingConsent: false },
@@ -230,12 +225,6 @@ function cartRequest() {
   };
 }
 
-async function refreshSlots() {
-  const result = await orderingApi.slots(state.service, state.checkout.date);
-  state.checkout.slots = result.slots || [];
-  if (!state.checkout.slots.some((slot) => slot.value === state.checkout.slot)) state.checkout.slot = "";
-}
-
 async function refreshQuote() {
   state.checkout.quote = await orderingApi.validateCart(cartRequest());
   return state.checkout.quote;
@@ -246,7 +235,7 @@ async function prepareCheckout() {
   state.checkout.preparing = true;
   state.checkout.autoPrepared = true;
   state.checkout.error = "";
-  try { await Promise.all([refreshSlots(), refreshQuote()]); }
+  try { await refreshQuote(); }
   catch (error) { state.checkout.error = errorMessage(error); }
   finally { state.checkout.preparing = false; render({ preserveScroll: true }); }
 }
@@ -451,9 +440,9 @@ document.addEventListener("click", async (event) => {
     writeStorage(storageKeys.service, service);
     state.checkout.quote = null;
     state.checkout.autoPrepared = false;
-    state.checkout.slots = [];
     state.checkout.deliveryCheck = null;
     state.checkout.idempotencyKey = "";
+    if (state.service === "delivery") state.checkout.paymentMethod = "card";
     closeDialog(elements.serviceDialog);
     render({ preserveScroll: true });
     toast(`${titleCase(service)} selected`, service === "delivery" ? "Address eligibility uses manual review in safe test mode." : "11 S Vandeventer Ave");
@@ -497,9 +486,9 @@ document.addEventListener("click", async (event) => {
     writeStorage(storageKeys.service, state.service);
     state.checkout.quote = null;
     state.checkout.autoPrepared = false;
-    state.checkout.slots = [];
     state.checkout.deliveryCheck = null;
     state.checkout.idempotencyKey = "";
+    if (state.service === "delivery") state.checkout.paymentMethod = "card";
     await prepareCheckout();
   } else if (action === "validate-delivery") {
     state.checkout.error = "";
@@ -520,8 +509,7 @@ document.addEventListener("click", async (event) => {
   } else if (action === "checkout-next") {
     state.checkout.error = "";
     if (state.checkout.step === 0) {
-      if (!state.checkout.slot) state.checkout.error = "Choose an available service time.";
-      else if (state.service === "delivery" && !state.checkout.deliveryCheck) state.checkout.error = "Check the delivery address before continuing.";
+      if (state.service === "delivery" && !state.checkout.deliveryCheck) state.checkout.error = "Check the delivery address before continuing.";
     } else if (state.checkout.step === 1) {
       if (state.checkout.contact.name.trim().length < 2) state.checkout.error = "Enter the guest name.";
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.checkout.contact.email)) state.checkout.error = "Enter a valid email address.";
@@ -539,12 +527,14 @@ document.addEventListener("click", async (event) => {
     render({ preserveScroll: true });
     try {
       const quote = await refreshQuote();
-      const payment = await orderingApi.createPaymentIntent(quote.quoteId);
+      const cashAllowed = state.service !== "delivery" && state.checkout.paymentMethod === "cash";
+      const payment = cashAllowed ? null : await orderingApi.createPaymentIntent(quote.quoteId);
       if (!state.checkout.idempotencyKey) state.checkout.idempotencyKey = globalThis.crypto?.randomUUID?.() || `browser_${Date.now()}_${Math.random()}`;
       const result = await orderingApi.createOrder({
         quoteId: quote.quoteId,
-        paymentToken: payment.token,
-        schedule: state.checkout.slot,
+        paymentMethod: cashAllowed ? "cash" : "card",
+        paymentToken: payment?.token,
+        schedule: "asap",
         deliveryCheckToken: state.checkout.deliveryCheck?.deliveryCheckToken,
         allergenAcknowledged: state.checkout.allergenAcknowledged,
         customer: state.checkout.contact
@@ -595,12 +585,14 @@ document.addEventListener("change", async (event) => {
     state.checkout[field] = target.type === "checkbox" ? target.checked : target.value;
     state.checkout.idempotencyKey = "";
     state.checkout.error = "";
-    if (field === "date") {
-      state.checkout.slots = [];
-      state.checkout.slot = "";
-      try { await refreshSlots(); } catch (error) { state.checkout.error = errorMessage(error); }
-    }
     if (["promoCode", "allergenAcknowledged"].includes(field)) state.checkout.quote = field === "promoCode" ? null : state.checkout.quote;
+    render({ preserveScroll: true });
+    return;
+  }
+
+  if (target.dataset.paymentMethod) {
+    state.checkout.paymentMethod = target.value;
+    state.checkout.idempotencyKey = "";
     render({ preserveScroll: true });
     return;
   }

@@ -2,12 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ST. JUICE safe test order request",
   "type": "object",
-  "required": ["quoteId", "paymentToken", "schedule", "customer", "allergenAcknowledged"],
+  "required": ["quoteId", "paymentMethod", "schedule", "customer", "allergenAcknowledged"],
   "properties": {
     "quoteId": { "type": "string", "pattern": "^quote_" },
     "paymentToken": { "type": "string", "pattern": "^test_pay_" },
+    "paymentMethod": { "enum": ["card", "cash"] },
     "idempotencyKey": { "type": "string", "minLength": 8, "maxLength": 200, "description": "May instead be sent in the Idempotency-Key header." },
-    "schedule": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:00$" },
+    "schedule": { "type": "string", "pattern": "^(asap|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:00)$" },
     "deliveryCheckToken": { "type": "string", "pattern": "^delivery_test_" },
     "customer": {
       "type": "object",

@@ -117,6 +117,7 @@ function publicOrder(order) {
     statusHistory: order.statusHistory,
     service: order.service,
     schedule: order.schedule,
+    payment: { method: order.payment.method, status: order.payment.status },
     customer: { name: order.customer.name, email: maskEmail(order.customer.email), phone: `***${order.customer.phone.replace(/\D/g, "").slice(-4)}` },
     items: order.items,
     totals: order.totals,
@@ -129,6 +130,7 @@ function publicOrder(order) {
 }
 
 function scheduleValid(service, schedule) {
+  if (schedule === "asap") return ["pickup", "delivery", "dine_in"].includes(service);
   const value = String(schedule || "");
   const date = value.slice(0, 10);
   const result = generateSlots(service, date);
@@ -180,8 +182,10 @@ async function api(request, response, url) {
     if (input.allergenAcknowledged !== true) return json(response, 422, { valid: false, errors: [{ code: "allergen_acknowledgement_required", field: "allergenAcknowledged", message: "Review and acknowledge the allergen notice." }] });
     if (!scheduleValid(quote.service, input.schedule)) return json(response, 422, { valid: false, errors: [{ code: "schedule_invalid", field: "schedule", message: "Choose an available service time." }] });
     if (quote.service === "delivery" && !deliveryChecks.has(input.deliveryCheckToken)) return json(response, 422, { valid: false, errors: [{ code: "delivery_check_required", message: "Validate the delivery address first." }] });
-    const payment = verifyTestPayment({ token: input.paymentToken, quoteId: quote.quoteId, amount: quote.totals.total.cents });
-    if (!payment.valid) return json(response, 402, { error: { code: payment.code, message: "The safe test payment could not be verified." } });
+    const paymentMethod = input.paymentMethod === "cash" ? "cash" : "card";
+    if (quote.service === "delivery" && paymentMethod === "cash") return json(response, 422, { valid: false, errors: [{ code: "cash_not_available_for_delivery", field: "paymentMethod", message: "Cash is not available for delivery orders." }] });
+    const payment = paymentMethod === "cash" ? null : verifyTestPayment({ token: input.paymentToken, quoteId: quote.quoteId, amount: quote.totals.total.cents });
+    if (payment && !payment.valid) return json(response, 402, { error: { code: payment.code, message: "The safe test payment could not be verified." } });
 
     const createdAt = new Date().toISOString();
     const id = `order_${randomUUID()}`;
@@ -197,7 +201,9 @@ async function api(request, response, url) {
       items: quote.items,
       totals: quote.totals,
       quoteId: quote.quoteId,
-      payment: { provider: payment.intent.provider, status: "captured_test", tokenLast8: payment.intent.token.slice(-8) },
+      payment: paymentMethod === "cash"
+        ? { method: "cash", provider: "pay_at_handoff", status: "due_at_handoff" }
+        : { method: "card", provider: payment.intent.provider, status: "captured_test", tokenLast8: payment.intent.token.slice(-8) },
       mode: config.meta.mode,
       createdAt
     };
@@ -206,7 +212,7 @@ async function api(request, response, url) {
     order.pos = sendToTestPos(order);
     orders.set(id, order);
     if (order.accountId) attachOrder(order.accountId, id);
-    consumeTestPayment(input.paymentToken);
+    if (paymentMethod === "card") consumeTestPayment(input.paymentToken);
     idempotency.set(key, { orderId: id, expiresAt: Date.now() + config.orders.idempotencyMinutes * 60_000 });
     return json(response, 201, { idempotentReplay: false, order: publicOrder(order) });
   }

@@ -30,7 +30,7 @@ const state = {
   cateringSuccess: false,
   cateringEmail: "",
   checkout: {
-    step: 0, date: new Date().toISOString().slice(0, 10), slots: [], slot: "",
+    step: 0, schedule: "asap", paymentMethod: "card",
     address: { street: "", city: "St. Louis", state: "MO", postalCode: "" }, deliveryCheck: null,
     contact: { name: "", email: "", phone: "", marketingConsent: false }, promoCode: "", tipPercent: 0,
     allergenAcknowledged: false, quote: null, preparing: false, busy: false, error: ""
@@ -89,6 +89,22 @@ state.checkout.quote = {
 const checkout = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
 assert.ok(checkout.includes("Checkout without surprises"));
 assert.ok(checkout.includes("SAFE TEST"));
+assert.ok(checkout.includes("Order for now."));
+assert.ok(!checkout.includes("Service date"));
+assert.ok(!checkout.includes("Available time"));
+
+state.checkout.step = 3;
+state.checkout.paymentMethod = "cash";
+const pickupPayment = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
+assert.ok(pickupPayment.includes("Cash at pickup"));
+state.service = "dine_in";
+const dineInPayment = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
+assert.ok(dineInPayment.includes("Cash at the counter"));
+state.service = "delivery";
+const deliveryPayment = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
+assert.ok(deliveryPayment.includes("Cash is not available for delivery"));
+assert.ok(!deliveryPayment.includes("Cash at pickup"));
+state.service = "pickup";
 
 state.order = { id: "order_test", orderNumber: "STJ-0001", status: "received", service: "pickup", schedule: "2026-08-17T08:00:00", customer: { name: "Test Guest", email: "t***@example.com", phone: "***0100" }, items: state.checkout.quote.items, totals: state.checkout.quote.totals, pos: { reference: "test_pos_123", adapter: "test_pos_receipt", status: "accepted_test" } };
 const order = renderPage({ path: "/order/order_test", params: new URLSearchParams() }, { data, state });

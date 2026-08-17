@@ -57,6 +57,12 @@ try {
   const advanced = await json(`/api/orders/${order.payload.order.id}/advance`, { method: "POST", body: "{}" });
   assert.equal(advanced.payload.order.status, "confirmed");
 
+  const dineQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, service: "dine_in" }) });
+  const cashOrder = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": `${key}-cash` }, body: JSON.stringify({ ...orderBody, quoteId: dineQuote.payload.quoteId, paymentMethod: "cash", paymentToken: undefined, schedule: "asap" }) });
+  assert.equal(cashOrder.response.status, 201);
+  assert.equal(cashOrder.payload.order.payment.method, "cash");
+  assert.equal(cashOrder.payload.order.payment.status, "due_at_handoff");
+
   const badAddress = await json("/api/delivery/validate", { method: "POST", body: JSON.stringify({ address: { city: "St. Louis" } }) });
   assert.equal(badAddress.response.status, 422);
   const deliveryCheck = await json("/api/delivery/validate", { method: "POST", body: JSON.stringify({ address: { street: "11 S Vandeventer Ave", city: "St. Louis", state: "MO", postalCode: "63108" } }) });
@@ -65,6 +71,9 @@ try {
 
   const deliverySlots = await json(`/api/slots?service=delivery&date=${tomorrow}`);
   const deliveryQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, service: "delivery", promoCode: "", tipPercent: 15 }) });
+  const deliveryCash = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": `${key}-delivery-cash` }, body: JSON.stringify({ ...orderBody, quoteId: deliveryQuote.payload.quoteId, paymentMethod: "cash", paymentToken: undefined, schedule: "asap", deliveryCheckToken: deliveryCheck.payload.deliveryCheckToken }) });
+  assert.equal(deliveryCash.response.status, 422);
+  assert.equal(deliveryCash.payload.errors[0].code, "cash_not_available_for_delivery");
   const deliveryPayment = await json("/api/payment/intents", { method: "POST", body: JSON.stringify({ quoteId: deliveryQuote.payload.quoteId }) });
   const deliveryOrder = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": `${key}-delivery` }, body: JSON.stringify({ ...orderBody, quoteId: deliveryQuote.payload.quoteId, paymentToken: deliveryPayment.payload.token, schedule: deliverySlots.payload.slots[0].value, deliveryCheckToken: deliveryCheck.payload.deliveryCheckToken }) });
   assert.equal(deliveryOrder.response.status, 201);
@@ -72,7 +81,7 @@ try {
   for (let index = 0; index < 3; index += 1) deliveryStatus = (await json(`/api/orders/${deliveryStatus.id}/advance`, { method: "POST", body: "{}" })).payload.order;
   assert.equal(deliveryStatus.status, "out_for_delivery");
 
-  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true }, null, 2));
+  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true }, null, 2));
 } finally {
   server.close();
   await once(server, "close");

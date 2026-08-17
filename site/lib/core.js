@@ -8,9 +8,12 @@ const paths = {
 };
 
 export async function loadProjectData() {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 10000);
+  try {
   const entries = await Promise.all(
     Object.entries(paths).map(async ([key, url]) => {
-      const response = await fetch(url);
+      const response = await fetch(url, { cache: "no-store", signal: controller.signal });
       if (!response.ok) throw new Error(`Unable to load ${key}: ${response.status}`);
       return [key, await response.json()];
     })
@@ -21,6 +24,9 @@ export async function loadProjectData() {
   data.categoryById = new Map(data.catalog.categories.map((item) => [item.id, item]));
   data.modifierById = new Map(data.modifiers.groups.map((item) => [item.id, item]));
   return data;
+  } finally {
+    window.clearTimeout(timeout);
+  }
 }
 
 export function money(value) {
