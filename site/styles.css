@@ -349,12 +349,7 @@ a {
 }
 
 .app-loader {
-  min-height: 60vh;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 1rem;
-  color: var(--text-muted);
+  display: none !important;
 }
 
 .app-loader__mark {

@@ -10,6 +10,8 @@ const read = (path) => readFileSync(resolve(packageRoot, path), "utf8");
 const json = (path) => JSON.parse(read(path));
 const index = read("site/index.html");
 const server = read("ordering/server.mjs");
+const styles = read("site/styles.css");
+assert.match(styles, /\.app-loader\s*\{[^}]*display:\s*none\s*!important/s, "Loader must never reserve blank first-fold space");
 
 for (const marker of ["<title>", 'name="description"', 'name="robots"', 'property="og:title"', 'name="twitter:card"', 'rel="manifest"']) {
   assert.ok(index.includes(marker), `index.html must include ${marker}`);
