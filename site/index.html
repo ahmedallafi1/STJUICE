@@ -16,7 +16,7 @@
     <link rel="icon" href="../brand/assets/logos/st-juice-fruit-mark.svg" type="image/svg+xml" />
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="stylesheet" href="./styles.css" />
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="./app.js?v=20260817-2"></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -64,11 +64,10 @@
     </header>
 
     <main id="main-content" tabindex="-1">
-      <div class="app-loader" id="app-loader" role="status" aria-live="polite">
-        <div class="app-loader__mark" aria-hidden="true"></div>
-        <p>Setting the mood…</p>
+      <div class="app-loader" id="app-loader" role="status" aria-live="polite" hidden></div>
+      <div id="app">
+        <section class="hero"><div class="container hero__content"><p class="eyebrow">ST. JUICE · ST. LOUIS</p><h1>Your mood,<br />made fresh.</h1><p class="lede">Juices, smoothies, bowls, crepes, mini pancakes and signature drops—made for right now.</p><div class="hero__actions"><a class="button" href="#/menu">Explore the menu</a><a class="button button--outline" href="#/build">Build your mood</a></div></div></section>
       </div>
-      <div id="app" hidden></div>
     </main>
 
     <footer class="site-footer" id="site-footer"></footer>

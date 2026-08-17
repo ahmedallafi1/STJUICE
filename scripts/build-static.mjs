@@ -1,4 +1,5 @@
 import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs";
+import "./generate-browser-data.mjs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,7 +10,7 @@ rmSync(output, { recursive: true, force: true });
 mkdirSync(output, { recursive: true });
 
 const files = [
-  "site/index.html", "site/app.js", "site/styles.css", "site/site.webmanifest", "site/robots.txt",
+  "site/index.html", "site/app.js", "site/project-data.js", "site/styles.css", "site/site.webmanifest", "site/robots.txt",
   "content/site-copy.json",
   "menu/data/catalog.json", "menu/data/modifiers.json", "menu/data/build-your-mood.json", "menu/data/bundles-catering.json",
   "media/manifests/media-manifest.json", "media/motion/st-juice-hero-loop.svg", "media/motion/st-juice-hero-loop-fallback.svg"
@@ -22,6 +23,8 @@ for (const source of files) {
   cpSync(resolve(root, source), target);
 }
 for (const source of directories) cpSync(resolve(root, source), resolve(output, source), { recursive: true });
+// Keep a root copy for the conservative public-reference audit; the browser uses /site/project-data.js.
+cpSync(resolve(root, "site/project-data.js"), resolve(output, "project-data.js"));
 
 function countFiles(directory) {
   return readdirSync(directory, { withFileTypes: true }).reduce((total, entry) => total + (entry.isDirectory() ? countFiles(resolve(directory, entry.name)) : 1), 0);

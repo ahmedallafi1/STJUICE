@@ -1,32 +1,11 @@
-const paths = {
-  catalog: "../menu/data/catalog.json",
-  modifiers: "../menu/data/modifiers.json",
-  builder: "../menu/data/build-your-mood.json",
-  bundles: "../menu/data/bundles-catering.json",
-  copy: "../content/site-copy.json",
-  media: "../media/manifests/media-manifest.json"
-};
+import { projectData } from "../project-data.js";
 
 export async function loadProjectData() {
-  const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), 10000);
-  try {
-  const entries = await Promise.all(
-    Object.entries(paths).map(async ([key, url]) => {
-      const response = await fetch(url, { cache: "no-store", signal: controller.signal });
-      if (!response.ok) throw new Error(`Unable to load ${key}: ${response.status}`);
-      return [key, await response.json()];
-    })
-  );
-
-  const data = Object.fromEntries(entries);
+  const data = projectData;
   data.productById = new Map(data.catalog.products.map((item) => [item.id, item]));
   data.categoryById = new Map(data.catalog.categories.map((item) => [item.id, item]));
   data.modifierById = new Map(data.modifiers.groups.map((item) => [item.id, item]));
   return data;
-  } finally {
-    window.clearTimeout(timeout);
-  }
 }
 
 export function money(value) {
