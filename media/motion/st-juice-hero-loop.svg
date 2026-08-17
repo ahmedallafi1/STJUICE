@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">ST. JUICE abstract pistachio hero motion</title>
+  <desc id="desc">An original decorative loop with pistachio liquid, fruit-like orbs, seed shapes and a chrome orbit. It does not depict a verified product.</desc>
+  <defs>
+    <radialGradient id="bg" cx="72%" cy="36%" r="82%">
+      <stop offset="0" stop-color="#354029"/>
+      <stop offset=".52" stop-color="#171b18"/>
+      <stop offset="1" stop-color="#0c0f0d"/>
+    </radialGradient>
+    <linearGradient id="pistachio" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d9efa6"/>
+      <stop offset=".55" stop-color="#b7d86c"/>
+      <stop offset="1" stop-color="#829d43"/>
+    </linearGradient>
+    <linearGradient id="cream" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffdf6"/>
+      <stop offset="1" stop-color="#fff8e7"/>
+    </linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#747a77"/>
+      <stop offset=".24" stop-color="#eef2f0"/>
+      <stop offset=".52" stop-color="#9ba19e"/>
+      <stop offset=".76" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#6d7470"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="20" result="blur"/>
+      <feOffset in="blur" dx="0" dy="26" result="offset"/>
+      <feComponentTransfer in="offset" result="shadowLayer">
+        <feFuncA type="linear" slope=".38"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="shadowLayer"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="glassClip">
+      <path d="M1012 266h298l-31 432c-2 31-28 55-59 55h-118c-31 0-57-24-59-55z"/>
+    </clipPath>
+    <style>
+      .drift-a { animation: drift-a 7s ease-in-out infinite; transform-origin: center; }
+      .drift-b { animation: drift-b 7s ease-in-out infinite; transform-origin: center; }
+      .orbit { animation: spin 9s linear infinite; transform-box: view-box; transform-origin: 1160px 465px; }
+      .pour { animation: pour 7s ease-in-out infinite; transform-origin: 1125px 155px; }
+      .rise { animation: rise 7s ease-in-out infinite; }
+      .spark { animation: sparkle 3.5s ease-in-out infinite; }
+      @keyframes drift-a { 0%,100% { transform: translate(0,0) rotate(-4deg); } 50% { transform: translate(20px,-18px) rotate(4deg); } }
+      @keyframes drift-b { 0%,100% { transform: translate(0,0) rotate(3deg); } 50% { transform: translate(-16px,20px) rotate(-5deg); } }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes pour { 0%,16%,100% { transform: scaleY(.05); opacity: 0; } 26%,73% { transform: scaleY(1); opacity: 1; } 84% { transform: scaleY(.18); opacity: .25; } }
+      @keyframes rise { 0%,20% { transform: translateY(116px); } 55%,100% { transform: translateY(0); } }
+      @keyframes sparkle { 0%,100% { opacity: .2; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.15); } }
+      @media (prefers-reduced-motion: reduce) {
+        .drift-a,.drift-b,.orbit,.pour,.rise,.spark { animation: none; }
+        .pour { opacity: .85; transform: scaleY(1); }
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <ellipse cx="1235" cy="780" rx="350" ry="76" fill="#000" opacity=".38" filter="url(#soft)"/>
+  <circle cx="1222" cy="350" r="286" fill="#b7d86c" opacity=".08" filter="url(#soft)"/>
+
+  <g opacity=".95">
+    <path d="M130 198c148-96 330-98 462-4 87 62 123 169 87 264-47 123-195 207-351 171-174-41-270-213-198-431z" fill="#fff8e7" opacity=".045"/>
+    <path d="M136 654c154-52 324-13 415 91" fill="none" stroke="#b7d86c" stroke-width="2" opacity=".28"/>
+    <path d="M138 672c164-35 301 10 388 103" fill="none" stroke="#c9cdd0" stroke-width="1.5" opacity=".2"/>
+  </g>
+
+  <g class="drift-a" filter="url(#shadow)">
+    <circle cx="366" cy="333" r="134" fill="#f3a5b7"/>
+    <circle cx="342" cy="302" r="96" fill="#f9c3cf" opacity=".62"/>
+    <g fill="#171b18" opacity=".72">
+      <ellipse cx="300" cy="272" rx="5" ry="10" transform="rotate(-26 300 272)"/>
+      <ellipse cx="356" cy="244" rx="5" ry="10" transform="rotate(12 356 244)"/>
+      <ellipse cx="414" cy="282" rx="5" ry="10" transform="rotate(28 414 282)"/>
+      <ellipse cx="314" cy="344" rx="5" ry="10" transform="rotate(18 314 344)"/>
+      <ellipse cx="390" cy="372" rx="5" ry="10" transform="rotate(-18 390 372)"/>
+    </g>
+  </g>
+
+  <g class="drift-b" filter="url(#shadow)">
+    <path d="M506 454c62-82 183-100 265-34 70 56 86 158 35 229-59 81-179 99-261 38-78-59-94-160-39-233z" fill="#efb24c"/>
+    <path d="M548 467c42-47 119-60 176-25 52 32 78 98 54 154-31 72-124 106-193 61-66-43-82-130-37-190z" fill="#ffcf6c" opacity=".58"/>
+  </g>
+
+  <g class="orbit" fill="none" stroke-linecap="round">
+    <ellipse cx="1160" cy="465" rx="337" ry="262" stroke="url(#chrome)" stroke-width="3" opacity=".62" stroke-dasharray="260 60 18 52"/>
+    <ellipse cx="1160" cy="465" rx="292" ry="226" stroke="#b7d86c" stroke-width="2" opacity=".44" stroke-dasharray="9 24"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <path d="M1012 266h298l-31 432c-2 31-28 55-59 55h-118c-31 0-57-24-59-55z" fill="#ffffff" fill-opacity=".11" stroke="#ffffff" stroke-opacity=".42" stroke-width="4"/>
+    <g clip-path="url(#glassClip)">
+      <rect class="rise" x="1004" y="384" width="314" height="382" rx="36" fill="url(#pistachio)"/>
+      <path class="rise" d="M1000 399c72-35 137 26 211-7 43-20 84-19 112-2v54h-323z" fill="#d9efa6" opacity=".84"/>
+      <path d="M1039 346c85 31 171 30 257-2" fill="none" stroke="#fff" stroke-width="14" opacity=".16"/>
+    </g>
+    <ellipse cx="1161" cy="266" rx="149" ry="31" fill="url(#cream)" opacity=".9"/>
+    <ellipse cx="1161" cy="266" rx="123" ry="20" fill="#b7d86c"/>
+    <path class="pour" d="M1114 36h84l-3 233c-1 37-26 66-57 66s-55-29-54-66z" fill="url(#pistachio)"/>
+    <path d="M1054 596h214" stroke="#fff8e7" stroke-width="3" opacity=".22"/>
+  </g>
+
+  <g fill="#d9efa6">
+    <ellipse cx="918" cy="236" rx="13" ry="6" transform="rotate(-34 918 236)"/>
+    <ellipse cx="1395" cy="380" rx="12" ry="6" transform="rotate(28 1395 380)"/>
+    <ellipse cx="896" cy="676" rx="11" ry="5" transform="rotate(18 896 676)"/>
+    <ellipse cx="1394" cy="638" rx="14" ry="6" transform="rotate(-20 1394 638)"/>
+  </g>
+  <g class="spark" fill="#fff8e7">
+    <circle cx="906" cy="372" r="5"/>
+    <circle cx="1356" cy="252" r="4"/>
+    <circle cx="1431" cy="525" r="6"/>
+  </g>
+</svg>

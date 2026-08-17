@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "version": "3.0.0",
+    "currency": "USD",
+    "priceStatus": "working_requires_owner_approval",
+    "leadTimeStatus": "working_requires_manager_confirmation",
+    "quoteRequiredForCustomService": true
+  },
+  "orderNowBoxes": [
+    {
+      "productId":"study-night-box","serves":{"min":2,"max":3},"basePrice":26.95,
+      "includes":["12 Classic Minis","2 eligible 16 oz refreshers","2 sauces","1 crunch"],
+      "leadTime":{"type":"capacity_based","minimumMinutes":25},"studentOfferEligible":true
+    },
+    {
+      "productId":"date-night-box","serves":{"min":2,"max":2},"basePrice":31.95,
+      "includes":["2 fruit sticks","1 mini dessert cup","2 eligible 12 oz drinks","Optional gift note"],
+      "leadTime":{"type":"capacity_based","minimumMinutes":25},"studentOfferEligible":false
+    },
+    {
+      "productId":"game-day-box","serves":{"min":4,"max":6},"basePrice":49.95,
+      "includes":["24 mini pancakes","2 fruit cups","3 sauces","3 crunches"],
+      "leadTime":{"type":"capacity_based","minimumMinutes":35},"studentOfferEligible":false
+    },
+    {
+      "productId":"birthday-box","serves":{"min":4,"max":6},"basePrice":59.95,
+      "includes":["24 mini pancakes","2 fruit sticks","1 share-size brownie component","3 sauces","2 toppings","Gift note"],
+      "leadTime":{"type":"capacity_based","minimumMinutes":40},"studentOfferEligible":false
+    },
+    {
+      "productId":"build-your-party-box","serves":{"min":6,"max":12},"basePrice":69.95,"startingAt":true,
+      "includes":["2 bases","Up to 3 fruit selections","3 sauces","3 toppings"],
+      "leadTime":{"type":"scheduled","minimumHours":4},"studentOfferEligible":false
+    }
+  ],
+  "cateringPackages": [
+    {"id":"drink-drop","name":"Drink Drop","guestRange":{"min":12,"max":50},"workingRate":{"type":"per_guest","startingAt":7.50},"includes":["Individually labeled eligible drinks","Allergen information card","Scheduled pickup or quoted delivery"]},
+    {"id":"dessert-table","name":"Dessert Table","guestRange":{"min":12,"max":75},"workingRate":{"type":"per_guest","startingAt":12.00},"includes":["Mini pancakes","Fruit selection","Chocolate and sauces","Crunch and toppings"]},
+    {"id":"full-mood-bar","name":"Full Mood Bar","guestRange":{"min":20,"max":150},"workingRate":{"type":"per_guest","startingAt":18.00},"includes":["Eligible drinks","Dessert assortment","Setup scope defined by quote"]},
+    {"id":"corporate-gift-set","name":"Corporate Gift Set","guestRange":{"min":10,"max":100},"workingRate":{"type":"per_recipient","startingAt":28.00},"includes":["Bottle or drink","Dessert box","Gift note","Recipient label"]}
+  ],
+  "leadTimeRules": [
+    {"guestCount":{"min":1,"max":7},"rule":"Use first available store capacity slot"},
+    {"guestCount":{"min":8,"max":20},"minimumHours":24},
+    {"guestCount":{"min":21,"max":50},"minimumHours":48},
+    {"guestCount":{"min":51,"max":9999},"minimumBusinessDays":5},
+    {"condition":"staffed_service_or_custom_branding","minimumBusinessDays":5}
+  ],
+  "requestFields": [
+    {"id":"contactName","required":true,"type":"text"},
+    {"id":"organization","required":false,"type":"text"},
+    {"id":"email","required":true,"type":"email"},
+    {"id":"phone","required":true,"type":"tel"},
+    {"id":"eventDate","required":true,"type":"date"},
+    {"id":"serviceTime","required":true,"type":"time"},
+    {"id":"guestCount","required":true,"type":"number","min":1},
+    {"id":"serviceMode","required":true,"type":"select","options":["pickup","delivery","staffed_setup"]},
+    {"id":"venueAddress","requiredWhen":{"serviceMode":["delivery","staffed_setup"]},"type":"address"},
+    {"id":"packageInterest","required":false,"type":"multi_select"},
+    {"id":"budgetRange","required":false,"type":"select"},
+    {"id":"dietaryAllergenNotes","required":false,"type":"textarea"},
+    {"id":"taxExemptRequest","required":false,"type":"boolean"},
+    {"id":"customBrandingRequest","required":false,"type":"boolean"},
+    {"id":"notes","required":false,"type":"textarea"},
+    {"id":"contactConsent","required":true,"type":"boolean"}
+  ],
+  "quoteStates": ["request_received","needs_clarification","quote_prepared","customer_accepted","payment_required","scheduled","in_preparation","ready_or_out_for_delivery","complete","canceled_or_refunded"],
+  "unapprovedCommercialTerms": ["deposit_percentage","cancellation_window","delivery_fee","setup_fee","gratuity","tax_handling","quote_expiration"]
+}

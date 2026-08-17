@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-labelledby="title desc">
+  <title id="title">Seed Orbit pattern</title>
+  <desc id="desc">A sparse pattern of small oval fruit seeds and orbit lines.</desc>
+  <rect width="320" height="240" fill="#FFF8E7"/>
+  <g fill="none" stroke="#526B2B" stroke-width="1.5" opacity=".18">
+    <path d="M-30 90C50 15 135 10 210 74s123 66 172 12"/>
+    <path d="M-20 210c72-58 150-70 230-12s130 40 165 0"/>
+  </g>
+  <g fill="#171B18" opacity=".11">
+    <ellipse cx="36" cy="42" rx="5" ry="10" transform="rotate(-38 36 42)"/><ellipse cx="99" cy="106" rx="5" ry="10" transform="rotate(21 99 106)"/><ellipse cx="174" cy="38" rx="5" ry="10" transform="rotate(48 174 38)"/><ellipse cx="242" cy="119" rx="5" ry="10" transform="rotate(-15 242 119)"/><ellipse cx="292" cy="54" rx="5" ry="10" transform="rotate(35 292 54)"/><ellipse cx="58" cy="190" rx="5" ry="10" transform="rotate(50 58 190)"/><ellipse cx="151" cy="176" rx="5" ry="10" transform="rotate(-30 151 176)"/><ellipse cx="276" cy="210" rx="5" ry="10" transform="rotate(12 276 210)"/>
+  </g>
+</svg>

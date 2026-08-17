@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "release": "stage-09-launch-candidate",
+  "publicOrigin": null,
+  "business": {
+    "legalNameApproved": true,
+    "publicPhone": null,
+    "publicEmail": null,
+    "hoursApproved": true,
+    "mapsListingApproved": false
+  },
+  "commerce": {
+    "paymentProvider": "test_only",
+    "posProvider": "test_only",
+    "taxConfigured": false,
+    "deliveryConfigured": false,
+    "refundPolicyApproved": false,
+    "cateringTermsApproved": false
+  },
+  "customerData": {
+    "database": "memory_only_test",
+    "authentication": "prototype_only",
+    "retentionApproved": false,
+    "privacyPolicyApproved": false,
+    "cookiePlanApproved": false
+  },
+  "communications": {
+    "transactionalEmail": "not_configured",
+    "transactionalSms": "not_configured",
+    "marketingConsentApproved": false
+  },
+  "content": {
+    "pricesApproved": false,
+    "recipesApproved": false,
+    "allergenControlsApproved": false,
+    "nutritionVerified": false,
+    "finalPhotographyApproved": false,
+    "rewardsRulesApproved": false,
+    "studentVerificationApproved": false
+  },
+  "observability": {
+    "errorMonitoring": "not_configured",
+    "analytics": "not_configured",
+    "uptimeMonitoring": "not_configured",
+    "backupRestoreTested": false
+  },
+  "releaseApproval": {
+    "ownerApproved": false,
+    "legalContentApproved": false,
+    "realOrderTestPassed": false,
+    "rollbackOwnerAssigned": false
+  }
+}

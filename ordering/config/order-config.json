@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "brand": "ST. JUICE",
+    "version": "6.0.0",
+    "mode": "safe_test",
+    "currency": "USD",
+    "timezone": "America/Chicago"
+  },
+  "location": {
+    "id": "vandeventer",
+    "name": "ST. JUICE · Vandeventer",
+    "address": "11 S Vandeventer Ave, St. Louis, MO",
+    "status": "confirmed_open_in_site"
+  },
+  "fulfillment": {
+    "supported": ["pickup", "delivery", "dine_in"],
+    "schedulingDays": 7,
+    "slotIncrementMinutes": 30,
+    "leadMinutes": {
+      "pickup": 30,
+      "delivery": 60,
+      "dine_in": 15
+    },
+    "hours": {
+      "sunday": { "open": "06:30", "close": "21:00" },
+      "monday": { "open": "06:30", "close": "21:00" },
+      "tuesday": { "open": "06:30", "close": "21:00" },
+      "wednesday": { "open": "06:30", "close": "21:00" },
+      "thursday": { "open": "06:30", "close": "21:00" },
+      "friday": { "open": "06:30", "close": "23:00" },
+      "saturday": { "open": "06:30", "close": "23:00" }
+    },
+    "delivery": {
+      "mode": "manual_review_test",
+      "testBehavior": "A complete address may continue in safe test mode. Real radius, route, fee and availability remain unconfigured.",
+      "realRadiusMiles": null,
+      "realMinimum": null,
+      "realFee": null
+    }
+  },
+  "pricing": {
+    "catalogPriceStatus": "working_requires_owner_approval",
+    "tax": {
+      "status": "not_configured",
+      "rate": null,
+      "safeTestAmount": 0
+    },
+    "deliveryFee": {
+      "status": "not_configured",
+      "amount": null,
+      "safeTestAmount": 0
+    },
+    "serviceFee": {
+      "status": "not_configured",
+      "amount": null,
+      "safeTestAmount": 0
+    },
+    "tips": {
+      "status": "optional_test_control",
+      "allowedPercentages": [0, 15, 18, 20]
+    },
+    "promo": {
+      "status": "test_only",
+      "testCode": "TEST10",
+      "percentOff": 10,
+      "maximumDiscount": 10
+    }
+  },
+  "payments": {
+    "adapter": "safe_test_token",
+    "acceptsRawCardData": false,
+    "liveProvider": null,
+    "testButtonLabel": "Authorize safe test payment"
+  },
+  "pos": {
+    "adapter": "test_pos_receipt",
+    "liveProvider": null
+  },
+  "orders": {
+    "storage": "memory_only_test",
+    "idempotencyMinutes": 60,
+    "quoteMinutes": 15,
+    "statuses": [
+      "received",
+      "confirmed",
+      "in_preparation",
+      "ready_for_pickup",
+      "out_for_delivery",
+      "complete",
+      "canceled"
+    ]
+  }
+}

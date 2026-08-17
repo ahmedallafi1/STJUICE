@@ -1,0 +1,10 @@
+{
+  "name": "st-juice-stage-05-frontend",
+  "version": "5.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node serve.mjs",
+    "test": "node tests/data-contract.test.mjs && node tests/render-contract.test.mjs"
+  }
+}

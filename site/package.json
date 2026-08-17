@@ -1,0 +1,10 @@
+{
+  "name": "st-juice-stage-08-final-qa",
+  "version": "8.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node ../ordering/server.mjs",
+    "test": "node ../menu/data/validate-menu.mjs && node ../ordering/tests/order-engine.test.mjs && node ../ordering/tests/api-smoke.test.mjs && node tests/data-contract.test.mjs && node tests/render-contract.test.mjs && node tests/final-qa.test.mjs"
+  }
+}

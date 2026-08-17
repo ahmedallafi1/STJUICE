@@ -1,0 +1,36 @@
+{
+  "meta": { "brand": "ST. JUICE", "version": "7.0.0", "mode": "safe_test", "storage": "memory_only_test" },
+  "authentication": {
+    "sessionHours": 8,
+    "cookieName": "stj_session",
+    "passwordMinimumCharacters": 12,
+    "loginWindowMinutes": 15,
+    "loginMaximumAttempts": 8,
+    "emailVerification": "not_connected_test"
+  },
+  "accountTypes": {
+    "regular": { "label": "Regular", "theme": "default", "capabilities": ["favorites", "saved_mixes", "saved_addresses", "order_history", "reorder", "rewards_enrollment"] },
+    "student": { "label": "Student", "theme": "student", "capabilities": ["favorites", "saved_mixes", "saved_addresses", "order_history", "reorder", "rewards_enrollment", "student_verification_request"] },
+    "business": { "label": "Business & Catering", "theme": "business", "capabilities": ["favorites", "saved_mixes", "saved_addresses", "order_history", "reorder", "rewards_enrollment", "business_profile", "saved_events"] }
+  },
+  "rewards": {
+    "status": "terms_pending",
+    "enrollmentAvailableInTest": true,
+    "pointsPerDollar": null,
+    "redemptionValue": null,
+    "expiration": null,
+    "birthdayValue": null,
+    "referralValue": null,
+    "tiers": ["Fresh", "Gold", "Saint", "Icon"],
+    "safeMessage": "Enrollment preferences can be tested. Points, redemption, expiration and benefits remain inactive until approved terms are configured."
+  },
+  "studentVerification": {
+    "mode": "manual_review_test",
+    "methods": ["school_email"],
+    "automaticApproval": false,
+    "expiration": null,
+    "affiliationDisclaimer": "ST. JUICE is not affiliated with, endorsed by or sponsored by any university.",
+    "blockedGeneralEmailDomains": ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "aol.com"]
+  },
+  "privacy": { "dataExportAvailable": true, "accountDeletionAvailable": true, "marketingConsentSeparate": true, "savedPaymentMethods": false }
+}

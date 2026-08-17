@@ -1,0 +1,5 @@
+*.zip
+.git
+.DS_Store
+node_modules
+site/qa/screenshots

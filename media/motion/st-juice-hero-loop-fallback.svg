@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">ST. JUICE abstract hero fallback</title>
+  <desc id="desc">A static pistachio, cream and charcoal composition used when motion is unavailable or reduced.</desc>
+  <defs>
+    <radialGradient id="bg" cx="72%" cy="36%" r="82%">
+      <stop offset="0" stop-color="#354029"/>
+      <stop offset=".52" stop-color="#171b18"/>
+      <stop offset="1" stop-color="#0c0f0d"/>
+    </radialGradient>
+    <linearGradient id="pistachio" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d9efa6"/>
+      <stop offset=".55" stop-color="#b7d86c"/>
+      <stop offset="1" stop-color="#829d43"/>
+    </linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#747a77"/>
+      <stop offset=".25" stop-color="#eef2f0"/>
+      <stop offset=".55" stop-color="#9ba19e"/>
+      <stop offset=".78" stop-color="#fff"/>
+      <stop offset="1" stop-color="#6d7470"/>
+    </linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="20" result="blur"/>
+      <feOffset in="blur" dx="0" dy="26" result="offset"/>
+      <feComponentTransfer in="offset" result="shadowLayer">
+        <feFuncA type="linear" slope=".38"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="shadowLayer"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <path d="M136 654c154-52 324-13 415 91" fill="none" stroke="#b7d86c" stroke-width="2" opacity=".28"/>
+  <circle cx="366" cy="333" r="134" fill="#f3a5b7" filter="url(#shadow)"/>
+  <path d="M506 454c62-82 183-100 265-34 70 56 86 158 35 229-59 81-179 99-261 38-78-59-94-160-39-233z" fill="#efb24c" filter="url(#shadow)"/>
+  <ellipse cx="1160" cy="465" rx="337" ry="262" fill="none" stroke="url(#chrome)" stroke-width="3" opacity=".62" stroke-dasharray="260 60 18 52"/>
+  <g filter="url(#shadow)">
+    <path d="M1012 266h298l-31 432c-2 31-28 55-59 55h-118c-31 0-57-24-59-55z" fill="#fff" fill-opacity=".11" stroke="#fff" stroke-opacity=".42" stroke-width="4"/>
+    <path d="M1041 405h240l-22 293c-2 20-18 35-38 35h-120c-20 0-37-16-38-36z" fill="url(#pistachio)"/>
+    <ellipse cx="1161" cy="266" rx="149" ry="31" fill="#fff8e7"/>
+    <ellipse cx="1161" cy="266" rx="123" ry="20" fill="#b7d86c"/>
+    <path d="M1114 36h84l-3 233c-1 37-26 66-57 66s-55-29-54-66z" fill="url(#pistachio)"/>
+  </g>
+  <g fill="#d9efa6">
+    <ellipse cx="918" cy="236" rx="13" ry="6" transform="rotate(-34 918 236)"/>
+    <ellipse cx="1395" cy="380" rx="12" ry="6" transform="rotate(28 1395 380)"/>
+    <ellipse cx="896" cy="676" rx="11" ry="5" transform="rotate(18 896 676)"/>
+    <ellipse cx="1394" cy="638" rx="14" ry="6" transform="rotate(-20 1394 638)"/>
+  </g>
+</svg>

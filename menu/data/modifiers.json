@@ -1,0 +1,169 @@
+{
+  "meta": {
+    "version": "3.0.0",
+    "currency": "USD",
+    "priceStatus": "working_requires_owner_approval",
+    "allergenStatus": "draft_requires_supplier_and_kitchen_review"
+  },
+  "groups": [
+    {
+      "id":"milk-choice","name":"Milk choice","selection":{"min":0,"max":1,"included":1},"display":"single",
+      "options":[
+        {"id":"whole-milk","name":"Whole milk","price":0,"allergenAdds":["milk"]},
+        {"id":"oat-milk","name":"Oat milk","price":1.00,"allergenAdds":[],"status":"supplier_pending"},
+        {"id":"almond-milk","name":"Almond milk","price":1.00,"allergenAdds":["tree_nut"],"status":"supplier_pending"}
+      ]
+    },
+    {
+      "id":"sweetness","name":"Sweetness","selection":{"min":0,"max":1,"included":1},"display":"single",
+      "options":[{"id":"no-added-sweetener","name":"No added sweetener","price":0},{"id":"light","name":"Light","price":0},{"id":"regular","name":"Regular","price":0},{"id":"extra","name":"Extra","price":0}]
+    },
+    {
+      "id":"ice-level","name":"Ice","selection":{"min":0,"max":1,"included":1},"display":"single",
+      "options":[{"id":"no-ice","name":"No ice","price":0},{"id":"light-ice","name":"Light ice","price":0},{"id":"regular-ice","name":"Regular ice","price":0},{"id":"extra-ice","name":"Extra ice","price":0}]
+    },
+    {
+      "id":"protein-boost","name":"Protein boost","selection":{"min":0,"max":2,"included":0},"display":"multi",
+      "options":[
+        {"id":"vanilla-protein","name":"Vanilla protein","price":2.00,"allergenAdds":["milk"],"status":"supplier_pending"},
+        {"id":"chocolate-protein","name":"Chocolate protein","price":2.00,"allergenAdds":["milk","soy"],"status":"supplier_pending"}
+      ]
+    },
+    {
+      "id":"drink-premium-extras","name":"Premium finish","selection":{"min":0,"max":2,"included":0},"display":"multi",
+      "options":[
+        {"id":"pistachio-sauce","name":"Pistachio sauce","price":1.50,"allergenAdds":["milk","tree_nut"]},
+        {"id":"roasted-pistachio","name":"Roasted pistachio","price":1.25,"allergenAdds":["tree_nut"]},
+        {"id":"date","name":"Extra date","price":0.95,"allergenAdds":[]}
+      ]
+    },
+    {
+      "id":"drink-fruit-extras","name":"Extra fruit","selection":{"min":0,"max":3,"included":0},"display":"multi",
+      "options":[
+        {"id":"strawberry","name":"Strawberry","price":0.95},{"id":"banana","name":"Banana","price":0.95},{"id":"mango","name":"Mango","price":0.95},{"id":"blueberry","name":"Blueberry","price":1.25},{"id":"dragon-fruit","name":"Dragon fruit","price":1.25,"status":"seasonal"}
+      ]
+    },
+    {
+      "id":"drink-produce-extras","name":"Produce boost","selection":{"min":0,"max":3,"included":0},"display":"multi",
+      "options":[
+        {"id":"green-apple","name":"Green apple","price":0.95},{"id":"pineapple","name":"Pineapple","price":0.95},{"id":"cucumber","name":"Cucumber","price":0.95},{"id":"spinach","name":"Spinach","price":0.95},{"id":"mint","name":"Mint","price":0.75},{"id":"ginger","name":"Ginger","price":0.75}
+      ]
+    },
+    {
+      "id":"juice-produce-extras","name":"Add produce","selection":{"min":0,"max":3,"included":0},"display":"multi",
+      "options":[
+        {"id":"apple","name":"Apple","price":0.95},{"id":"orange","name":"Orange","price":0.95},{"id":"pineapple","name":"Pineapple","price":0.95},{"id":"carrot","name":"Carrot","price":0.95},{"id":"beet","name":"Beet","price":0.95},{"id":"lemon","name":"Lemon","price":0.75},{"id":"ginger","name":"Ginger","price":0.75}
+      ]
+    },
+    {
+      "id":"refresher-extras","name":"Refresher extras","selection":{"min":0,"max":3,"included":0},"display":"multi",
+      "options":[{"id":"mint","name":"Extra mint","price":0.75},{"id":"lemon","name":"Extra lemon","price":0.75},{"id":"strawberry","name":"Strawberry","price":0.95},{"id":"passion-fruit","name":"Passion fruit","price":1.25,"status":"seasonal"}]
+    },
+    {
+      "id":"bowl-fruit","name":"Fruit","selection":{"min":0,"max":6,"included":2},"display":"multi",
+      "pricing":{"standardAfterIncluded":0.95,"premiumAfterIncluded":1.25},
+      "options":[
+        {"id":"strawberry","name":"Strawberry","tier":"standard"},{"id":"banana","name":"Banana","tier":"standard"},{"id":"mango","name":"Mango","tier":"standard"},{"id":"pineapple","name":"Pineapple","tier":"standard"},{"id":"kiwi","name":"Kiwi","tier":"standard"},{"id":"blueberry","name":"Blueberry","tier":"premium"},{"id":"dragon-fruit","name":"Dragon fruit","tier":"premium","status":"seasonal"},{"id":"pomegranate","name":"Pomegranate arils","tier":"premium","status":"seasonal"}
+      ]
+    },
+    {
+      "id":"dessert-fruit","name":"Add fruit","selection":{"min":0,"max":4,"included":0},"display":"multi",
+      "options":[{"id":"strawberry","name":"Strawberry","price":0.95},{"id":"banana","name":"Banana","price":0.95},{"id":"mango","name":"Mango","price":0.95},{"id":"pineapple","name":"Pineapple","price":0.95},{"id":"blueberry","name":"Blueberry","price":1.25}]
+    },
+    {
+      "id":"chocolate-choice","name":"Chocolate","selection":{"min":1,"max":1,"included":1},"display":"single",
+      "options":[
+        {"id":"milk-chocolate","name":"Milk chocolate","price":0,"allergenAdds":["milk","soy"]},
+        {"id":"white-chocolate","name":"White chocolate","price":0,"allergenAdds":["milk","soy"]},
+        {"id":"dark-chocolate","name":"Dark chocolate","price":1.00,"allergenAdds":["soy"],"status":"supplier_label_pending"}
+      ]
+    },
+    {
+      "id":"dessert-sauces","name":"Sauce","selection":{"min":0,"max":4,"included":1},"display":"multi",
+      "pricing":{"standardAfterIncluded":0.75,"premiumAfterIncluded":1.50},
+      "options":[
+        {"id":"milk-chocolate","name":"Milk chocolate","tier":"standard","allergenAdds":["milk","soy"]},
+        {"id":"white-chocolate","name":"White chocolate","tier":"standard","allergenAdds":["milk","soy"]},
+        {"id":"dark-chocolate","name":"Dark chocolate","tier":"premium","allergenAdds":["soy"],"status":"supplier_label_pending"},
+        {"id":"pistachio-sauce","name":"Pistachio sauce","tier":"premium","allergenAdds":["milk","tree_nut"]},
+        {"id":"berry-sauce","name":"Berry sauce","tier":"standard","allergenAdds":[]},
+        {"id":"caramel","name":"Caramel","tier":"standard","allergenAdds":["milk"]},
+        {"id":"biscuit-spread","name":"Caramelized biscuit spread","tier":"standard","allergenAdds":["wheat","soy"]},
+        {"id":"honey","name":"Honey","tier":"standard","allergenAdds":[]}
+      ]
+    },
+    {
+      "id":"dessert-toppings","name":"Topping and crunch","selection":{"min":0,"max":5,"included":1},"display":"multi",
+      "pricing":{"standardAfterIncluded":0.75,"premiumAfterIncluded":1.25},
+      "options":[
+        {"id":"roasted-pistachio","name":"Roasted pistachio","tier":"premium","allergenAdds":["tree_nut"]},
+        {"id":"kataifi-crunch","name":"Kataifi crunch","tier":"premium","allergenAdds":["wheat"]},
+        {"id":"cookie-crumb","name":"Chocolate cookie crumb","tier":"standard","allergenAdds":["wheat","soy"]},
+        {"id":"biscuit-crumb","name":"Caramelized biscuit crumb","tier":"standard","allergenAdds":["wheat","soy"]},
+        {"id":"brownie-bites","name":"Brownie bites","tier":"premium","allergenAdds":["milk","egg","wheat","soy"]},
+        {"id":"marshmallow","name":"Marshmallow","tier":"standard","allergenAdds":[],"status":"supplier_label_pending"},
+        {"id":"cereal-crunch","name":"Cereal crunch","tier":"standard","allergenAdds":["wheat"],"status":"supplier_label_pending"},
+        {"id":"coconut","name":"Coconut flakes","tier":"standard","allergenAdds":[]},
+        {"id":"granola","name":"Granola","tier":"standard","allergenAdds":["wheat"],"status":"supplier_label_pending"},
+        {"id":"fresh-fruit","name":"Fresh fruit","tier":"standard","allergenAdds":[]}
+      ]
+    },
+    {
+      "id":"bowl-boosts","name":"Bowl boost","selection":{"min":0,"max":3,"included":0},"display":"multi",
+      "options":[
+        {"id":"protein","name":"Vanilla protein","price":2.00,"allergenAdds":["milk"],"status":"supplier_pending"},
+        {"id":"yogurt","name":"Yogurt","price":1.00,"allergenAdds":["milk"]},
+        {"id":"pistachio","name":"Roasted pistachio","price":1.25,"allergenAdds":["tree_nut"]}
+      ]
+    },
+    {
+      "id":"gift-presentation","name":"Presentation","selection":{"min":0,"max":1,"included":0},"display":"single",
+      "options":[{"id":"standard","name":"Standard packaging","price":0},{"id":"gift","name":"Gift presentation","price":4.00,"status":"packaging_vendor_pending"}]
+    },
+    {
+      "id":"flight-drink-selection","name":"Choose four tastes","selection":{"min":4,"max":4,"included":4,"allowDuplicates":true},"display":"product_reference","eligibleProductIds":["pistachio-saint","blue-saint","berry-boulevard","lemon-chrome","saint-sunset","green-arch"]
+    },
+    {
+      "id":"twin-fresh-juice-selection","name":"Choose two juices","selection":{"min":2,"max":2,"included":2,"allowDuplicates":true},"display":"product_reference","eligibleProductIds":["orange-press","watermelon-wave","pineapple-lime","carrot-glow","beet-route"]
+    },
+    {
+      "id":"liter-flavor-selection","name":"Choose a liter","selection":{"min":1,"max":1,"included":1},"display":"product_reference",
+      "options":[{"id":"orange","name":"Orange","price":0},{"id":"watermelon","name":"Watermelon","price":0},{"id":"pineapple-lime","name":"Pineapple Lime","price":1.00},{"id":"carrot-glow","name":"Carrot Glow","price":1.00},{"id":"beet-route","name":"Beet Route","price":2.00}]
+    },
+    {
+      "id":"study-box-drinks","name":"Choose two refreshers","selection":{"min":2,"max":2,"included":2,"allowDuplicates":true},"display":"product_reference","eligibleProductIds":["lemon-mint","strawberry-lemonade","mango-passion-fizz","blue-rush"]
+    },
+    {
+      "id":"date-box-drinks","name":"Choose two 12 oz drinks","selection":{"min":2,"max":2,"included":2,"allowDuplicates":true},"display":"product_reference","eligibleProductIds":["orange-press","watermelon-wave","pineapple-lime","lemon-mint","strawberry-lemonade","blue-rush"]
+    },
+    {
+      "id":"box-fruit","name":"Box fruit","selection":{"min":2,"max":4,"included":2},"display":"multi","pricing":{"standardAfterIncluded":4.00,"premiumAfterIncluded":5.00},"options":[{"id":"strawberry","name":"Strawberry","tier":"standard"},{"id":"banana","name":"Banana","tier":"standard"},{"id":"mango","name":"Mango","tier":"standard"},{"id":"pineapple","name":"Pineapple","tier":"standard"},{"id":"blueberry","name":"Blueberry","tier":"premium"},{"id":"dragon-fruit","name":"Dragon fruit","tier":"premium","status":"seasonal"}]
+    },
+    {
+      "id":"box-sauces","name":"Box sauces","selection":{"min":1,"max":5,"included":2},"display":"multi","pricing":{"standardAfterIncluded":2.00,"premiumAfterIncluded":3.50},"reuseOptionsFrom":"dessert-sauces"
+    },
+    {
+      "id":"box-toppings","name":"Box toppings","selection":{"min":1,"max":5,"included":1},"display":"multi","pricing":{"standardAfterIncluded":2.00,"premiumAfterIncluded":3.00},"reuseOptionsFrom":"dessert-toppings"
+    },
+    {
+      "id":"party-box-bases","name":"Party bases","selection":{"min":2,"max":2,"included":2},"display":"multi",
+      "options":[{"id":"mini-pancakes","name":"Mini pancakes","price":0,"allergenAdds":["milk","egg","wheat"]},{"id":"fruit-cups","name":"Fruit cups","price":0},{"id":"brownie-bites","name":"Brownie bites","price":8.00,"allergenAdds":["milk","egg","wheat","soy"]},{"id":"waffle-sticks","name":"Waffle sticks","price":8.00,"allergenAdds":["milk","egg","wheat"]}]
+    },
+    {
+      "id":"office-drink-selection","name":"Office drinks","selection":{"min":10,"max":20,"included":10,"allowDuplicates":true},"display":"product_reference","eligibleProductIds":["orange-press","watermelon-wave","pineapple-lime","carrot-glow","beet-route","lemon-mint","strawberry-lemonade","mango-passion-fizz","blue-rush"],"pricing":{"eachAfterIncluded":7.50}
+    },
+    {
+      "id":"catering-addons","name":"Catering add-ons","selection":{"min":0,"max":5,"included":0},"display":"multi",
+      "options":[
+        {"id":"individual-labels","name":"Individual name labels","price":10.00,"priceUnit":"order"},
+        {"id":"allergen-cards","name":"Printed allergen cards","price":0,"priceUnit":"order"},
+        {"id":"gift-notes","name":"Individual gift notes","price":2.00,"priceUnit":"recipient"},
+        {"id":"premium-presentation","name":"Premium presentation","price":4.00,"priceUnit":"recipient","status":"packaging_vendor_pending"},
+        {"id":"delivery-setup","name":"Delivery and setup","price":0,"priceUnit":"quoted"}
+      ]
+    },
+    {
+      "id":"gift-note","name":"Gift note","selection":{"min":0,"max":1,"included":1},"display":"text","constraints":{"maxCharacters":160},"price":0
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "version": "3.0.0",
+    "status": "working_requires_operational_and_legal_review",
+    "publicNutritionAllowed": false,
+    "nullNutritionMeaning": "unverified_not_zero"
+  },
+  "allergens": [
+    {"id":"milk","name":"Milk / dairy","priority":1},
+    {"id":"egg","name":"Egg","priority":2},
+    {"id":"wheat","name":"Wheat / gluten-containing cereal","priority":3},
+    {"id":"soy","name":"Soy","priority":4},
+    {"id":"peanut","name":"Peanut","priority":5},
+    {"id":"tree_nut","name":"Tree nuts, including pistachio","priority":6},
+    {"id":"sesame","name":"Sesame","priority":7}
+  ],
+  "sharedKitchenStatement": "Our kitchen handles milk, eggs, wheat, soy, peanuts, tree nuts and sesame. Cross-contact is possible. Ingredient and allergen information is based on current recipes and supplier labels and may change. Tell our team about allergies before ordering.",
+  "productAllergenStates": ["draft","reviewed","verified"],
+  "nutritionFieldsPerSize": [
+    "calories","totalFatG","saturatedFatG","transFatG","cholesterolMg","sodiumMg","totalCarbohydrateG","dietaryFiberG","totalSugarsG","addedSugarsG","proteinG","vitaminDMcg","calciumMg","ironMg","potassiumMg"
+  ],
+  "verificationRequirements": [
+    "Frozen recipe version",
+    "Exact ingredient weights and yield",
+    "Current supplier specification and allergen sheets",
+    "Contains and may-contain mapping",
+    "Verified sellable portion",
+    "Nutrition calculation by size",
+    "Cross-contact procedure review",
+    "Manager approval and date"
+  ],
+  "claimsRequiringEvidence": ["vegan","vegetarian","gluten-free","organic","halal","high-protein","low-sugar","no-added-sugar","allergen-free","plant-based"]
+}

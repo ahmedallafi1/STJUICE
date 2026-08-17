@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stjuice.example/schemas/catalog.schema.json",
+  "title": "ST. JUICE Catalog",
+  "type": "object",
+  "required": ["meta", "recordDefaults", "categories", "products"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["brand", "version", "currency", "priceStatus", "primaryItemCount", "groupFormatCount", "activeDropCount"]
+    },
+    "recordDefaults": {
+      "type": "object",
+      "required": ["allergenStatus", "crossContactPossible", "nutrition", "media", "locationIds", "availabilityStatus"],
+      "properties": {
+        "nutrition": {
+          "type": "object",
+          "required": ["status", "values"],
+          "properties": {
+            "status": {"const": "unverified"},
+            "values": {"type": "null"}
+          }
+        }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "slug", "order", "description"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "name": {"type": "string", "minLength": 1},
+          "slug": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "order": {"type": "integer", "minimum": 1},
+          "description": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "categoryId", "name", "slug", "catalogRole", "productType", "description", "sizes", "moods", "occasions", "draftIngredients", "containsAllergens", "allergenMode", "modifierGroupIds", "availability", "prepTimeMinutes", "pairingIds", "alternativeIds"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "categoryId": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "name": {"type": "string", "minLength": 1},
+          "slug": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "catalogRole": {"enum": ["primary", "group_format"]},
+          "description": {"type": "string", "minLength": 1},
+          "sizes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "label", "price"],
+              "properties": {
+                "id": {"type": "string"},
+                "label": {"type": "string"},
+                "price": {"type": "number", "minimum": 0},
+                "startingAt": {"type": "boolean"}
+              }
+            }
+          },
+          "moods": {"type": "array", "items": {"type": "string"}},
+          "occasions": {"type": "array", "items": {"type": "string"}},
+          "draftIngredients": {"type": "array", "items": {"type": "string"}},
+          "containsAllergens": {"type": "array", "items": {"type": "string"}},
+          "allergenMode": {"enum": ["fixed", "fixed_plus_modifiers", "configuration_dependent", "selection_dependent"]},
+          "modifierGroupIds": {"type": "array", "items": {"type": "string"}},
+          "availability": {"type": "object", "required": ["dayparts", "channels", "deliverySuitability"]},
+          "prepTimeMinutes": {"type": "object", "required": ["status", "min", "max"]},
+          "pairingIds": {"type": "array", "items": {"type": "string"}},
+          "alternativeIds": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 430" role="img" aria-labelledby="title desc">
+  <title id="title">ST. JUICE stacked logo</title>
+  <desc id="desc">Saint Slice fruit mark above the ST. JUICE wordmark.</desc>
+  <g transform="translate(130 28)" color="#171B18">
+    <path fill="currentColor" d="M80 22c37.2 0 62 25.7 62 62.5 0 35.4-26 60.5-62 60.5s-62-25.1-62-60.5C18 47.7 42.8 22 80 22Z"/>
+    <path fill="#FFF8E7" d="M80 35c29.2 0 48.5 20.2 48.5 49.2 0 27.8-20.4 47.7-48.5 47.7s-48.5-19.9-48.5-47.7C31.5 55.2 50.8 35 80 35Z"/>
+    <path fill="currentColor" d="M71.3 31.5C67.7 18.7 72.2 8.2 84.7 3.2c3.7 12.1-.1 22.5-13.4 28.3ZM88.8 31.7c3.4-11.5 12-17.5 24.3-15.8-2.7 11.3-10.7 17.3-24.3 15.8Z"/>
+    <g fill="currentColor"><ellipse cx="79" cy="57" rx="4.3" ry="8.3"/><ellipse cx="54" cy="68" rx="4.1" ry="7.5" transform="rotate(-52 54 68)"/><ellipse cx="105" cy="69" rx="4.1" ry="7.5" transform="rotate(48 105 69)"/><ellipse cx="61" cy="94" rx="4.1" ry="7.5" transform="rotate(32 61 94)"/><ellipse cx="98" cy="95" rx="4.1" ry="7.5" transform="rotate(-34 98 95)"/><ellipse cx="79" cy="112" rx="4.2" ry="7.8"/><ellipse cx="80" cy="83" rx="5" ry="9"/></g>
+  </g>
+  <text x="210" y="282" text-anchor="middle" fill="#171B18" font-family="Manrope, Arial, sans-serif" font-size="60" font-weight="800" letter-spacing="5">ST. JUICE</text>
+</svg>

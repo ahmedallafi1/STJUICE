@@ -1,0 +1,24 @@
+import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = resolve(fileURLToPath(new URL("../..", import.meta.url)));
+const json = (path) => JSON.parse(readFileSync(resolve(root, path), "utf8"));
+const vercel = json("vercel.json");
+const pkg = json("package.json");
+assert.equal(vercel.version, 2);
+assert.equal(vercel.buildCommand, "npm run build");
+assert.equal(vercel.outputDirectory, "dist-public");
+assert.ok(vercel.redirects.some((item) => item.source === "/" && item.destination === "/site/"));
+assert.ok(existsSync(resolve(root, "api/index.js")));
+assert.ok(existsSync(resolve(root, "api/[...path].js")));
+assert.ok(existsSync(resolve(root, ".github/workflows/ci.yml")));
+assert.ok(existsSync(resolve(root, ".gitignore")));
+assert.equal(pkg.engines.node, "22.x");
+assert.ok(pkg.scripts.test && pkg.scripts.start);
+assert.ok(pkg.scripts.build);
+assert.ok(readFileSync(resolve(root, "site/robots.txt"), "utf8").includes("Disallow: /"));
+const globalHeaders = Object.fromEntries(vercel.headers.find((item) => item.source === "/(.*)").headers.map((item) => [item.key, item.value]));
+for (const name of ["Content-Security-Policy", "Strict-Transport-Security", "X-Content-Type-Options", "X-Frame-Options", "Referrer-Policy", "Permissions-Policy"]) assert.ok(globalHeaders[name], `Missing Vercel header ${name}`);
+console.log(JSON.stringify({ status: "valid", github: true, vercel: true, node: pkg.engines.node, indexing: "blocked_prelaunch" }, null, 2));

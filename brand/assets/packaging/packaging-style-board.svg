@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">ST. JUICE initial packaging style board</title>
+  <desc id="desc">Visual concepts for a cold cup, bottle, dessert box, takeout bag and catering box in pistachio, cream, charcoal and gold.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#171B18" flood-opacity=".12"/></filter>
+    <pattern id="seeds" width="70" height="54" patternUnits="userSpaceOnUse" patternTransform="rotate(-12)"><ellipse cx="16" cy="16" rx="4" ry="8" fill="#171B18" opacity=".10"/><ellipse cx="52" cy="38" rx="4" ry="8" fill="#171B18" opacity=".10" transform="rotate(45 52 38)"/></pattern>
+    <symbol id="slice" viewBox="0 0 160 160">
+      <path fill="currentColor" d="M80 22c37.2 0 62 25.7 62 62.5 0 35.4-26 60.5-62 60.5s-62-25.1-62-60.5C18 47.7 42.8 22 80 22Z"/>
+      <path fill="#FFF8E7" d="M80 35c29.2 0 48.5 20.2 48.5 49.2 0 27.8-20.4 47.7-48.5 47.7s-48.5-19.9-48.5-47.7C31.5 55.2 50.8 35 80 35Z"/>
+      <path fill="currentColor" d="M71.3 31.5C67.7 18.7 72.2 8.2 84.7 3.2c3.7 12.1-.1 22.5-13.4 28.3ZM88.8 31.7c3.4-11.5 12-17.5 24.3-15.8-2.7 11.3-10.7 17.3-24.3 15.8Z"/>
+      <g fill="currentColor"><ellipse cx="79" cy="57" rx="4.3" ry="8.3"/><ellipse cx="54" cy="68" rx="4.1" ry="7.5" transform="rotate(-52 54 68)"/><ellipse cx="105" cy="69" rx="4.1" ry="7.5" transform="rotate(48 105 69)"/><ellipse cx="61" cy="94" rx="4.1" ry="7.5" transform="rotate(32 61 94)"/><ellipse cx="98" cy="95" rx="4.1" ry="7.5" transform="rotate(-34 98 95)"/><ellipse cx="79" cy="112" rx="4.2" ry="7.8"/><ellipse cx="80" cy="83" rx="5" ry="9"/></g>
+    </symbol>
+  </defs>
+  <rect width="1600" height="1000" fill="#FFF8E7"/>
+  <circle cx="1440" cy="70" r="220" fill="#B7D86C" opacity=".35"/>
+  <circle cx="80" cy="980" r="250" fill="#D94D78" opacity=".08"/>
+  <text x="90" y="96" fill="#526B2B" font-family="Manrope, Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="5">STAGE 02 · PACKAGING SYSTEM</text>
+  <text x="90" y="170" fill="#171B18" font-family="Georgia, serif" font-size="64" font-weight="700">Quiet outside. Mood inside.</text>
+  <text x="94" y="218" fill="#737A76" font-family="Manrope, Arial, sans-serif" font-size="22">Concept direction only · Final dielines, materials and food-contact compliance require vendor confirmation.</text>
+
+  <g transform="translate(85 280)" filter="url(#shadow)">
+    <rect width="270" height="500" rx="30" fill="#FFFFFF" stroke="#C9CDD0"/>
+    <text x="28" y="42" fill="#737A76" font-family="Manrope, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="2">COLD CUP</text>
+    <ellipse cx="135" cy="130" rx="84" ry="17" fill="#C9CDD0"/>
+    <path d="M56 130h158l-18 278c-2 27-20 43-46 43h-30c-26 0-44-16-46-43L56 130Z" fill="#F5EAD2" stroke="#737A76" stroke-width="2"/>
+    <path d="M72 300h126l-5 82H77l-5-82Z" fill="#B7D86C"/>
+    <use href="#slice" x="100" y="190" width="70" height="70" color="#171B18"/>
+    <text x="135" y="337" text-anchor="middle" fill="#171B18" font-family="Manrope, Arial, sans-serif" font-size="17" font-weight="800" letter-spacing="2">ST. JUICE</text>
+    <text x="135" y="475" text-anchor="middle" fill="#526B2B" font-family="Manrope, Arial, sans-serif" font-size="14" font-weight="700">Clear product · pistachio band</text>
+  </g>
+
+  <g transform="translate(375 280)" filter="url(#shadow)">
+    <rect width="270" height="500" rx="30" fill="#FFFFFF" stroke="#C9CDD0"/>
+    <text x="28" y="42" fill="#737A76" font-family="Manrope, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="2">BOTTLE</text>
+    <rect x="104" y="86" width="62" height="28" rx="8" fill="#171B18"/>
+    <path d="M98 112h74l14 42v240c0 30-19 49-49 49h-4c-30 0-49-19-49-49V154l14-42Z" fill="#F5EAD2" stroke="#737A76" stroke-width="2"/>
+    <rect x="84" y="184" width="102" height="142" fill="#FFF8E7" stroke="#C9CDD0"/>
+    <rect x="84" y="184" width="102" height="24" fill="#B7D86C"/>
+    <text x="135" y="250" text-anchor="middle" fill="#171B18" font-family="Georgia, serif" font-size="25" font-weight="700">Pistachio</text>
+    <text x="135" y="277" text-anchor="middle" fill="#171B18" font-family="Manrope, Arial, sans-serif" font-size="13" font-weight="800" letter-spacing="1.5">ST. JUICE</text>
+    <path d="M104 301h62" stroke="#737A76"/>
+    <text x="135" y="475" text-anchor="middle" fill="#526B2B" font-family="Manrope, Arial, sans-serif" font-size="14" font-weight="700">Readable batch label</text>
+  </g>
+
+  <g transform="translate(665 280)" filter="url(#shadow)">
+    <rect width="270" height="500" rx="30" fill="#FFFFFF" stroke="#C9CDD0"/>
+    <text x="28" y="42" fill="#737A76" font-family="Manrope, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="2">DESSERT BOX</text>
+    <path d="M41 184 135 126l94 58v175l-94 58-94-58V184Z" fill="#FFF8E7" stroke="#171B18" stroke-width="2"/>
+    <path d="m41 184 94 58 94-58M135 242v175" fill="none" stroke="#171B18" stroke-width="2"/>
+    <path d="m135 126 94 58-94 58-94-58 94-58Z" fill="#F5EAD2"/>
+    <path d="m135 126 94 58-94 58-94-58 94-58Z" fill="url(#seeds)"/>
+    <rect x="105" y="205" width="60" height="24" rx="12" fill="#B7D86C"/>
+    <text x="135" y="222" text-anchor="middle" fill="#171B18" font-family="Manrope, Arial, sans-serif" font-size="10" font-weight="800">SEALED FRESH</text>
+    <text x="135" y="475" text-anchor="middle" fill="#526B2B" font-family="Manrope, Arial, sans-serif" font-size="14" font-weight="700">Cream shell · seed interior</text>
+  </g>
+
+  <g transform="translate(955 280)" filter="url(#shadow)">
+    <rect width="270" height="500" rx="30" fill="#FFFFFF" stroke="#C9CDD0"/>
+    <text x="28" y="42" fill="#737A76" font-family="Manrope, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="2">TAKEOUT BAG</text>
+    <path d="M55 151h160l-13 278H68L55 151Z" fill="#E8D6B4" stroke="#171B18" stroke-width="2"/>
+    <path d="M91 171v-25c0-29 19-48 44-48s44 19 44 48v25" fill="none" stroke="#171B18" stroke-width="5"/>
+    <use href="#slice" x="90" y="218" width="90" height="90" color="#171B18"/>
+    <text x="135" y="345" text-anchor="middle" fill="#171B18" font-family="Manrope, Arial, sans-serif" font-size="19" font-weight="800" letter-spacing="2">ST. JUICE</text>
+    <circle cx="203" cy="174" r="18" fill="#B7D86C"/>
+    <text x="135" y="475" text-anchor="middle" fill="#526B2B" font-family="Manrope, Arial, sans-serif" font-size="14" font-weight="700">One-color base · green seal</text>
+  </g>
+
+  <g transform="translate(1245 280)" filter="url(#shadow)">
+    <rect width="270" height="500" rx="30" fill="#FFFFFF" stroke="#C9CDD0"/>
+    <text x="28" y="42" fill="#737A76" font-family="Manrope, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="2">PARTY / CATERING</text>
+    <path d="M37 190h196v200H37z" fill="#171B18"/>
+    <path d="M37 190 73 146h124l36 44H37Z" fill="#2B302C" stroke="#C9CDD0"/>
+    <rect x="64" y="235" width="142" height="72" rx="6" fill="#FFF8E7"/>
+    <text x="135" y="264" text-anchor="middle" fill="#171B18" font-family="Manrope, Arial, sans-serif" font-size="17" font-weight="800" letter-spacing="2">ST. JUICE</text>
+    <text x="135" y="289" text-anchor="middle" fill="#A67C36" font-family="Manrope, Arial, sans-serif" font-size="11" font-weight="800" letter-spacing="2">PARTY EDITION</text>
+    <rect x="37" y="378" width="196" height="12" fill="#B7D86C"/>
+    <text x="135" y="475" text-anchor="middle" fill="#76531F" font-family="Manrope, Arial, sans-serif" font-size="14" font-weight="700">Charcoal · gold event label</text>
+  </g>
+
+  <g transform="translate(90 840)">
+    <rect width="1420" height="82" rx="24" fill="#171B18"/>
+    <circle cx="50" cy="41" r="14" fill="#B7D86C"/><text x="82" y="49" fill="#FFF8E7" font-family="Manrope, Arial, sans-serif" font-size="18" font-weight="700">Core system: cream base · charcoal identity · pistachio recognition · removable flavor labels · premium accents.</text>
+  </g>
+</svg>

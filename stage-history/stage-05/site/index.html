@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" data-theme="default">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#171B18" />
+    <meta name="description" content="ST. JUICE — fresh juice, bold dessert and shareable moods, made on Vandeventer in St. Louis." />
+    <title>ST. JUICE — Your mood, made fresh.</title>
+    <link rel="icon" href="../brand/assets/logos/st-juice-fruit-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <div class="announcement" role="status">
+      <span class="announcement__dot" aria-hidden="true"></span>
+      <span id="announcement-copy">Open daily on Vandeventer · Pickup and delivery available.</span>
+      <button class="announcement__mode" type="button" data-action="open-account" aria-label="Change account experience">
+        <span id="announcement-mode">Guest mode</span>
+      </button>
+    </div>
+
+    <header class="site-header" id="site-header">
+      <div class="site-header__inner">
+        <a class="brand-link" href="#/" aria-label="ST. JUICE home">
+          <img src="../brand/assets/logos/st-juice-lockup-horizontal.svg" alt="ST. JUICE" width="194" height="54" />
+        </a>
+
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href="#/menu">Menu</a>
+          <a href="#/drops">New Drops</a>
+          <a href="#/build">Build Your Mood</a>
+          <a href="#/boxes">Party Boxes</a>
+          <a href="#/catering">Catering</a>
+          <a href="#/rewards">Rewards</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-button icon-button--labeled" type="button" data-action="open-service" aria-label="Choose pickup or delivery">
+            <span data-icon="pin" aria-hidden="true"></span>
+            <span class="header-actions__label" id="service-label">Pickup</span>
+          </button>
+          <button class="icon-button" type="button" data-action="menu-search" aria-label="Search the menu">
+            <span data-icon="search" aria-hidden="true"></span>
+          </button>
+          <button class="icon-button" type="button" data-action="open-account" aria-label="Account and experience mode">
+            <img src="../brand/assets/icons/account.svg" alt="" width="22" height="22" />
+          </button>
+          <button class="cart-button" type="button" data-action="open-cart" aria-label="Open order bag">
+            <img src="../brand/assets/icons/bag.svg" alt="" width="22" height="22" />
+            <span class="cart-button__count" id="cart-count" aria-live="polite">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+      <div class="app-loader" id="app-loader" role="status" aria-live="polite">
+        <div class="app-loader__mark" aria-hidden="true"></div>
+        <p>Setting the mood…</p>
+      </div>
+      <div id="app" hidden></div>
+    </main>
+
+    <footer class="site-footer" id="site-footer"></footer>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="#/" data-mobile-route="/">
+        <span data-icon="home" aria-hidden="true"></span>
+        <span>Home</span>
+      </a>
+      <a href="#/menu" data-mobile-route="/menu">
+        <span data-icon="grid" aria-hidden="true"></span>
+        <span>Menu</span>
+      </a>
+      <a class="mobile-nav__build" href="#/build" data-mobile-route="/build">
+        <span data-icon="spark" aria-hidden="true"></span>
+        <span>Build</span>
+      </a>
+      <button type="button" data-action="open-account">
+        <span data-icon="user" aria-hidden="true"></span>
+        <span>Account</span>
+      </button>
+      <button type="button" data-action="open-cart">
+        <span data-icon="bag" aria-hidden="true"></span>
+        <span>Bag <span id="mobile-cart-count">0</span></span>
+      </button>
+    </nav>
+
+    <dialog class="sheet-dialog sheet-dialog--right" id="cart-dialog" aria-labelledby="cart-title">
+      <div class="sheet-dialog__surface">
+        <header class="sheet-dialog__header">
+          <div>
+            <p class="eyebrow">YOUR ORDER</p>
+            <h2 id="cart-title">The mood bag</h2>
+          </div>
+          <button class="icon-button" type="button" data-action="close-dialog" aria-label="Close order bag">
+            <span data-icon="close" aria-hidden="true"></span>
+          </button>
+        </header>
+        <div class="sheet-dialog__body" id="cart-content"></div>
+      </div>
+    </dialog>
+
+    <dialog class="sheet-dialog sheet-dialog--right" id="account-dialog" aria-labelledby="account-title">
+      <div class="sheet-dialog__surface">
+        <header class="sheet-dialog__header">
+          <div>
+            <p class="eyebrow">ONE SITE · YOUR EXPERIENCE</p>
+            <h2 id="account-title">Choose your mode</h2>
+          </div>
+          <button class="icon-button" type="button" data-action="close-dialog" aria-label="Close account selector">
+            <span data-icon="close" aria-hidden="true"></span>
+          </button>
+        </header>
+        <div class="sheet-dialog__body" id="account-content"></div>
+      </div>
+    </dialog>
+
+    <dialog class="modal-dialog" id="service-dialog" aria-labelledby="service-title">
+      <div class="modal-dialog__surface">
+        <header class="sheet-dialog__header">
+          <div>
+            <p class="eyebrow">VANDEVENTER</p>
+            <h2 id="service-title">How are you getting it?</h2>
+          </div>
+          <button class="icon-button" type="button" data-action="close-dialog" aria-label="Close service selector">
+            <span data-icon="close" aria-hidden="true"></span>
+          </button>
+        </header>
+        <div class="service-grid" id="service-content"></div>
+      </div>
+    </dialog>
+
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+    <noscript>
+      <div class="noscript-message">ST. JUICE needs JavaScript for the interactive menu prototype. The catalog files remain available in this package.</div>
+    </noscript>
+  </body>
+</html>

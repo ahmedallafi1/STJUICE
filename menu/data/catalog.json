@@ -1,0 +1,403 @@
+{
+  "meta": {
+    "brand": "ST. JUICE",
+    "version": "3.0.0",
+    "currency": "USD",
+    "language": "en-US",
+    "priceStatus": "working_requires_owner_approval",
+    "ingredientStatus": "draft_requires_recipe_and_supplier_review",
+    "nutritionStatus": "unverified_all_values_null",
+    "primaryItemCount": 45,
+    "groupFormatCount": 9,
+    "activeDropCount": 2
+  },
+  "recordDefaults": {
+    "allergenStatus": "draft_requires_supplier_and_kitchen_review",
+    "crossContactPossible": true,
+    "nutrition": {
+      "status": "unverified",
+      "values": null
+    },
+    "media": {
+      "status": "scheduled_for_stage_04",
+      "imageIds": [],
+      "videoId": null
+    },
+    "locationIds": ["vandeventer"],
+    "availabilityStatus": "working_launch_catalog"
+  },
+  "categories": [
+    {"id":"signatures","name":"ST. Signatures","slug":"signatures","order":1,"description":"The drinks that define ST. JUICE first."},
+    {"id":"fresh-juices","name":"Fresh Juices","slug":"fresh-juices","order":2,"description":"Fruit and produce pressed or blended to order."},
+    {"id":"smoothies-protein","name":"Smoothies, Yogurt & Protein","slug":"smoothies-protein","order":3,"description":"Creamy blends, yogurt shakes and protein options."},
+    {"id":"refreshers","name":"Mojitos & Refreshers","slug":"refreshers","order":4,"description":"Bright, cold and always non-alcoholic."},
+    {"id":"bowls-fruit","name":"Açaí, Fruit & Fresh Bowls","slug":"bowls-fruit","order":5,"description":"Fruit-forward bowls and cups with customizable finishes."},
+    {"id":"chocolate-lab","name":"Chocolate Lab","slug":"chocolate-lab","order":6,"description":"Fresh fruit, brownie and chocolate built to dip and share."},
+    {"id":"crepes-waffles","name":"Crepes & Waffles","slug":"crepes-waffles","order":7,"description":"Warm folded desserts, fruit, chocolate and crunch."},
+    {"id":"mini-pancakes","name":"Mini Pancakes","slug":"mini-pancakes","order":8,"description":"Twelve warm minis with sauce and toppings."},
+    {"id":"soft-serve-shakes","name":"Soft Serve & Shakes","slug":"soft-serve-shakes","order":9,"description":"Cold, creamy and finished your way."},
+    {"id":"dubai-collection","name":"Dubai Collection","slug":"dubai-collection","order":10,"description":"Rotating pistachio, kataifi and chocolate favorites."},
+    {"id":"desserts-drops","name":"Desserts & Drops","slug":"desserts-drops","order":11,"description":"Warm desserts and two limited items live at a time."},
+    {"id":"flights-liters-boxes","name":"Flights, Liters & Boxes","slug":"flights-liters-boxes","order":12,"description":"Formats made to taste, carry and share."}
+  ],
+  "products": [
+    {
+      "id":"pistachio-saint","categoryId":"signatures","name":"Pistachio Saint","slug":"pistachio-saint","catalogRole":"primary","productType":"drink",
+      "description":"Creamy pistachio, banana and date with a roasted pistachio finish.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":9.95},{"id":"20oz","label":"20 oz","price":11.45}],
+      "moods":["creamy","pistachio","protein-ready"],"occasions":["morning","afternoon","late-night"],
+      "draftIngredients":["milk","banana","date","pistachio cream","roasted pistachio"],"containsAllergens":["milk","tree_nut"],"allergenMode":"fixed_plus_modifiers",
+      "modifierGroupIds":["milk-choice","sweetness","protein-boost","drink-premium-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},
+      "pairingIds":["classic-minis"],"alternativeIds":["pistachio-power"],"featuredRank":1
+    },
+    {
+      "id":"blue-saint","categoryId":"signatures","name":"Blue Saint","slug":"blue-saint","catalogRole":"primary","productType":"drink",
+      "description":"Blue raspberry, lemon and coconut water with a bright chilled finish.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":8.95},{"id":"20oz","label":"20 oz","price":10.45}],
+      "moods":["fresh","fruity"],"occasions":["afternoon","study-night","game-day"],
+      "draftIngredients":["coconut water","lemon","blue raspberry flavor base","ice"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers",
+      "modifierGroupIds":["sweetness","ice-level","refresher-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":4,"max":7},
+      "pairingIds":["dragon-cloud-cup"],"alternativeIds":["blue-rush"],"featuredRank":4
+    },
+    {
+      "id":"berry-boulevard","categoryId":"signatures","name":"Berry Boulevard","slug":"berry-boulevard","catalogRole":"primary","productType":"drink",
+      "description":"Strawberry, blueberry, raspberry and apple blended cold.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":8.95},{"id":"20oz","label":"20 oz","price":10.45}],
+      "moods":["fruity","fresh"],"occasions":["morning","afternoon"],
+      "draftIngredients":["strawberry","blueberry","raspberry","apple juice","ice"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers",
+      "modifierGroupIds":["sweetness","protein-boost","drink-fruit-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},
+      "pairingIds":["saint-acai"],"alternativeIds":["berry-flex"],"featuredRank":3
+    },
+    {
+      "id":"lemon-chrome","categoryId":"signatures","name":"Lemon Chrome","slug":"lemon-chrome","catalogRole":"primary","productType":"drink",
+      "description":"Lemon, mint and light honey over crushed ice; non-alcoholic.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":7.95},{"id":"20oz","label":"20 oz","price":9.45}],
+      "moods":["fresh","citrus"],"occasions":["morning","afternoon","late-night"],
+      "draftIngredients":["lemon","mint","honey","water","ice"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers",
+      "modifierGroupIds":["sweetness","ice-level","refresher-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":4,"max":7},
+      "pairingIds":["saint-fruit-stick"],"alternativeIds":["lemon-mint"],"featuredRank":5
+    },
+    {
+      "id":"saint-sunset","categoryId":"signatures","name":"Saint Sunset","slug":"saint-sunset","catalogRole":"primary","productType":"drink",
+      "description":"Mango, passion fruit and orange layered for a tropical finish.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":8.95},{"id":"20oz","label":"20 oz","price":10.45}],
+      "moods":["tropical","fruity"],"occasions":["afternoon","date-night","game-day"],
+      "draftIngredients":["mango","passion fruit","orange","ice"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers",
+      "modifierGroupIds":["sweetness","ice-level","drink-fruit-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},
+      "pairingIds":["strawberry-fold"],"alternativeIds":["mango-passion-fizz"],"featuredRank":2
+    },
+    {
+      "id":"the-vandeventer","categoryId":"signatures","name":"The Vandeventer","slug":"the-vandeventer","catalogRole":"primary","productType":"drink",
+      "description":"Avocado, date, honey and milk with pistachio crunch.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":10.45},{"id":"20oz","label":"20 oz","price":11.95}],
+      "moods":["creamy","pistachio"],"occasions":["morning","afternoon"],
+      "draftIngredients":["avocado","date","honey","milk","pistachio"],"containsAllergens":["milk","tree_nut"],"allergenMode":"fixed_plus_modifiers",
+      "modifierGroupIds":["milk-choice","sweetness","protein-boost","drink-premium-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":6,"max":9},
+      "pairingIds":["loaded-brownie"],"alternativeIds":["pistachio-saint"],"featuredRank":6
+    },
+    {
+      "id":"midnight-mango","categoryId":"signatures","name":"Midnight Mango","slug":"midnight-mango","catalogRole":"primary","productType":"drink",
+      "description":"Mango cream shake with a dark chocolate ripple.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":9.95},{"id":"20oz","label":"20 oz","price":11.45}],
+      "moods":["creamy","chocolate","tropical"],"occasions":["date-night","late-night"],
+      "draftIngredients":["mango","ice cream","milk","dark chocolate sauce"],"containsAllergens":["milk","soy"],"allergenMode":"fixed_plus_modifiers",
+      "modifierGroupIds":["milk-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"time_sensitive"},"prepTimeMinutes":{"status":"working","min":6,"max":9},
+      "pairingIds":["midnight-crunch-cookie"],"alternativeIds":["strawberry-shake"],"featuredRank":8
+    },
+    {
+      "id":"green-arch","categoryId":"signatures","name":"Green Arch","slug":"green-arch","catalogRole":"primary","productType":"drink",
+      "description":"Green apple, pineapple, cucumber, spinach and mint.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":8.95},{"id":"20oz","label":"20 oz","price":10.45}],
+      "moods":["fresh","green"],"occasions":["morning","afternoon"],
+      "draftIngredients":["green apple","pineapple","cucumber","spinach","mint"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers",
+      "modifierGroupIds":["sweetness","ice-level","drink-produce-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},
+      "pairingIds":["loaded-fruit-cup"],"alternativeIds":["beet-route"],"featuredRank":7
+    },
+
+    {
+      "id":"orange-press","categoryId":"fresh-juices","name":"Orange Press","slug":"orange-press","catalogRole":"primary","productType":"drink","description":"Fresh orange, pressed to order.",
+      "sizes":[{"id":"12oz","label":"12 oz","price":6.95},{"id":"16oz","label":"16 oz","price":8.45},{"id":"20oz","label":"20 oz","price":9.95}],
+      "moods":["fresh","citrus"],"occasions":["morning"],"draftIngredients":["orange"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["ice-level","juice-produce-extras"],
+      "availability":{"dayparts":["morning","afternoon"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":4,"max":7},"pairingIds":["classic-minis"],"alternativeIds":["pineapple-lime"]
+    },
+    {
+      "id":"watermelon-wave","categoryId":"fresh-juices","name":"Watermelon Wave","slug":"watermelon-wave","catalogRole":"primary","productType":"drink","description":"Cold watermelon with a clean, juicy finish.",
+      "sizes":[{"id":"12oz","label":"12 oz","price":6.95},{"id":"16oz","label":"16 oz","price":8.45},{"id":"20oz","label":"20 oz","price":9.95}],
+      "moods":["fresh","fruity"],"occasions":["morning","afternoon"],"draftIngredients":["watermelon"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["ice-level","juice-produce-extras"],
+      "availability":{"dayparts":["morning","afternoon"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":4,"max":7},"pairingIds":["saint-fruit-stick"],"alternativeIds":["orange-press"]
+    },
+    {
+      "id":"pineapple-lime","categoryId":"fresh-juices","name":"Pineapple Lime","slug":"pineapple-lime","catalogRole":"primary","productType":"drink","description":"Pineapple and lime, sharp and tropical.",
+      "sizes":[{"id":"12oz","label":"12 oz","price":7.45},{"id":"16oz","label":"16 oz","price":8.95},{"id":"20oz","label":"20 oz","price":10.45}],
+      "moods":["fresh","tropical"],"occasions":["morning","afternoon"],"draftIngredients":["pineapple","lime"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["ice-level","juice-produce-extras"],
+      "availability":{"dayparts":["morning","afternoon"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":4,"max":7},"pairingIds":["tropical-bowl"],"alternativeIds":["saint-sunset"]
+    },
+    {
+      "id":"carrot-glow","categoryId":"fresh-juices","name":"Carrot Glow","slug":"carrot-glow","catalogRole":"primary","productType":"drink","description":"Carrot, orange and ginger.",
+      "sizes":[{"id":"12oz","label":"12 oz","price":7.45},{"id":"16oz","label":"16 oz","price":8.95},{"id":"20oz","label":"20 oz","price":10.45}],
+      "moods":["fresh","ginger"],"occasions":["morning"],"draftIngredients":["carrot","orange","ginger"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["ice-level","juice-produce-extras"],
+      "availability":{"dayparts":["morning","afternoon"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["classic-minis"],"alternativeIds":["beet-route"]
+    },
+    {
+      "id":"beet-route","categoryId":"fresh-juices","name":"Beet Route","slug":"beet-route","catalogRole":"primary","productType":"drink","description":"Beet, carrot, apple and lemon.",
+      "sizes":[{"id":"12oz","label":"12 oz","price":7.95},{"id":"16oz","label":"16 oz","price":9.45},{"id":"20oz","label":"20 oz","price":10.95}],
+      "moods":["fresh","earthy"],"occasions":["morning"],"draftIngredients":["beet","carrot","apple","lemon"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["ice-level","juice-produce-extras"],
+      "availability":{"dayparts":["morning","afternoon"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["loaded-fruit-cup"],"alternativeIds":["green-arch"]
+    },
+
+    {
+      "id":"mango-cloud","categoryId":"smoothies-protein","name":"Mango Cloud","slug":"mango-cloud","catalogRole":"primary","productType":"drink","description":"Mango and yogurt blended thick and cold.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":8.95},{"id":"20oz","label":"20 oz","price":10.45}],"moods":["creamy","tropical"],"occasions":["morning","afternoon"],
+      "draftIngredients":["mango","yogurt","milk","ice"],"containsAllergens":["milk"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["milk-choice","sweetness","protein-boost","drink-fruit-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["classic-minis"],"alternativeIds":["strawberry-yogurt"]
+    },
+    {
+      "id":"strawberry-yogurt","categoryId":"smoothies-protein","name":"Strawberry Yogurt","slug":"strawberry-yogurt","catalogRole":"primary","productType":"drink","description":"Strawberry and yogurt with a smooth tart finish.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":8.95},{"id":"20oz","label":"20 oz","price":10.45}],"moods":["creamy","fruity"],"occasions":["morning","afternoon"],
+      "draftIngredients":["strawberry","yogurt","milk","ice"],"containsAllergens":["milk"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["milk-choice","sweetness","protein-boost","drink-fruit-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["strawberry-fold"],"alternativeIds":["mango-cloud"]
+    },
+    {
+      "id":"berry-flex","categoryId":"smoothies-protein","name":"Berry Flex","slug":"berry-flex","catalogRole":"primary","productType":"drink","description":"Mixed berries, banana and vanilla protein.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":9.95},{"id":"20oz","label":"20 oz","price":11.45}],"moods":["protein","fruity"],"occasions":["morning","study-night"],
+      "draftIngredients":["strawberry","blueberry","raspberry","banana","vanilla protein","milk"],"containsAllergens":["milk"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["milk-choice","sweetness","protein-boost","drink-fruit-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["berry-acai"],"alternativeIds":["berry-boulevard"]
+    },
+    {
+      "id":"banana-charge","categoryId":"smoothies-protein","name":"Banana Charge","slug":"banana-charge","catalogRole":"primary","productType":"drink","description":"Banana, date, peanut butter and vanilla protein.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":10.45},{"id":"20oz","label":"20 oz","price":11.95}],"moods":["protein","creamy"],"occasions":["morning","study-night"],
+      "draftIngredients":["banana","date","peanut butter","vanilla protein","milk"],"containsAllergens":["milk","peanut"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["milk-choice","sweetness","protein-boost"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["loaded-brownie"],"alternativeIds":["berry-flex"]
+    },
+    {
+      "id":"pistachio-power","categoryId":"smoothies-protein","name":"Pistachio Power","slug":"pistachio-power","catalogRole":"primary","productType":"drink","description":"Pistachio, banana, milk and vanilla protein.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":10.95},{"id":"20oz","label":"20 oz","price":12.45}],"moods":["protein","pistachio"],"occasions":["morning","study-night"],
+      "draftIngredients":["pistachio cream","banana","milk","vanilla protein","roasted pistachio"],"containsAllergens":["milk","tree_nut"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["milk-choice","sweetness","protein-boost","drink-premium-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["pistachio-minis"],"alternativeIds":["pistachio-saint"]
+    },
+
+    {
+      "id":"lemon-mint","categoryId":"refreshers","name":"Lemon Mint","slug":"lemon-mint","catalogRole":"primary","productType":"drink","description":"Lemon, fresh mint and sparkling water over ice; non-alcoholic.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":7.45},{"id":"20oz","label":"20 oz","price":8.95}],"moods":["fresh","citrus"],"occasions":["afternoon","late-night"],
+      "draftIngredients":["lemon","mint","sparkling water","sweetener","ice"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["sweetness","ice-level","refresher-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":4,"max":7},"pairingIds":["saint-fruit-stick"],"alternativeIds":["lemon-chrome"]
+    },
+    {
+      "id":"strawberry-lemonade","categoryId":"refreshers","name":"Strawberry Lemonade","slug":"strawberry-lemonade","catalogRole":"primary","productType":"drink","description":"Strawberry, lemon and sparkling water; non-alcoholic.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":7.95},{"id":"20oz","label":"20 oz","price":9.45}],"moods":["fruity","citrus"],"occasions":["afternoon","game-day"],
+      "draftIngredients":["strawberry","lemon","sparkling water","sweetener","ice"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["sweetness","ice-level","refresher-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":4,"max":7},"pairingIds":["strawberry-dip-cup"],"alternativeIds":["blue-rush"]
+    },
+    {
+      "id":"mango-passion-fizz","categoryId":"refreshers","name":"Mango Passion Fizz","slug":"mango-passion-fizz","catalogRole":"primary","productType":"drink","description":"Mango, passion fruit and sparkling citrus; non-alcoholic.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":8.45},{"id":"20oz","label":"20 oz","price":9.95}],"moods":["tropical","fresh"],"occasions":["afternoon","date-night"],
+      "draftIngredients":["mango","passion fruit","citrus","sparkling water","ice"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["sweetness","ice-level","refresher-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":4,"max":7},"pairingIds":["tropical-bowl"],"alternativeIds":["saint-sunset"]
+    },
+    {
+      "id":"blue-rush","categoryId":"refreshers","name":"Blue Rush","slug":"blue-rush","catalogRole":"primary","productType":"drink","description":"Blue raspberry, lemon and sparkling water; non-alcoholic.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":7.95},{"id":"20oz","label":"20 oz","price":9.45}],"moods":["fruity","fresh"],"occasions":["study-night","game-day","late-night"],
+      "draftIngredients":["blue raspberry flavor base","lemon","sparkling water","ice"],"containsAllergens":[],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["sweetness","ice-level","refresher-extras"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":4,"max":7},"pairingIds":["dragon-cloud-cup"],"alternativeIds":["blue-saint"]
+    },
+
+    {
+      "id":"saint-acai","categoryId":"bowls-fruit","name":"Saint Açaí","slug":"saint-acai","catalogRole":"primary","productType":"bowl","description":"Açaí base, banana, strawberry, granola and honey.",
+      "sizes":[{"id":"regular","label":"Regular","price":11.95},{"id":"large","label":"Large","price":14.45}],"moods":["fruity","fresh"],"occasions":["morning","afternoon"],
+      "draftIngredients":["açaí base","banana","strawberry","granola","honey"],"containsAllergens":["wheat"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["bowl-fruit","dessert-sauces","dessert-toppings","bowl-boosts"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"time_sensitive"},"prepTimeMinutes":{"status":"working","min":6,"max":9},"pairingIds":["orange-press"],"alternativeIds":["berry-acai"]
+    },
+    {
+      "id":"berry-acai","categoryId":"bowls-fruit","name":"Berry Açaí","slug":"berry-acai","catalogRole":"primary","productType":"bowl","description":"Açaí base, mixed berries, banana, granola and berry drizzle.",
+      "sizes":[{"id":"regular","label":"Regular","price":12.45},{"id":"large","label":"Large","price":14.95}],"moods":["fruity","berry"],"occasions":["morning","afternoon"],
+      "draftIngredients":["açaí base","mixed berries","banana","granola","berry sauce"],"containsAllergens":["wheat"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["bowl-fruit","dessert-sauces","dessert-toppings","bowl-boosts"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"time_sensitive"},"prepTimeMinutes":{"status":"working","min":6,"max":9},"pairingIds":["berry-boulevard"],"alternativeIds":["saint-acai"]
+    },
+    {
+      "id":"tropical-bowl","categoryId":"bowls-fruit","name":"Tropical Bowl","slug":"tropical-bowl","catalogRole":"primary","productType":"bowl","description":"Mango-pineapple base, banana, kiwi, coconut and granola.",
+      "sizes":[{"id":"regular","label":"Regular","price":11.95},{"id":"large","label":"Large","price":14.45}],"moods":["tropical","fruity"],"occasions":["morning","afternoon"],
+      "draftIngredients":["mango-pineapple base","banana","kiwi","coconut","granola"],"containsAllergens":["wheat"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["bowl-fruit","dessert-sauces","dessert-toppings","bowl-boosts"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"time_sensitive"},"prepTimeMinutes":{"status":"working","min":6,"max":9},"pairingIds":["mango-passion-fizz"],"alternativeIds":["loaded-fruit-cup"]
+    },
+    {
+      "id":"loaded-fruit-cup","categoryId":"bowls-fruit","name":"Loaded Fruit Cup","slug":"loaded-fruit-cup","catalogRole":"primary","productType":"fruit_cup","description":"Seasonal fruit with one sauce and two toppings.",
+      "sizes":[{"id":"regular","label":"Regular","price":8.95},{"id":"large","label":"Large","price":11.95}],"moods":["fresh","fruity","customizable"],"occasions":["afternoon","study-night","party"],
+      "draftIngredients":["seasonal fruit selection"],"containsAllergens":[],"allergenMode":"configuration_dependent","modifierGroupIds":["bowl-fruit","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["lemon-mint"],"alternativeIds":["strawberry-dip-cup"]
+    },
+
+    {
+      "id":"strawberry-dip-cup","categoryId":"chocolate-lab","name":"Strawberry Dip Cup","slug":"strawberry-dip-cup","catalogRole":"primary","productType":"dessert_cup","description":"Fresh strawberries finished with your choice of chocolate.",
+      "sizes":[{"id":"regular","label":"Regular","price":9.95},{"id":"large","label":"Large","price":12.95}],"moods":["chocolate","fruity"],"occasions":["date-night","late-night"],
+      "draftIngredients":["strawberry","customer-selected chocolate"],"containsAllergens":["milk","soy"],"allergenMode":"configuration_dependent","modifierGroupIds":["chocolate-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":6,"max":9},"pairingIds":["strawberry-lemonade"],"alternativeIds":["dubai-strawberry-cup"]
+    },
+    {
+      "id":"saint-fruit-stick","categoryId":"chocolate-lab","name":"Saint Fruit Stick","slug":"saint-fruit-stick","catalogRole":"primary","productType":"dessert","description":"Strawberry, banana and pineapple dipped to order.",
+      "sizes":[{"id":"standard","label":"Standard","price":7.95}],"moods":["chocolate","fruity"],"occasions":["date-night","party"],
+      "draftIngredients":["strawberry","banana","pineapple","customer-selected chocolate"],"containsAllergens":["milk","soy"],"allergenMode":"configuration_dependent","modifierGroupIds":["chocolate-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["lemon-chrome"],"alternativeIds":["brownie-fruit-stick"]
+    },
+    {
+      "id":"brownie-fruit-stick","categoryId":"chocolate-lab","name":"Brownie Fruit Stick","slug":"brownie-fruit-stick","catalogRole":"primary","productType":"dessert","description":"Brownie, strawberry and banana with chocolate drizzle.",
+      "sizes":[{"id":"standard","label":"Standard","price":8.95}],"moods":["chocolate","shareable"],"occasions":["date-night","late-night"],
+      "draftIngredients":["brownie","strawberry","banana","chocolate sauce"],"containsAllergens":["milk","egg","wheat","soy"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["chocolate-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":6,"max":9},"pairingIds":["blue-rush"],"alternativeIds":["saint-fruit-stick"]
+    },
+    {
+      "id":"build-your-own-dip","categoryId":"chocolate-lab","name":"Build Your Own Dip","slug":"build-your-own-dip","catalogRole":"primary","productType":"dessert_cup","description":"Choose fruit, chocolate, sauce and crunch.",
+      "sizes":[{"id":"regular","label":"Regular","price":9.95,"startingAt":true},{"id":"large","label":"Large","price":12.95,"startingAt":true}],"moods":["chocolate","customizable"],"occasions":["date-night","party"],
+      "draftIngredients":[],"containsAllergens":[],"allergenMode":"configuration_dependent","modifierGroupIds":["bowl-fruit","chocolate-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":6,"max":10},"pairingIds":["lemon-mint"],"alternativeIds":["strawberry-dip-cup"]
+    },
+
+    {
+      "id":"st-crepe","categoryId":"crepes-waffles","name":"ST. Crepe","slug":"st-crepe","catalogRole":"primary","productType":"hot_dessert","description":"Strawberry, banana, milk chocolate and pistachio crunch.",
+      "sizes":[{"id":"standard","label":"Standard","price":13.95}],"moods":["chocolate","pistachio","warm"],"occasions":["date-night","late-night"],
+      "draftIngredients":["crepe batter","strawberry","banana","milk chocolate","pistachio"],"containsAllergens":["milk","egg","wheat","soy","tree_nut"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["dessert-fruit","chocolate-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":8,"max":12},"pairingIds":["lemon-chrome"],"alternativeIds":["pistachio-minis"]
+    },
+    {
+      "id":"strawberry-fold","categoryId":"crepes-waffles","name":"Strawberry Fold","slug":"strawberry-fold","catalogRole":"primary","productType":"hot_dessert","description":"Strawberries, cream and your choice of chocolate.",
+      "sizes":[{"id":"standard","label":"Standard","price":11.95}],"moods":["fruity","chocolate","warm"],"occasions":["date-night","late-night"],
+      "draftIngredients":["crepe batter","strawberry","cream","customer-selected chocolate"],"containsAllergens":["milk","egg","wheat","soy"],"allergenMode":"configuration_dependent","modifierGroupIds":["dessert-fruit","chocolate-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":8,"max":12},"pairingIds":["strawberry-lemonade"],"alternativeIds":["st-crepe"]
+    },
+    {
+      "id":"brownie-fold","categoryId":"crepes-waffles","name":"Brownie Fold","slug":"brownie-fold","catalogRole":"primary","productType":"hot_dessert","description":"Brownie bites, banana, chocolate and cookie crumble.",
+      "sizes":[{"id":"standard","label":"Standard","price":13.45}],"moods":["chocolate","crunchy","warm"],"occasions":["date-night","late-night"],
+      "draftIngredients":["crepe batter","brownie","banana","chocolate sauce","cookie crumble"],"containsAllergens":["milk","egg","wheat","soy"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["dessert-fruit","chocolate-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":8,"max":12},"pairingIds":["midnight-mango"],"alternativeIds":["loaded-brownie"]
+    },
+    {
+      "id":"loaded-waffle","categoryId":"crepes-waffles","name":"Loaded Waffle","slug":"loaded-waffle","catalogRole":"primary","productType":"hot_dessert","description":"Belgian-style waffle, fruit, ice cream and two sauces.",
+      "sizes":[{"id":"standard","label":"Standard","price":14.95}],"moods":["shareable","chocolate","warm"],"occasions":["date-night","party","late-night"],
+      "draftIngredients":["waffle batter","seasonal fruit","ice cream","customer-selected sauces"],"containsAllergens":["milk","egg","wheat","soy"],"allergenMode":"configuration_dependent","modifierGroupIds":["dessert-fruit","chocolate-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":9,"max":13},"pairingIds":["blue-rush"],"alternativeIds":["st-crepe"]
+    },
+
+    {
+      "id":"classic-minis","categoryId":"mini-pancakes","name":"Classic Minis","slug":"classic-minis","catalogRole":"primary","productType":"hot_dessert","description":"Twelve warm mini pancakes with one sauce and one topping.",
+      "sizes":[{"id":"12-piece","label":"12 pieces","price":9.95}],"moods":["warm","customizable"],"occasions":["study-night","date-night","late-night"],
+      "draftIngredients":["mini pancake batter","customer-selected sauce","customer-selected topping"],"containsAllergens":["milk","egg","wheat"],"allergenMode":"configuration_dependent","modifierGroupIds":["dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":7,"max":11},"pairingIds":["orange-press"],"alternativeIds":["pistachio-minis"]
+    },
+    {
+      "id":"pistachio-minis","categoryId":"mini-pancakes","name":"Pistachio Minis","slug":"pistachio-minis","catalogRole":"primary","productType":"hot_dessert","description":"Twelve minis with pistachio sauce and roasted pistachio.",
+      "sizes":[{"id":"12-piece","label":"12 pieces","price":11.95}],"moods":["pistachio","warm","crunchy"],"occasions":["date-night","late-night"],
+      "draftIngredients":["mini pancake batter","pistachio sauce","roasted pistachio"],"containsAllergens":["milk","egg","wheat","tree_nut"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":7,"max":11},"pairingIds":["pistachio-saint"],"alternativeIds":["dubai-minis"]
+    },
+    {
+      "id":"dubai-minis","categoryId":"mini-pancakes","name":"Dubai Minis","slug":"dubai-minis","catalogRole":"primary","productType":"hot_dessert","description":"Twelve minis with pistachio cream, kataifi crunch and chocolate.",
+      "sizes":[{"id":"12-piece","label":"12 pieces","price":13.95}],"moods":["pistachio","chocolate","crunchy"],"occasions":["date-night","late-night","party"],
+      "draftIngredients":["mini pancake batter","pistachio cream","kataifi crunch","chocolate"],"containsAllergens":["milk","egg","wheat","soy","tree_nut"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":8,"max":12},"pairingIds":["lemon-mint"],"alternativeIds":["pistachio-minis"]
+    },
+
+    {
+      "id":"pistachio-soft-serve","categoryId":"soft-serve-shakes","name":"Pistachio Soft Serve","slug":"pistachio-soft-serve","catalogRole":"primary","productType":"frozen_dessert","description":"Pistachio soft serve with optional drizzle or crunch.",
+      "sizes":[{"id":"regular","label":"Regular","price":6.45},{"id":"large","label":"Large","price":8.45}],"moods":["pistachio","creamy"],"occasions":["afternoon","late-night"],
+      "draftIngredients":["pistachio soft-serve base"],"containsAllergens":["milk","tree_nut"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup"],"deliverySuitability":"not_recommended_until_packaging_test"},"prepTimeMinutes":{"status":"working","min":3,"max":6},"pairingIds":["loaded-brownie"],"alternativeIds":["pistachio-saint"]
+    },
+    {
+      "id":"strawberry-shake","categoryId":"soft-serve-shakes","name":"Strawberry Shake","slug":"strawberry-shake","catalogRole":"primary","productType":"drink","description":"Strawberry ice cream and milk blended thick.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":8.95},{"id":"20oz","label":"20 oz","price":10.45}],"moods":["creamy","fruity"],"occasions":["afternoon","late-night"],
+      "draftIngredients":["strawberry ice cream","milk","strawberry"],"containsAllergens":["milk"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["milk-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"time_sensitive"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["strawberry-dip-cup"],"alternativeIds":["cookies-cream-shake"]
+    },
+    {
+      "id":"cookies-cream-shake","categoryId":"soft-serve-shakes","name":"Cookies & Cream Shake","slug":"cookies-cream-shake","catalogRole":"primary","productType":"drink","description":"Chocolate sandwich cookie, ice cream and milk.",
+      "sizes":[{"id":"16oz","label":"16 oz","price":9.45},{"id":"20oz","label":"20 oz","price":10.95}],"moods":["creamy","chocolate","crunchy"],"occasions":["study-night","late-night"],
+      "draftIngredients":["chocolate sandwich cookie","ice cream","milk"],"containsAllergens":["milk","wheat","soy"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["milk-choice","dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"time_sensitive"},"prepTimeMinutes":{"status":"working","min":5,"max":8},"pairingIds":["midnight-crunch-cookie"],"alternativeIds":["strawberry-shake"]
+    },
+
+    {
+      "id":"dubai-strawberry-cup","categoryId":"dubai-collection","name":"Dubai Strawberry Cup","slug":"dubai-strawberry-cup","catalogRole":"primary","productType":"dessert_cup","description":"Strawberries, pistachio cream, kataifi crunch and chocolate.",
+      "sizes":[{"id":"regular","label":"Regular","price":11.95},{"id":"large","label":"Large","price":14.95}],"moods":["pistachio","chocolate","crunchy"],"occasions":["date-night","late-night"],
+      "draftIngredients":["strawberry","pistachio cream","kataifi crunch","chocolate"],"containsAllergens":["milk","wheat","soy","tree_nut"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":6,"max":9},"pairingIds":["lemon-mint"],"alternativeIds":["strawberry-dip-cup"]
+    },
+    {
+      "id":"st-dubai-bar","categoryId":"dubai-collection","name":"ST. Dubai Bar","slug":"st-dubai-bar","catalogRole":"primary","productType":"packaged_dessert","description":"Chocolate shell filled with pistachio cream and kataifi crunch.",
+      "sizes":[{"id":"standard","label":"Standard bar","price":12.95}],"moods":["pistachio","chocolate","giftable"],"occasions":["gift","date-night","late-night"],
+      "draftIngredients":["chocolate","pistachio cream","kataifi crunch"],"containsAllergens":["milk","wheat","soy","tree_nut"],"allergenMode":"fixed","modifierGroupIds":["gift-presentation"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":2,"max":5},"pairingIds":["pistachio-saint"],"alternativeIds":["dubai-strawberry-cup"]
+    },
+
+    {
+      "id":"loaded-brownie","categoryId":"desserts-drops","name":"Loaded Brownie","slug":"loaded-brownie","catalogRole":"primary","productType":"hot_dessert","description":"Warm brownie, soft serve, sauce and crunch.",
+      "sizes":[{"id":"standard","label":"Standard","price":9.95}],"moods":["chocolate","warm","creamy"],"occasions":["date-night","late-night"],
+      "draftIngredients":["brownie","soft serve","customer-selected sauce","customer-selected crunch"],"containsAllergens":["milk","egg","wheat","soy"],"allergenMode":"configuration_dependent","modifierGroupIds":["dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":7,"max":11},"pairingIds":["midnight-mango"],"alternativeIds":["brownie-fold"]
+    },
+    {
+      "id":"dragon-cloud-cup","categoryId":"desserts-drops","name":"Dragon Cloud Cup","slug":"dragon-cloud-cup","catalogRole":"primary","productType":"limited_drop","drop":{"code":"DROP-01","status":"active_working","startDate":null,"endDate":null},
+      "description":"Dragon fruit cream, strawberry, vanilla cloud and seed crunch.","sizes":[{"id":"standard","label":"Standard","price":12.45}],"moods":["fruity","creamy","limited"],"occasions":["afternoon","date-night"],
+      "draftIngredients":["dragon fruit cream","strawberry","vanilla cream","seed crunch"],"containsAllergens":["milk"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["dessert-toppings"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":6,"max":9},"pairingIds":["blue-rush"],"alternativeIds":["loaded-fruit-cup"],"featuredRank":9
+    },
+    {
+      "id":"midnight-crunch-cookie","categoryId":"desserts-drops","name":"Midnight Crunch Cookie","slug":"midnight-crunch-cookie","catalogRole":"primary","productType":"limited_drop","drop":{"code":"DROP-02","status":"active_working","startDate":null,"endDate":null},
+      "description":"Warm chocolate cookie, dark chocolate and pistachio crunch.","sizes":[{"id":"standard","label":"Standard","price":8.95}],"moods":["chocolate","pistachio","limited"],"occasions":["study-night","late-night"],
+      "draftIngredients":["chocolate cookie","dark chocolate","pistachio crunch"],"containsAllergens":["milk","egg","wheat","soy","tree_nut"],"allergenMode":"fixed_plus_modifiers","modifierGroupIds":["dessert-sauces","dessert-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":7,"max":11},"pairingIds":["cookies-cream-shake"],"alternativeIds":["loaded-brownie"],"featuredRank":10
+    },
+
+    {
+      "id":"st-flight","categoryId":"flights-liters-boxes","name":"ST. Flight","slug":"st-flight","catalogRole":"group_format","productType":"flight","description":"Four 6 oz tastes selected from eligible signatures.",
+      "sizes":[{"id":"four-6oz","label":"Four 6 oz cups","price":18.95}],"moods":["shareable","discovery"],"occasions":["date-night","group"],"draftIngredients":[],"containsAllergens":[],"allergenMode":"selection_dependent","modifierGroupIds":["flight-drink-selection"],
+      "availability":{"dayparts":["all_day"],"channels":["dine_in","pickup"],"deliverySuitability":"requires_carrier_test"},"prepTimeMinutes":{"status":"working","min":10,"max":15},"pairingIds":["saint-fruit-stick"],"alternativeIds":["fresh-juice-twins"]
+    },
+    {
+      "id":"fresh-juice-twins","categoryId":"flights-liters-boxes","name":"Fresh Juice Twins","slug":"fresh-juice-twins","catalogRole":"group_format","productType":"bundle","description":"Two 16 oz fresh juices from the eligible list.",
+      "sizes":[{"id":"two-16oz","label":"Two 16 oz drinks","price":15.95}],"moods":["fresh","shareable"],"occasions":["morning","study-night"],"draftIngredients":[],"containsAllergens":[],"allergenMode":"selection_dependent","modifierGroupIds":["twin-fresh-juice-selection"],
+      "availability":{"dayparts":["morning","afternoon"],"channels":["dine_in","pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":8,"max":12},"pairingIds":["classic-minis"],"alternativeIds":["st-flight"]
+    },
+    {
+      "id":"one-liter-juice","categoryId":"flights-liters-boxes","name":"One-Liter Juice","slug":"one-liter-juice","catalogRole":"group_format","productType":"liter","description":"A one-liter bottle from the eligible fresh-juice list.",
+      "sizes":[{"id":"1-liter","label":"1 liter","price":15.95,"startingAt":true}],"moods":["fresh","shareable"],"occasions":["family","office","party"],"draftIngredients":[],"containsAllergens":[],"allergenMode":"selection_dependent","modifierGroupIds":["liter-flavor-selection"],
+      "availability":{"dayparts":["morning","afternoon"],"channels":["pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":10,"max":15},"pairingIds":["game-day-box"],"alternativeIds":["fresh-juice-twins"]
+    },
+    {
+      "id":"study-night-box","categoryId":"flights-liters-boxes","name":"Study Night Box","slug":"study-night-box","catalogRole":"group_format","productType":"party_box","description":"Twelve Classic Minis, two 16 oz refreshers, two sauces and one crunch.",
+      "sizes":[{"id":"serves-2-3","label":"Serves 2–3","price":26.95}],"moods":["shareable","student","warm"],"occasions":["study-night"],"draftIngredients":[],"containsAllergens":[],"allergenMode":"selection_dependent","modifierGroupIds":["study-box-drinks","box-sauces","box-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":15,"max":22},"pairingIds":[],"alternativeIds":["date-night-box"]
+    },
+    {
+      "id":"date-night-box","categoryId":"flights-liters-boxes","name":"Date Night Box","slug":"date-night-box","catalogRole":"group_format","productType":"party_box","description":"Two fruit sticks, one mini dessert cup, two 12 oz drinks and an optional note.",
+      "sizes":[{"id":"serves-2","label":"Serves 2","price":31.95}],"moods":["shareable","giftable","chocolate"],"occasions":["date-night"],"draftIngredients":[],"containsAllergens":[],"allergenMode":"selection_dependent","modifierGroupIds":["date-box-drinks","chocolate-choice","gift-note"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["pickup","delivery"],"deliverySuitability":"good"},"prepTimeMinutes":{"status":"working","min":15,"max":22},"pairingIds":[],"alternativeIds":["study-night-box"]
+    },
+    {
+      "id":"game-day-box","categoryId":"flights-liters-boxes","name":"Game Day Box","slug":"game-day-box","catalogRole":"group_format","productType":"party_box","description":"Twenty-four mini pancakes, two fruit cups, three sauces and three crunches.",
+      "sizes":[{"id":"serves-4-6","label":"Serves 4–6","price":49.95}],"moods":["shareable","warm","customizable"],"occasions":["game-day","party"],"draftIngredients":[],"containsAllergens":[],"allergenMode":"selection_dependent","modifierGroupIds":["box-fruit","box-sauces","box-toppings"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":20,"max":30},"pairingIds":["one-liter-juice"],"alternativeIds":["build-your-party-box"]
+    },
+    {
+      "id":"birthday-box","categoryId":"flights-liters-boxes","name":"Birthday Box","slug":"birthday-box","catalogRole":"group_format","productType":"party_box","description":"Twenty-four mini pancakes, two fruit sticks, a share-size brownie component, sauces, toppings and a gift note.",
+      "sizes":[{"id":"serves-4-6","label":"Serves 4–6","price":59.95}],"moods":["shareable","giftable","celebration"],"occasions":["birthday","party"],"draftIngredients":[],"containsAllergens":[],"allergenMode":"selection_dependent","modifierGroupIds":["chocolate-choice","box-sauces","box-toppings","gift-note"],
+      "availability":{"dayparts":["afternoon","evening"],"channels":["pickup","delivery"],"deliverySuitability":"quality_declines_over_time"},"prepTimeMinutes":{"status":"working","min":25,"max":40},"pairingIds":["one-liter-juice"],"alternativeIds":["build-your-party-box"]
+    },
+    {
+      "id":"office-box","categoryId":"flights-liters-boxes","name":"Office Box","slug":"office-box","catalogRole":"group_format","productType":"catering_box","description":"Ten individually labeled 12 oz drinks or an approved mixed configuration.",
+      "sizes":[{"id":"serves-8-10","label":"Serves 8–10","price":79.95,"startingAt":true}],"moods":["shareable","business"],"occasions":["office","meeting"],"draftIngredients":[],"containsAllergens":[],"allergenMode":"selection_dependent","modifierGroupIds":["office-drink-selection","catering-addons"],
+      "availability":{"dayparts":["morning","afternoon","evening"],"channels":["pickup","quoted_delivery"],"deliverySuitability":"scheduled_only"},"prepTimeMinutes":{"status":"working","min":30,"max":60},"pairingIds":[],"alternativeIds":["build-your-party-box"]
+    },
+    {
+      "id":"build-your-party-box","categoryId":"flights-liters-boxes","name":"Build Your Party Box","slug":"build-your-party-box","catalogRole":"group_format","productType":"catering_box","description":"Choose two bases, fruit, sauces and toppings for six to twelve guests.",
+      "sizes":[{"id":"serves-6","label":"Serves 6","price":69.95,"startingAt":true},{"id":"serves-12","label":"Serves 12","price":124.95,"startingAt":true}],"moods":["shareable","customizable"],"occasions":["birthday","party","office"],"draftIngredients":[],"containsAllergens":[],"allergenMode":"selection_dependent","modifierGroupIds":["party-box-bases","box-fruit","box-sauces","box-toppings","catering-addons"],
+      "availability":{"dayparts":["morning","afternoon","evening"],"channels":["pickup","quoted_delivery"],"deliverySuitability":"scheduled_only"},"prepTimeMinutes":{"status":"working","min":35,"max":75},"pairingIds":["one-liter-juice"],"alternativeIds":["game-day-box"]
+    }
+  ]
+}

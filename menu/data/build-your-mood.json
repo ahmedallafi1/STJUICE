@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "name": "Build Your Mood",
+    "version": "3.0.0",
+    "currency": "USD",
+    "priceStatus": "working_requires_owner_approval",
+    "publicPromise": "Pick your base. Set the mood.",
+    "nutritionStatus": "unverified"
+  },
+  "steps": [
+    {
+      "id":"base","order":1,"name":"Pick a base","required":true,"selection":{"min":1,"max":1},
+      "options":[
+        {"id":"fresh-juice-16","name":"Fresh juice · 16 oz","basePrice":8.45,"includes":{"produce":3},"allows":["fruit-flavor","texture-juice","juice-finish"],"defaultAllergens":[]},
+        {"id":"smoothie-16","name":"Smoothie · 16 oz","basePrice":8.95,"includes":{"baseLiquid":1,"fruit":3},"allows":["milk-choice","fruit-flavor","texture-blended","sauces-cold","toppings-cold","boosts-protein"],"defaultAllergens":["milk"]},
+        {"id":"yogurt-shake-16","name":"Yogurt shake · 16 oz","basePrice":9.45,"includes":{"fruit":2},"allows":["milk-choice","fruit-flavor","texture-blended","sauces-cold","toppings-cold","boosts-protein"],"defaultAllergens":["milk"]},
+        {"id":"fruit-cup-regular","name":"Fruit cup · Regular","basePrice":8.95,"includes":{"fruit":4,"sauce":1},"allows":["fruit-flavor","sauces-dessert","toppings-dessert"],"defaultAllergens":[]},
+        {"id":"crepe","name":"Crepe","basePrice":9.95,"includes":{"sauce":1,"topping":2},"allows":["fruit-dessert","sauces-dessert","toppings-dessert","boosts-dessert"],"defaultAllergens":["milk","egg","wheat"]},
+        {"id":"waffle","name":"Waffle","basePrice":10.95,"includes":{"sauce":1,"topping":2},"allows":["fruit-dessert","sauces-dessert","toppings-dessert","boosts-dessert"],"defaultAllergens":["milk","egg","wheat"]},
+        {"id":"mini-pancakes-12","name":"Mini pancakes · 12","basePrice":9.95,"includes":{"sauce":1,"topping":1},"allows":["fruit-dessert","sauces-dessert","toppings-dessert","boosts-dessert"],"defaultAllergens":["milk","egg","wheat"]},
+        {"id":"soft-serve-regular","name":"Soft serve · Regular","basePrice":6.45,"includes":{"sauce":1,"topping":1},"allows":["sauces-dessert","toppings-dessert"],"defaultAllergens":["milk"]}
+      ]
+    },
+    {
+      "id":"mood","order":2,"name":"Set the mood","required":true,"selection":{"min":1,"max":1},"priceImpact":0,
+      "options":[
+        {"id":"fresh","name":"Fresh","recommends":["citrus","mint","pineapple","strawberry"]},
+        {"id":"fruity","name":"Fruity","recommends":["strawberry","mango","blueberry","banana"]},
+        {"id":"tropical","name":"Tropical","recommends":["mango","pineapple","passion-fruit","coconut"]},
+        {"id":"chocolate","name":"Chocolate","recommends":["milk-chocolate","dark-chocolate","brownie-bites"]},
+        {"id":"pistachio","name":"Pistachio","recommends":["pistachio-sauce","roasted-pistachio","kataifi-crunch"]},
+        {"id":"crunchy","name":"Crunchy","recommends":["kataifi-crunch","cookie-crumb","granola"]},
+        {"id":"protein","name":"Protein","recommends":["vanilla-protein","banana","peanut-butter"]},
+        {"id":"shareable","name":"Shareable","recommends":["large-format","extra-sauce","extra-topping"]}
+      ]
+    },
+    {
+      "id":"fruit-flavor","order":3,"name":"Add fruit and flavor","required":false,"selection":{"min":0,"max":6},
+      "options":[
+        {"id":"strawberry","name":"Strawberry","tier":"standard","priceAfterIncluded":0.95},{"id":"banana","name":"Banana","tier":"standard","priceAfterIncluded":0.95},{"id":"mango","name":"Mango","tier":"standard","priceAfterIncluded":0.95},{"id":"pineapple","name":"Pineapple","tier":"standard","priceAfterIncluded":0.95},{"id":"kiwi","name":"Kiwi","tier":"standard","priceAfterIncluded":0.95},{"id":"blueberry","name":"Blueberry","tier":"premium","priceAfterIncluded":1.25},{"id":"apple","name":"Apple","tier":"standard","priceAfterIncluded":0.95},{"id":"orange","name":"Orange","tier":"standard","priceAfterIncluded":0.95},{"id":"lemon","name":"Lemon","tier":"standard","priceAfterIncluded":0.75},{"id":"dragon-fruit","name":"Dragon fruit","tier":"premium","priceAfterIncluded":1.25,"status":"seasonal"},{"id":"pomegranate","name":"Pomegranate arils","tier":"premium","priceAfterIncluded":1.25,"status":"seasonal"},{"id":"passion-fruit","name":"Passion fruit","tier":"premium","priceAfterIncluded":1.25,"status":"seasonal"},{"id":"avocado","name":"Avocado","tier":"premium","priceAfterIncluded":1.25}
+      ]
+    },
+    {
+      "id":"texture","order":4,"name":"Set the texture","required":false,"selection":{"min":0,"max":1},"priceImpact":0,
+      "options":[{"id":"smooth","name":"Smooth"},{"id":"over-ice","name":"Over ice"},{"id":"frozen","name":"Frozen"},{"id":"layered","name":"Layered"},{"id":"crunchy-finish","name":"Crunchy finish"},{"id":"creamy-finish","name":"Creamy finish"}]
+    },
+    {
+      "id":"sauce","order":5,"name":"Choose sauce","required":false,"selection":{"min":0,"max":4},"reuseOptionsFrom":"modifiers.json#dessert-sauces"
+    },
+    {
+      "id":"topping","order":6,"name":"Choose crunch and toppings","required":false,"selection":{"min":0,"max":5},"reuseOptionsFrom":"modifiers.json#dessert-toppings"
+    },
+    {
+      "id":"boost","order":7,"name":"Add a boost","required":false,"selection":{"min":0,"max":2},
+      "options":[
+        {"id":"vanilla-protein","name":"Vanilla protein","price":2.00,"allowedBaseIds":["smoothie-16","yogurt-shake-16"],"allergenAdds":["milk"],"status":"supplier_pending"},
+        {"id":"chocolate-protein","name":"Chocolate protein","price":2.00,"allowedBaseIds":["smoothie-16","yogurt-shake-16"],"allergenAdds":["milk","soy"],"status":"supplier_pending"},
+        {"id":"yogurt","name":"Yogurt","price":1.00,"allowedBaseIds":["smoothie-16"],"allergenAdds":["milk"]},
+        {"id":"soft-serve-scoop","name":"Soft-serve scoop","price":2.50,"allowedBaseIds":["crepe","waffle","mini-pancakes-12"],"allergenAdds":["milk"]}
+      ]
+    },
+    {
+      "id":"review","order":8,"name":"Review your mood","required":true,
+      "mustDisplay":["configurationName","basePrice","modifierLines","totalPrice","draftIngredientSummary","containsAllergens","mayContainAllergens","prepTimeStatus","deliverySuitability","suggestedAddOn","saveMixControl"]
+    }
+  ],
+  "hardRules": [
+    {"id":"juice-no-dessert","if":{"baseId":"fresh-juice-16"},"disallow":["milk-choice","sauces-dessert","toppings-dessert","boosts-protein","boosts-dessert"]},
+    {"id":"protein-bases","if":{"selectionType":"protein"},"allowedBaseIds":["smoothie-16","yogurt-shake-16"]},
+    {"id":"pistachio-allergen","if":{"optionIdsContain":["pistachio-sauce","roasted-pistachio"]},"addAllergens":["tree_nut"]},
+    {"id":"kataifi-allergen","if":{"optionIdsContain":["kataifi-crunch"]},"addAllergens":["wheat"]},
+    {"id":"allergen-reconfirm","if":{"allergenSetChanges":true},"requireCustomerReconfirmation":true},
+    {"id":"delivery-quality","if":{"baseIdIn":["crepe","waffle","mini-pancakes-12","soft-serve-regular"]},"showQualityNotice":true}
+  ],
+  "savedMixRules": {
+    "signedInOnly": true,
+    "nameMaxCharacters": 30,
+    "privateByDefault": true,
+    "publicSharingAtLaunch": false,
+    "profanityFilterRequired": true
+  }
+}

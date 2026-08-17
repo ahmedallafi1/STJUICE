@@ -1,0 +1,162 @@
+:root,
+[data-theme="default"] {
+  --st-pistachio-50: #f7faee;
+  --st-pistachio-100: #eef5d8;
+  --st-pistachio-200: #dceab0;
+  --st-pistachio-300: #c9df86;
+  --st-pistachio-400: #b7d86c;
+  --st-pistachio-500: #98bb4e;
+  --st-pistachio-600: #73923a;
+  --st-pistachio-700: #526b2b;
+  --st-pistachio-800: #3b4d24;
+  --st-pistachio-900: #29361d;
+  --st-cream: #fff8e7;
+  --st-paper: #f5ead2;
+  --st-white: #fff;
+  --st-charcoal: #171b18;
+  --st-charcoal-soft: #2b302c;
+  --st-chrome: #c9cdd0;
+  --st-steel: #737a76;
+  --st-blue: #1747b5;
+  --st-yellow: #f4c84a;
+  --st-gold: #a67c36;
+  --st-dragonfruit: #d94d78;
+  --st-citrus: #f18b43;
+  --st-berry: #8254a6;
+  --st-success: #26734d;
+  --st-warning: #9a641b;
+  --st-error: #b3313d;
+  --st-info: #255aa8;
+  --st-font-display: "Fraunces", Georgia, serif;
+  --st-font-body: "Manrope", Inter, Arial, sans-serif;
+  --st-radius-sm: 10px;
+  --st-radius-control: 14px;
+  --st-radius-card: 20px;
+  --st-radius-feature: 24px;
+  --st-radius-pill: 999px;
+  --st-shadow-card: 0 10px 30px rgb(23 27 24 / 8%);
+  --st-shadow-lifted: 0 18px 50px rgb(23 27 24 / 14%);
+  --st-fast: 160ms;
+  --st-base: 220ms;
+  --st-theme-speed: 260ms;
+  --st-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --theme-background: var(--st-cream);
+  --theme-surface: var(--st-white);
+  --theme-primary: var(--st-pistachio-400);
+  --theme-on-primary: var(--st-charcoal);
+  --theme-accent: var(--st-pistachio-700);
+  --theme-accent-soft: var(--st-pistachio-100);
+  --theme-text: var(--st-charcoal);
+  --theme-text-muted: var(--st-steel);
+  --theme-border: var(--st-chrome);
+  --theme-link: var(--st-pistachio-700);
+}
+
+[data-theme="student"] {
+  --theme-background: var(--st-cream);
+  --theme-surface: var(--st-white);
+  --theme-primary: var(--st-pistachio-400);
+  --theme-on-primary: var(--st-charcoal);
+  --theme-accent: var(--st-blue);
+  --theme-accent-soft: #e8eefc;
+  --theme-highlight: var(--st-yellow);
+  --theme-text: var(--st-charcoal);
+  --theme-text-muted: #5d6670;
+  --theme-border: #b9c5e5;
+  --theme-link: var(--st-blue);
+}
+
+[data-theme="business"] {
+  --theme-background: var(--st-cream);
+  --theme-surface: var(--st-white);
+  --theme-primary: var(--st-charcoal);
+  --theme-on-primary: var(--st-cream);
+  --theme-accent: var(--st-gold);
+  --theme-accent-soft: #f1e7d2;
+  --theme-highlight: var(--st-pistachio-400);
+  --theme-text: var(--st-charcoal);
+  --theme-text-muted: #68625a;
+  --theme-border: #c7b891;
+  --theme-link: #76531f;
+}
+
+.st-button {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--st-radius-control);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--st-font-body);
+  font-size: 1rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  transition: transform var(--st-fast) var(--st-ease), background-color var(--st-fast) var(--st-ease), color var(--st-fast) var(--st-ease);
+}
+
+.st-button:hover {
+  transform: translateY(-2px);
+}
+
+.st-button:focus-visible,
+.st-card:focus-visible {
+  outline: 3px solid var(--st-blue);
+  outline-offset: 2px;
+}
+
+.st-button--primary {
+  background: var(--theme-primary);
+  color: var(--theme-on-primary);
+}
+
+.st-button--dark {
+  background: var(--st-charcoal);
+  color: var(--st-cream);
+}
+
+.st-button--secondary {
+  background: transparent;
+  border-color: var(--theme-text);
+  color: var(--theme-text);
+}
+
+.st-card {
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--st-radius-card);
+  box-shadow: var(--st-shadow-card);
+  color: var(--theme-text);
+  padding: 1.25rem;
+  transition: box-shadow var(--st-base) var(--st-ease), transform var(--st-base) var(--st-ease);
+}
+
+.st-card:hover {
+  box-shadow: var(--st-shadow-lifted);
+  transform: translateY(-3px);
+}
+
+.st-badge {
+  align-items: center;
+  background: var(--theme-accent-soft);
+  border-radius: var(--st-radius-pill);
+  color: var(--theme-text);
+  display: inline-flex;
+  font-family: var(--st-font-body);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  min-height: 28px;
+  padding: 0.35rem 0.7rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

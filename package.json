@@ -1,0 +1,17 @@
+{
+  "name": "st-juice-launch-candidate",
+  "version": "9.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "node ordering/server.mjs",
+    "build": "node scripts/build-static.mjs",
+    "test": "cd site && npm test && cd .. && node launch/tests/launch-readiness.test.mjs && node launch/tests/vercel-handler.test.mjs && node launch/tests/vercel-readiness.test.mjs",
+    "readiness": "node launch/readiness.mjs",
+    "validate:vercel": "node launch/tests/vercel-readiness.test.mjs",
+    "audit": "node scripts/release-audit.mjs"
+  }
+}

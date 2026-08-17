@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "version": "3.0.0",
+    "status": "deferred_not_deleted",
+    "publiclySellable": false,
+    "activationRequires": ["recipe_test","price_approval","supplier_allergen_review","packaging_delivery_test","media_status","catalog_capacity_decision"]
+  },
+  "items": [
+    {"id":"mango-juice","name":"Mango Juice","family":"fresh-juices","reason":"launch_size_control"},
+    {"id":"apple-juice","name":"Apple Juice","family":"fresh-juices","reason":"launch_size_control"},
+    {"id":"immunity-blend","name":"Immunity Blend","family":"fresh-juices","reason":"claim_and_recipe_review"},
+    {"id":"fresh-mixed-cocktail","name":"Fresh Mixed Cocktail","family":"fresh-juices","reason":"overlaps_signatures"},
+    {"id":"passion-fruit-yogurt","name":"Passion Fruit Yogurt","family":"smoothies-protein","reason":"launch_size_control"},
+    {"id":"pomegranate-yogurt","name":"Pomegranate Yogurt","family":"smoothies-protein","reason":"seasonal_supply"},
+    {"id":"chocolate-banana-protein","name":"Chocolate Banana Protein","family":"smoothies-protein","reason":"launch_size_control"},
+    {"id":"watermelon-mint-refresher","name":"Watermelon Mint Refresher","family":"refreshers","reason":"seasonal_rotation"},
+    {"id":"ginger-honey-lemonade","name":"Ginger Honey Lemonade","family":"refreshers","reason":"launch_size_control"},
+    {"id":"mango-berry-cup","name":"Mango Berry Cup","family":"bowls-fruit","reason":"covered_by_loaded_fruit_cup"},
+    {"id":"fresh-fruit-plate","name":"Fresh Fruit Plate","family":"bowls-fruit","reason":"packaging_and_portion_test"},
+    {"id":"chocolate-strawberry-stick","name":"Chocolate Strawberry Stick","family":"chocolate-lab","reason":"covered_by_saint_fruit_stick"},
+    {"id":"triple-chocolate-waffle-stick","name":"Triple Chocolate Waffle Stick","family":"chocolate-lab","reason":"equipment_and_delivery_test"},
+    {"id":"biscuit-crepe","name":"Caramelized Biscuit Crepe","family":"crepes-waffles","reason":"supplier_and_launch_size_control"},
+    {"id":"cookies-cream-crepe","name":"Cookies & Cream Crepe","family":"crepes-waffles","reason":"launch_size_control"},
+    {"id":"crepe-fettuccine","name":"Crepe Fettuccine","family":"crepes-waffles","reason":"labor_and_packaging_test"},
+    {"id":"classic-waffle","name":"Classic Waffle","family":"crepes-waffles","reason":"covered_by_loaded_waffle_customization"},
+    {"id":"waffle-stick","name":"Waffle Stick","family":"crepes-waffles","reason":"equipment_and_delivery_test"},
+    {"id":"strawberry-minis","name":"Strawberry Minis","family":"mini-pancakes","reason":"available_through_customization"},
+    {"id":"mango-soft-serve","name":"Mango Soft Serve","family":"soft-serve-shakes","reason":"equipment_and_supplier_test"},
+    {"id":"biscuit-soft-serve","name":"Caramelized Biscuit Soft Serve","family":"soft-serve-shakes","reason":"equipment_and_supplier_test"},
+    {"id":"chocolate-soft-serve","name":"Chocolate Soft Serve","family":"soft-serve-shakes","reason":"equipment_and_supplier_test"},
+    {"id":"pistachio-milkshake","name":"Pistachio Milkshake","family":"soft-serve-shakes","reason":"covered_by_pistachio_signature"},
+    {"id":"dubai-chocolate-shake","name":"Dubai Chocolate Shake","family":"dubai-collection","reason":"limited_rotation"},
+    {"id":"dubai-crepe","name":"Dubai Crepe","family":"dubai-collection","reason":"limited_rotation"},
+    {"id":"dubai-brownie","name":"Dubai Brownie","family":"dubai-collection","reason":"limited_rotation"},
+    {"id":"seasonal-fruit-dessert","name":"Seasonal Fruit Dessert","family":"desserts-drops","reason":"seasonal_rotation"},
+    {"id":"shake-twins","name":"Shake Twins","family":"flights-liters-boxes","reason":"carrier_and_margin_test"},
+    {"id":"one-and-half-liter-bottle","name":"1.5-Liter Bottle","family":"flights-liters-boxes","reason":"bottle_supplier_and_yield_test"}
+  ]
+}

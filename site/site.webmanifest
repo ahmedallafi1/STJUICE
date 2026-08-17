@@ -1,0 +1,10 @@
+{
+  "name": "ST. JUICE",
+  "short_name": "ST. JUICE",
+  "description": "ST. JUICE menu and ordering experience.",
+  "start_url": "./#/",
+  "display": "standalone",
+  "background_color": "#fff8e7",
+  "theme_color": "#171b18",
+  "icons": []
+}

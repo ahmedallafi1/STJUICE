@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "brand": "ST. JUICE",
+    "version": "2.0.0",
+    "stage": "02 Brand System",
+    "source": "ST-JUICE-01-Master-Foundation.zip"
+  },
+  "color": {
+    "pistachio": {
+      "50": "#F7FAEE",
+      "100": "#EEF5D8",
+      "200": "#DCEAB0",
+      "300": "#C9DF86",
+      "400": "#B7D86C",
+      "500": "#98BB4E",
+      "600": "#73923A",
+      "700": "#526B2B",
+      "800": "#3B4D24",
+      "900": "#29361D"
+    },
+    "neutral": {
+      "white": "#FFFFFF",
+      "cream": "#FFF8E7",
+      "paper": "#F5EAD2",
+      "chrome": "#C9CDD0",
+      "steel": "#737A76",
+      "charcoalSoft": "#2B302C",
+      "charcoal": "#171B18"
+    },
+    "accent": {
+      "studentBlue": "#1747B5",
+      "studentYellow": "#F4C84A",
+      "businessGold": "#A67C36",
+      "dragonfruit": "#D94D78",
+      "citrus": "#F18B43",
+      "berry": "#8254A6"
+    },
+    "state": {
+      "success": "#26734D",
+      "warning": "#9A641B",
+      "error": "#B3313D",
+      "info": "#255AA8"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "display": "Fraunces, Georgia, serif",
+      "body": "Manrope, Inter, Arial, sans-serif"
+    },
+    "fontWeight": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+      "extrabold": 800
+    },
+    "fontSize": {
+      "micro": "0.75rem",
+      "small": "0.875rem",
+      "body": "1rem",
+      "bodyLarge": "1.125rem",
+      "h4": "1.25rem",
+      "h3": "1.625rem",
+      "h2": "2.25rem",
+      "h1": "3rem",
+      "displayLarge": "3.75rem",
+      "displayXL": "5rem"
+    },
+    "lineHeight": {
+      "tight": 0.95,
+      "heading": 1.1,
+      "body": 1.55,
+      "small": 1.45
+    }
+  },
+  "space": {
+    "0": "0",
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "5": "1.25rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "10": "2.5rem",
+    "12": "3rem",
+    "16": "4rem",
+    "20": "5rem",
+    "24": "6rem"
+  },
+  "radius": {
+    "small": "0.625rem",
+    "control": "0.875rem",
+    "card": "1.25rem",
+    "feature": "1.5rem",
+    "pill": "999px"
+  },
+  "border": {
+    "width": "1px",
+    "color": "#C9CDD0"
+  },
+  "shadow": {
+    "card": "0 10px 30px rgba(23,27,24,0.08)",
+    "lifted": "0 18px 50px rgba(23,27,24,0.14)"
+  },
+  "motion": {
+    "fast": "160ms",
+    "base": "220ms",
+    "theme": "260ms",
+    "ease": "cubic-bezier(0.22, 1, 0.36, 1)"
+  },
+  "themes": {
+    "default": {
+      "background": "#FFF8E7",
+      "surface": "#FFFFFF",
+      "primary": "#B7D86C",
+      "onPrimary": "#171B18",
+      "accent": "#526B2B",
+      "accentSoft": "#EEF5D8",
+      "text": "#171B18",
+      "textMuted": "#737A76",
+      "border": "#C9CDD0",
+      "link": "#526B2B"
+    },
+    "student": {
+      "background": "#FFF8E7",
+      "surface": "#FFFFFF",
+      "primary": "#B7D86C",
+      "onPrimary": "#171B18",
+      "accent": "#1747B5",
+      "accentSoft": "#E8EEFC",
+      "highlight": "#F4C84A",
+      "text": "#171B18",
+      "textMuted": "#5D6670",
+      "border": "#B9C5E5",
+      "link": "#1747B5"
+    },
+    "business": {
+      "background": "#FFF8E7",
+      "surface": "#FFFFFF",
+      "primary": "#171B18",
+      "onPrimary": "#FFF8E7",
+      "accent": "#A67C36",
+      "accentSoft": "#F1E7D2",
+      "highlight": "#B7D86C",
+      "text": "#171B18",
+      "textMuted": "#68625A",
+      "border": "#C7B891",
+      "link": "#76531F"
+    }
+  }
+}

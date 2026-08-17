@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /
+
+# Pre-launch preview: indexing remains disabled until the public
+# domain, canonical URLs, approved hours/contact details, and production
+# ordering stack are configured.
