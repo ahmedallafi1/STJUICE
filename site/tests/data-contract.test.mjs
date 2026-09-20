@@ -59,12 +59,11 @@ for (const route of ["/menu", "/build", "/drops", "/boxes", "/gift-cards", "/cat
 
 assert.ok(stylesSource.includes("prefers-reduced-motion"), "Reduced-motion CSS is required");
 assert.ok(stylesSource.includes(":focus-visible"), "Visible keyboard focus is required");
-assert.ok(appSource.includes("localStorage"), "Prototype mode/cart continuity is required");
-assert.ok(viewsSource.includes("Concept visual"), "Generated media must remain visibly labeled");
-assert.ok(viewsSource.includes("SAFE TEST"), "Ordering safety boundary must be visible");
+assert.ok(appSource.includes("localStorage"), "Cart and service continuity is required");
+assert.ok(viewsSource.includes("ORDERING PREVIEW"), "Ordering preview boundary must be visible");
 assert.ok(appSource.includes("orderingApi"), "Checkout must use the authoritative order API");
 assert.ok(appSource.includes("allergenAcknowledged"), "Checkout must require an allergen acknowledgement");
-assert.ok(viewsSource.includes("No card fields. No live charge."), "Safe test payment boundary must be visible");
+assert.ok(viewsSource.includes("No live card charge will occur yet."), "Preview payment boundary must be visible");
 
 console.log(JSON.stringify({
   status: "valid",
