@@ -1285,7 +1285,7 @@ h3 {
   top: 4.85rem;
   z-index: 20;
   border-bottom: 1px solid var(--border);
-  background: rgba(255, 248, 231, 0.94);
+  background: var(--header-bg);
   backdrop-filter: blur(18px);
 }
 
@@ -1584,7 +1584,7 @@ h3 {
   border: 1px solid var(--border);
   border-radius: 1.2rem;
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.92);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
   box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
 }
@@ -1597,6 +1597,79 @@ h3 {
 
 .product-order-bar__total strong {
   font-size: 1.1rem;
+}
+
+.product-detail__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem;
+  margin-top: .8rem;
+}
+
+.product-detail__facts span {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: .42rem .7rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: .7rem;
+  font-weight: 800;
+}
+
+.product-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .75rem;
+  margin-top: 1.5rem;
+}
+
+.coming-soon-card {
+  max-width: 58rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-feature);
+  padding: clamp(2rem, 6vw, 5rem);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--accent-soft) 100%);
+  box-shadow: var(--shadow-soft);
+}
+
+.rewards-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.launch-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .85rem 1rem;
+  background: var(--accent-soft);
+  color: var(--text);
+  font-size: .78rem;
+}
+
+.launch-notice strong {
+  color: var(--accent);
+  font-weight: 900;
+}
+
+.quote-totals__note {
+  margin: .7rem 0 0;
+  color: var(--text-muted);
+  font-size: .7rem;
+  line-height: 1.45;
+}
+
+html[data-theme="business"] .product-order-bar {
+  background: rgba(20, 23, 21, .94);
+}
+
+html[data-theme="student"] .product-order-bar {
+  background: rgba(255, 255, 255, .95);
 }
 
 .builder-page {
@@ -2593,6 +2666,15 @@ h3 {
 }
 
 @media (max-width: 820px) {
+  .rewards-preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .launch-notice {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .drop-hero,
   .drop-card,
   .box-showcase {
