@@ -12,7 +12,7 @@ const seed = {
   profile: { name: "", email: "", phone: "", birthday: "", mode: "regular" },
   student: { status: "not_submitted", schoolEmail: "", institution: "", expiresAt: "" },
   business: { company: "", contactRole: "", recurringCadence: "", savedEvent: "" },
-  points: 240,
+  points: 0,
   favorites: [],
   savedMixes: [],
   orderHistory: []
@@ -49,6 +49,5 @@ export function saveMix(account, mix) {
 export function rememberOrder(account, order) {
   const entry = { id: order.id, orderNumber: order.orderNumber, service: order.service, status: order.status, total: order.totals.total.amount, items: order.items, createdAt: order.createdAt || new Date().toISOString() };
   account.orderHistory = [entry, ...account.orderHistory.filter((item) => item.id !== order.id)].slice(0, 20);
-  account.points += Math.floor(Number(order.totals.total.amount || 0) * rewardsConfig.pointsPerDollar);
   saveAccount(account);
 }
