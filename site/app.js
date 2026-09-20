@@ -1,5 +1,5 @@
 import { escapeHtml, hydrateIcons, loadProjectData, productImage, routeInfo, titleCase } from "./lib/core.js";
-import { orderingApi } from "./lib/api.js";
+import { accountApi, orderingApi } from "./lib/api.js";
 import { loadAccount, saveAccount, saveMix, toggleFavorite, rememberOrder } from "./lib/account.js";
 import {
   builderAllergens,
@@ -76,7 +76,7 @@ function freshCheckout() {
 }
 
 const state = {
-  mode: modes[savedMode] ? savedMode : "guest",
+  mode: "guest",
   service: ["pickup", "delivery", "dine_in"].includes(savedService) ? savedService : "pickup",
   cart: savedCart,
   menuFilters: { query: "", category: "all", mood: "all", occasion: "all", channel: "all" },
@@ -92,9 +92,10 @@ const state = {
   order: null,
   orderLoading: false,
   orderRequestedId: "",
-  orderTrackingTokens: readSession("stjuice-order-tracking", {})
+  orderTrackingTokens: readSession("stjuice-order-tracking", {}),
+  accountIntent: "regular"
 };
-state.account = loadAccount();
+state.account = { ...loadAccount(), signedIn: false, points: 0, csrfToken: "" };
 
 let data;
 let searchTimer;
@@ -120,6 +121,39 @@ const elements = {
 
 function currentContext() {
   return { data, state };
+}
+
+function applyAccountSession(payload) {
+  state.account.signedIn = Boolean(payload?.authenticated);
+  state.account.csrfToken = payload?.csrfToken || "";
+  if (!payload?.authenticated || !payload.account) {
+    state.mode = "guest";
+    state.account.profile = { ...state.account.profile, name: "", email: "", phone: "", birthday: "", mode: "regular" };
+    state.account.student = { status: "not_submitted", schoolEmail: "", institution: "", expiresAt: "" };
+    state.account.business = {};
+    state.account.points = 0;
+    return;
+  }
+  const account = payload.account;
+  state.account.profile = {
+    ...state.account.profile,
+    name: account.name || "",
+    email: account.email || "",
+    phone: account.phone || "",
+    birthday: account.birthday || "",
+    mode: account.type || "regular"
+  };
+  state.account.student = account.student || { status: "not_submitted" };
+  state.account.business = account.business || {};
+  state.account.points = Number(account.rewards?.points || 0);
+  state.mode = modes[account.type] ? account.type : "regular";
+}
+
+async function refreshAccountSession() {
+  try { applyAccountSession(await accountApi.session()); }
+  catch {
+    applyAccountSession({ authenticated: false, account: null, csrfToken: null });
+  }
 }
 
 function syncFiltersFromRoute(route) {
@@ -419,8 +453,13 @@ document.addEventListener("click", async (event) => {
   if (action === "save-builder-mix") {
     saveMix(state.account, { name: state.builder.name || "My Mood", selections: structuredClone(state.builder.selections) }); render({ preserveScroll: true }); toast("Mix saved", "Available in your account dashboard."); return;
   }
-  if (action === "prototype-signout") {
-    state.account.signedIn = false; saveAccount(state.account); state.mode = "guest"; writeStorage(storageKeys.mode, state.mode); render(); toast("Signed out of prototype"); return;
+  if (action === "account-signout") {
+    try { await accountApi.logout(state.account.csrfToken); }
+    catch { /* Clear the local view even if the expired session is already gone. */ }
+    applyAccountSession({ authenticated: false, account: null, csrfToken: null });
+    render();
+    toast("Signed out");
+    return;
   }
   if (action === "reorder-history") {
     const order = state.account.orderHistory.find((item) => item.id === actionElement.dataset.orderId);
@@ -446,11 +485,22 @@ document.addEventListener("click", async (event) => {
   } else if (action === "set-mode") {
     const mode = actionElement.dataset.mode;
     if (!modes[mode]) return;
-    state.mode = mode;
-    writeStorage(storageKeys.mode, mode);
+    if (mode === "guest") {
+      state.mode = "guest";
+      closeDialog(elements.accountDialog);
+      render({ preserveScroll: true });
+      return;
+    }
+    if (state.account.signedIn && state.account.profile.mode === mode) {
+      state.mode = mode;
+      closeDialog(elements.accountDialog);
+      render({ preserveScroll: true });
+      return;
+    }
+    state.accountIntent = mode;
     closeDialog(elements.accountDialog);
-    render({ preserveScroll: true });
-    toast(`${modes[mode].label} mode is on`, modes[mode].detail);
+    window.location.hash = "/account";
+    toast("Sign in required", `Sign in or create a ${modes[mode].label.toLowerCase()} account to use this experience.`);
   } else if (action === "set-service") {
     const service = actionElement.dataset.service;
     if (!["pickup", "delivery", "dine_in"].includes(service)) return;
@@ -712,15 +762,41 @@ document.addEventListener("input", (event) => {
   }
 });
 
-document.addEventListener("submit", (event) => {
-  const accountForm = event.target.closest("[data-account-form]");
-  if (accountForm) {
-    event.preventDefault(); const values = new FormData(accountForm); const type = accountForm.dataset.accountForm;
-    state.account.signedIn = true;
-    state.account.profile = { ...state.account.profile, name: String(values.get("name") || ""), email: String(values.get("email") || ""), phone: String(values.get("phone") || ""), birthday: String(values.get("birthday") || ""), mode: type };
-    if (type === "student") state.account.student = { status: "pending_manual_review", schoolEmail: String(values.get("schoolEmail") || ""), institution: String(values.get("institution") || ""), expiresAt: "" };
-    if (type === "business") state.account.business = { company: String(values.get("company") || ""), contactRole: String(values.get("contactRole") || ""), recurringCadence: String(values.get("recurringCadence") || ""), savedEvent: String(values.get("savedEvent") || "") };
-    state.mode = type; saveAccount(state.account); writeStorage(storageKeys.mode, type); render(); toast("Prototype profile saved", "Stored on this device only."); return;
+document.addEventListener("submit", async (event) => {
+  const loginForm = event.target.closest("[data-login-form]");
+  if (loginForm) {
+    event.preventDefault();
+    const values = new FormData(loginForm);
+    try {
+      const payload = await accountApi.login({ email: String(values.get("email") || ""), password: String(values.get("password") || "") });
+      applyAccountSession(payload);
+      render();
+      toast("Welcome back", state.account.profile.name || "Your account is ready.");
+    } catch (error) {
+      toast("Sign in failed", errorMessage(error));
+    }
+    return;
+  }
+
+  const registerForm = event.target.closest("[data-register-form]");
+  if (registerForm) {
+    event.preventDefault();
+    const values = new FormData(registerForm);
+    const type = String(values.get("type") || state.accountIntent || "regular");
+    try {
+      const payload = await accountApi.register({
+        name: String(values.get("name") || ""),
+        email: String(values.get("email") || ""),
+        password: String(values.get("password") || ""),
+        type
+      });
+      applyAccountSession(payload);
+      render();
+      toast("Account created", `${modes[state.mode].label} experience is ready.`);
+    } catch (error) {
+      toast("Account could not be created", errorMessage(error));
+    }
+    return;
   }
   if (!(event.target instanceof HTMLFormElement) || event.target.id !== "catering-request") return;
   event.preventDefault();
@@ -746,6 +822,7 @@ hydrateIcons(document);
 try {
   data = await loadProjectData();
   migrateStage05Cart();
+  await refreshAccountSession();
   render();
 } catch (error) {
   console.error(error);
