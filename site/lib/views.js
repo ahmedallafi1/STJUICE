@@ -713,15 +713,35 @@ function renderBuilder({ data, state }) {
 
 function renderDrops({ data }) {
   const active = data.copy.drops.activeProductIds.map((id) => data.productById.get(id)).filter(Boolean);
+  const [lead, ...rest] = active;
   return `
-    ${pageHero("LIMITED · TRACEABLE · CURRENT", data.copy.drops.title, data.copy.drops.intro)}
+    ${pageHero("NEW DROPS", data.copy.drops.title, "Limited releases, seasonal ideas and the newest reasons to come back.")}
     <section class="section section--cream">
       <div class="container">
-        <div class="feature-grid">
-          ${active.map((product, index) => `<article class="feature-card ${index === 0 ? "" : ""}">${mediaBadge()}<img src="${productImage(product)}" alt="Concept visual for ${escapeHtml(product.name)}" width="720" height="900" /><div class="feature-card__content"><p class="eyebrow">DROP 0${index + 1} · ACTIVE</p><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><a class="button button--light button--small" href="#/product/${escapeHtml(product.id)}">${escapeHtml(data.copy.drops.cta)}</a></div></article>`).join("")}
-          <article class="feature-card"><img src="${categoryImage("desserts-drops")}" alt="Concept dessert scene" width="360" height="360" /><div class="feature-card__content"><p class="eyebrow">THE ARCHIVE</p><h3>Had its moment.</h3><p>${escapeHtml(data.copy.drops.expiredState)}</p><a class="button button--light button--small" href="#/menu?category=desserts-drops">See what is live</a></div></article>
+        ${lead ? `
+          <article class="drop-hero">
+            <div class="drop-hero__media"><img src="${productImage(lead)}" alt="${escapeHtml(lead.name)}" width="960" height="960" /></div>
+            <div class="drop-hero__copy">
+              <p class="eyebrow">FEATURED DROP</p>
+              <h2>${escapeHtml(lead.name)}</h2>
+              <p class="lede">${escapeHtml(lead.description)}</p>
+              <div class="drop-hero__meta"><span>Limited release</span><span>Available while offered</span></div>
+              <a class="button" href="#/product/${escapeHtml(lead.id)}">Order the drop</a>
+            </div>
+          </article>` : ""}
+        ${rest.length ? `
+          <div class="section-heading drop-heading"><div><p class="eyebrow">MORE TO TRY</p><h2>Still fresh.</h2></div></div>
+          <div class="drop-grid">
+            ${rest.map((product) => `
+              <article class="drop-card">
+                <a class="drop-card__media" href="#/product/${escapeHtml(product.id)}"><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="720" /></a>
+                <div class="drop-card__body"><p class="eyebrow">CURRENT DROP</p><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><a class="text-link" href="#/product/${escapeHtml(product.id)}">View drop ${icon("arrow")}</a></div>
+              </article>`).join("")}
+          </div>` : ""}
+        <div class="drop-archive">
+          <div><p class="eyebrow">DROP ARCHIVE</p><h2>Past favorites make room for what is next.</h2><p>When a release ends, it moves here instead of disappearing from the story.</p></div>
+          <a class="button button--outline" href="#/menu?category=desserts-drops">Shop what is available</a>
         </div>
-        <div class="info-panel" style="margin-top:1.5rem"><h3>No fake countdown</h3><p>Drop dates and inventory must come from live operations. The interface intentionally avoids a countdown until a truthful end time is configured.</p></div>
       </div>
     </section>`;
 }
@@ -729,39 +749,37 @@ function renderDrops({ data }) {
 function renderBoxes({ data }) {
   const cards = data.bundles.orderNowBoxes.map((box) => ({ ...box, product: data.productById.get(box.productId) }));
   return `
-    ${pageHero("PARTIES · STUDY NIGHTS · OFFICES", data.copy.boxes.title, data.copy.boxes.intro, `<a class="button" href="#/catering">Plan a larger event</a>`)}
+    ${pageHero("PARTY BOXES", data.copy.boxes.title, "Built for study nights, birthdays, office tables and the moments that need more than one order.", `<a class="button" href="#/catering">Planning something bigger?</a>`)}
     <section class="section section--surface">
-      <div class="container split-feature" style="margin-bottom:clamp(3rem,6vw,5rem)">
-        <div class="split-feature__copy"><p class="eyebrow">QUIET OUTSIDE · MOOD INSIDE</p><h2>Built to arrive like the occasion matters.</h2><p class="lede">The packaging direction is coordinated, but final counts, dimensions and vendor structures still require approval.</p></div>
-        <div class="split-feature__media">${mediaBadge("Packaging concept")}<img src="../media/optimized/webp/packaging/birthday-box-concept-v1.webp" alt="Concept Birthday Box presentation" width="720" height="900" /></div>
-      </div>
-      <div class="container">
-        <div class="box-grid">
-          ${cards.map(({ product, ...box }) => `
-            <article class="box-card">
-              <div class="box-card__top"><div><p class="eyebrow">SERVES ${box.serves.min}–${box.serves.max}</p><h3>${escapeHtml(product?.name || box.productId)}</h3></div><span class="box-card__price">${box.startingAt ? "From " : ""}${money(box.basePrice)}</span></div>
+      <div class="container box-showcase">
+        ${cards.map(({ product, ...box }) => `
+          <article class="party-box-card">
+            <a class="party-box-card__media" href="#/product/${escapeHtml(box.productId)}">
+              <img src="${productImage(product || { id: box.productId, categoryId: "flights-liters-boxes" })}" alt="${escapeHtml(product?.name || box.productId)}" loading="lazy" width="720" height="620" />
+            </a>
+            <div class="party-box-card__body">
+              <div class="party-box-card__heading"><div><p class="eyebrow">SERVES ${box.serves.min}–${box.serves.max}</p><h3>${escapeHtml(product?.name || box.productId)}</h3></div><strong>${box.startingAt ? "From " : ""}${money(box.basePrice)}</strong></div>
               <ul class="compact-list">${box.includes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-              <p class="working-badge">Lead time: ${box.leadTime.type === "scheduled" ? `${box.leadTime.minimumHours} hours minimum` : `${box.leadTime.minimumMinutes} minutes minimum`}</p>
-              ${box.studentOfferEligible ? `<p class="chip" style="margin-top:.75rem">Student-offer eligible · terms pending</p>` : ""}
-              <a class="button button--small" href="#/product/${escapeHtml(box.productId)}" style="margin-top:1rem">Start this box</a>
-            </article>`).join("")}
-        </div>
+              <div class="party-box-card__meta"><span>${box.leadTime.type === "scheduled" ? `${box.leadTime.minimumHours} hr minimum prep` : `${box.leadTime.minimumMinutes} min minimum prep`}</span><span>Customize before checkout</span></div>
+              <a class="button" href="#/product/${escapeHtml(box.productId)}">Customize box</a>
+            </div>
+          </article>`).join("")}
       </div>
     </section>`;
 }
 
 function renderCatering({ data, state }) {
   return `
-    ${pageHero("MEETINGS · PARTIES · FULL ROOMS", data.copy.catering.title, data.copy.catering.intro, `<a class="button" href="#catering-form">${escapeHtml(data.copy.catering.primaryCta)}</a><a class="button button--outline" href="#/boxes">${escapeHtml(data.copy.catering.secondaryCta)}</a>`)}
+    ${pageHero("CATERING", data.copy.catering.title, "Drinks, desserts and full-table moments for teams, celebrations and groups.", `<a class="button" href="#catering-form">Start a request</a><a class="button button--outline" href="#/boxes">Shop party boxes</a>`)}
     <section class="section section--cream">
       <div class="container">
-        <div class="section-heading"><div><p class="eyebrow">STARTING DIRECTIONS</p><h2>Choose the service shape.</h2><p class="lede">Working rates help design the flow. A submitted request is not a booking or final quote.</p></div></div>
+        <div class="section-heading"><div><p class="eyebrow">CHOOSE YOUR FORMAT</p><h2>Start with the kind of service you need.</h2><p class="lede">Every catering request is reviewed around guest count, date, setup and menu availability before it is confirmed.</p></div></div>
         <div class="package-grid">
           ${data.bundles.cateringPackages.map((item) => `
             <article class="package-card">
-              <div class="package-card__top"><div><p class="eyebrow">${item.guestRange.min}–${item.guestRange.max} GUESTS</p><h3>${escapeHtml(item.name)}</h3></div><span class="package-card__price">From ${money(item.workingRate.startingAt)}<small>/${item.workingRate.type === "per_recipient" ? "recipient" : "guest"}</small></span></div>
+              <div class="package-card__top"><div><p class="eyebrow">${item.guestRange.min}–${item.guestRange.max} GUESTS</p><h3>${escapeHtml(item.name)}</h3></div><span class="package-card__price">Custom quote</span></div>
               <ul class="compact-list">${item.includes.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>
-              <button class="button button--outline button--small" type="button" data-action="prefill-catering" data-package="${escapeHtml(item.id)}">Choose package</button>
+              <button class="button button--outline button--small" type="button" data-action="prefill-catering" data-package="${escapeHtml(item.id)}">Choose this format</button>
             </article>`).join("")}
         </div>
       </div>
@@ -769,13 +787,13 @@ function renderCatering({ data, state }) {
     <section class="section section--surface" id="catering-form">
       <div class="container form-shell">
         <div>
-          <p class="eyebrow">QUOTE-FIRST WORKFLOW</p>
-          <h2>Tell us what the room needs.</h2>
-          <p class="lede">${escapeHtml(data.copy.catering.support)}</p>
+          <p class="eyebrow">YOUR EVENT</p>
+          <h2>Tell us what you are planning.</h2>
+          <p class="lede">Share the essentials and we will shape the menu around the group.</p>
           <div class="timeline">
-            <div class="timeline__item"><span class="timeline__dot">1</span><div><h3>Send the event details.</h3><p>Date, guest count, service style and contact information.</p></div></div>
-            <div class="timeline__item"><span class="timeline__dot">2</span><div><h3>We confirm capacity.</h3><p>Selection, delivery and setup remain subject to manager review.</p></div></div>
-            <div class="timeline__item"><span class="timeline__dot">3</span><div><h3>Approve the final quote.</h3><p>No event is booked until terms and payment steps are confirmed.</p></div></div>
+            <div class="timeline__item"><span class="timeline__dot">1</span><div><h3>Share the details.</h3><p>Date, group size, service style and contact information.</p></div></div>
+            <div class="timeline__item"><span class="timeline__dot">2</span><div><h3>We review the request.</h3><p>We confirm availability, menu fit and any delivery or setup needs.</p></div></div>
+            <div class="timeline__item"><span class="timeline__dot">3</span><div><h3>Confirm the plan.</h3><p>Your event becomes confirmed only after the final quote and required payment steps are accepted.</p></div></div>
           </div>
         </div>
         <form class="form-card" id="catering-request" novalidate>
@@ -788,11 +806,11 @@ function renderCatering({ data, state }) {
               <label class="form-field"><span>Event date *</span><input class="field" type="date" name="eventDate" required /></label>
               <label class="form-field"><span>Service time *</span><input class="field" type="time" name="serviceTime" required /></label>
               <label class="form-field"><span>Guest count *</span><input class="field" type="number" name="guestCount" min="1" required /></label>
-              <label class="form-field"><span>Service mode *</span><select class="field" name="serviceMode" required><option value="">Choose one</option><option value="pickup">Pickup</option><option value="delivery">Delivery</option><option value="staffed_setup">Staffed setup</option></select></label>
-              <label class="form-field form-field--full"><span>Package interest</span><select class="field" name="packageInterest" id="package-interest"><option value="">Not sure yet</option>${data.bundles.cateringPackages.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("")}</select></label>
-              <label class="form-field form-field--full"><span>Dietary, allergen and event notes</span><textarea class="field" name="notes" placeholder="Tell us the service style, venue and anything the team should review."></textarea></label>
-              <label class="checkbox-field form-field--full"><input type="checkbox" name="contactConsent" required /><span>I agree that ST. JUICE may contact me about this request. This is separate from marketing consent.</span></label>
-              <div class="form-field--full"><button class="button" type="submit">Request catering</button><p style="margin:.75rem 0 0;color:var(--text-muted);font-size:.7rem">Online submission will only confirm after the request is securely saved.</p></div>
+              <label class="form-field"><span>Service style *</span><select class="field" name="serviceMode" required><option value="">Choose one</option><option value="pickup">Pickup</option><option value="delivery">Delivery</option><option value="staffed_setup">Staffed setup</option></select></label>
+              <label class="form-field form-field--full"><span>Package interest</span><select class="field" name="packageInterest" id="package-interest"><option value="">Help me choose</option>${data.bundles.cateringPackages.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("")}</select></label>
+              <label class="form-field form-field--full"><span>Dietary, allergen and event notes</span><textarea class="field" name="notes" placeholder="Venue, service style, dietary needs, timing or anything else we should know."></textarea></label>
+              <label class="checkbox-field form-field--full"><input type="checkbox" name="contactConsent" required /><span>I agree that ST. JUICE may contact me about this request.</span></label>
+              <div class="form-field--full"><button class="button" type="submit">Request catering</button><p class="form-note">A confirmation will only appear after the request is securely saved.</p></div>
             </div>`}
         </form>
       </div>
