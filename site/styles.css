@@ -54,23 +54,38 @@
 }
 
 html[data-theme="student"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #f4f7ff;
+  --primary: var(--student-blue);
+  --on-primary: #ffffff;
   --accent: var(--student-blue);
-  --accent-soft: #e8eefc;
+  --accent-soft: #eaf0ff;
   --highlight: var(--student-yellow);
-  --border: rgba(23, 71, 181, 0.22);
-  --border-strong: rgba(23, 71, 181, 0.42);
+  --text: #0c245a;
+  --text-muted: #52627f;
+  --border: rgba(23, 71, 181, 0.18);
+  --border-strong: rgba(23, 71, 181, 0.38);
+  --header-bg: rgba(255, 255, 255, 0.94);
   --focus: var(--student-blue);
 }
 
 html[data-theme="business"] {
-  --primary: var(--charcoal);
-  --on-primary: var(--cream);
-  --accent: var(--business-gold);
-  --accent-soft: #f1e7d2;
-  --highlight: var(--pistachio-400);
-  --border: rgba(166, 124, 54, 0.26);
-  --border-strong: rgba(166, 124, 54, 0.48);
-  --focus: #76531f;
+  color-scheme: dark;
+  --bg: #0b0d0c;
+  --surface: #141715;
+  --surface-soft: #1b1f1c;
+  --primary: var(--business-gold);
+  --on-primary: #0b0d0c;
+  --accent: #d1aa62;
+  --accent-soft: #242016;
+  --highlight: #d1aa62;
+  --text: #f8f5ee;
+  --text-muted: #b6b2a8;
+  --border: rgba(209, 170, 98, 0.24);
+  --border-strong: rgba(209, 170, 98, 0.48);
+  --header-bg: rgba(11, 13, 12, 0.94);
+  --focus: #e0bd78;
 }
 
 *,
@@ -375,7 +390,7 @@ a {
 }
 
 .section--cream {
-  background: var(--cream);
+  background: var(--bg);
 }
 
 .section--surface {
@@ -389,6 +404,47 @@ a {
 .section--dark {
   background: var(--charcoal);
   color: var(--cream);
+}
+
+html[data-theme="student"] .section--dark {
+  background: #10368f;
+  color: #ffffff;
+}
+
+html[data-theme="business"] .section--dark {
+  background: #050706;
+  color: var(--text);
+}
+
+html[data-theme="business"] .site-footer {
+  background: #050706;
+}
+
+html[data-theme="business"] .announcement {
+  background: #050706;
+  color: var(--text);
+}
+
+html[data-theme="student"] .announcement {
+  background: var(--student-blue);
+  color: #ffffff;
+}
+
+html[data-theme="student"] .announcement__mode {
+  color: #ffffff;
+}
+
+html[data-theme="business"] .field,
+html[data-theme="business"] input,
+html[data-theme="business"] select,
+html[data-theme="business"] textarea {
+  color: var(--text);
+  background: var(--surface);
+}
+
+html[data-theme="business"] .map-card__label {
+  background: rgba(20, 23, 21, 0.94);
+  color: var(--text);
 }
 
 .eyebrow {
@@ -963,6 +1019,14 @@ h3 {
 .product-card__price {
   font-size: 0.95rem;
   font-weight: 900;
+}
+
+.product-card__type {
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .product-card__actions {
