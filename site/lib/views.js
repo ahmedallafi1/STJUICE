@@ -906,7 +906,7 @@ function renderAccount({ data, state }) {
     </section>`;
 }
 
-function renderAboutfunction renderAbout({ data }) {
+function renderAbout({ data }) {
   return `
     ${pageHero("OUR STORY", data.copy.about.title, data.copy.about.body)}
     <section class="section section--surface"><div class="container split-feature"><div class="split-feature__copy"><p class="eyebrow">YOUR MOOD, MADE FRESH</p><h2>Fresh and indulgent share the same counter.</h2><p class="lede">${escapeHtml(data.copy.about.story)}</p><a class="button" href="#/menu">Explore the menu</a></div><div class="split-feature__media">${mediaBadge("Packaging concept")}<img src="../media/optimized/webp/packaging/packaging-lineup-concept-v1.webp" alt="Concept ST. JUICE packaging lineup" width="1200" height="800" /></div></div></section>
