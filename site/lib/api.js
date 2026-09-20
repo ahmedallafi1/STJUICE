@@ -22,3 +22,12 @@ export const orderingApi = {
   createOrder: (order, idempotencyKey) => request("../api/orders", { method: "POST", headers: { "Idempotency-Key": idempotencyKey }, body: JSON.stringify(order) }),
   getOrder: (id, trackingToken = "") => request(`../api/orders/${encodeURIComponent(id)}${trackingToken ? `?token=${encodeURIComponent(trackingToken)}` : ""}`)
 };
+
+
+export const accountApi = {
+  session: () => request("../api/account/session"),
+  register: (input) => request("../api/account/register", { method: "POST", body: JSON.stringify(input) }),
+  login: (input) => request("../api/account/login", { method: "POST", body: JSON.stringify(input) }),
+  logout: (csrfToken) => request("../api/account/logout", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: "{}" }),
+  dashboard: () => request("../api/account/dashboard")
+};
