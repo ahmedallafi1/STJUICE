@@ -29,7 +29,7 @@ export const modes = {
     icon: "heart",
     announcement: "Your favorites, rewards preview and faster reorder—in one mood.",
     line: "Save favorites, collect rewards and reorder faster.",
-    detail: "Prototype favorites and rewards remain on this device until production accounts are connected."
+    detail: "Sign in to save favorites, mixes and member activity to your account."
   },
   student: {
     label: "Student",
@@ -53,7 +53,7 @@ export const modes = {
 
 export const serviceModes = {
   pickup: { label: "Pickup", icon: "pickup", detail: "Pick up on Vandeventer" },
-  delivery: { label: "Delivery", icon: "delivery", detail: "Address check runs in safe test mode" },
+  delivery: { label: "Delivery", icon: "delivery", detail: "Delivery availability is confirmed during checkout" },
   dine_in: { label: "Dine in", icon: "dine", detail: "Enjoy it at the shop" }
 };
 
@@ -118,7 +118,7 @@ function renderHome({ data, state }) {
     <section class="hero">
       <picture>
         <source media="(max-width: 760px)" srcset="../media/optimized/webp/hero/st-juice-hero-960.webp" />
-        <img class="hero__image" src="../media/optimized/webp/hero/st-juice-hero-1600.webp" alt="Concept tableau of ST. JUICE drinks and desserts" width="1599" height="900" fetchpriority="high" />
+        <img class="hero__image" src="../media/optimized/webp/hero/st-juice-hero-1600.webp" alt="ST. JUICE drinks and desserts" width="1599" height="900" fetchpriority="high" />
       </picture>
       <span class="media-status" style="top:1rem;left:auto;right:1rem">Concept visual</span>
       <div class="hero__veil" aria-hidden="true"></div>
