@@ -20,6 +20,5 @@ export const orderingApi = {
   validateCart: (cart) => request("../api/cart/validate", { method: "POST", body: JSON.stringify(cart) }),
   createPaymentIntent: (quoteId) => request("../api/payment/intents", { method: "POST", body: JSON.stringify({ quoteId }) }),
   createOrder: (order, idempotencyKey) => request("../api/orders", { method: "POST", headers: { "Idempotency-Key": idempotencyKey }, body: JSON.stringify(order) }),
-  getOrder: (id) => request(`../api/orders/${encodeURIComponent(id)}`),
-  advanceOrder: (id) => request(`../api/orders/${encodeURIComponent(id)}/advance`, { method: "POST", body: "{}" })
+  getOrder: (id, trackingToken = "") => request(`../api/orders/${encodeURIComponent(id)}${trackingToken ? `?token=${encodeURIComponent(trackingToken)}` : ""}`)
 };
