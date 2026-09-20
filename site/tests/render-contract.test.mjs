@@ -71,7 +71,7 @@ assert.ok(officeProduct.includes("data-product-reference"), "Repeatable group fo
 for (const mode of ["guest", "regular", "student", "business"]) {
   state.mode = mode;
   const accountHtml = renderAccountDialog(state);
-  assert.ok(accountHtml.includes("Current mode"), `${mode} selector must expose current state`);
+  assert.ok(accountHtml.includes("Current experience"), `${mode} selector must expose current state`);
 }
 
 assert.ok(renderServiceDialog(state).includes("Pickup"), "Service dialog must include pickup");
