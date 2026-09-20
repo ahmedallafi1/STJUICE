@@ -29,5 +29,7 @@ export const accountApi = {
   register: (input) => request("../api/account/register", { method: "POST", body: JSON.stringify(input) }),
   login: (input) => request("../api/account/login", { method: "POST", body: JSON.stringify(input) }),
   logout: (csrfToken) => request("../api/account/logout", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: "{}" }),
-  dashboard: () => request("../api/account/dashboard")
+  dashboard: () => request("../api/account/dashboard"),
+  setFavorite: (productId, active, csrfToken) => request("../api/account/favorites", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify({ productId, active }) }),
+  saveMix: (mix, csrfToken) => request("../api/account/mixes", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(mix) })
 };
