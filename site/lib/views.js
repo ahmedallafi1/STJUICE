@@ -107,10 +107,10 @@ function renderHome({ data, state }) {
     .slice(0, 3);
 
   const modeFeature = {
-    guest: { eyebrow: "ONE MENU · NO WALLS", title: "Start where the craving is.", body: "Browse as a guest, choose pickup or delivery and build the order before deciding whether an account is useful." },
-    regular: { eyebrow: "REGULAR MODE", title: "Your usual, without the usual wait.", body: "Favorites, saved mixes and reorder tools are available for review and activate fully with production accounts." },
-    student: { eyebrow: "STUDENT MODE", title: "Study fuel meets the sweet break.", body: "Student-value merchandising and Study Night Boxes move forward without copying or implying affiliation with any university." },
-    business: { eyebrow: "BUSINESS MODE", title: "The whole room has a mood.", body: "Move from office boxes to catered dessert tables with clear lead times and a quote-first workflow." }
+    guest: { eyebrow: "YOUR FIRST POUR", title: "Start with the craving.", body: "Explore the full menu, build your mood and check out as a guest whenever online ordering opens." },
+    regular: { eyebrow: "YOUR ST. JUICE", title: "Your favorites, one tap away.", body: "Keep favorites, saved mixes and recent orders together under your account." },
+    student: { eyebrow: "STUDENT EXPERIENCE", title: "Study fuel. Sweet breaks. Your lane.", body: "A focused blue-and-white experience built around value, group study moments and easy repeat ordering." },
+    business: { eyebrow: "BUSINESS EXPERIENCE", title: "Bring the whole room into it.", body: "Move from office drops to catering requests with a darker, polished workspace built for groups." }
   }[state.mode];
 
   return `
@@ -120,7 +120,6 @@ function renderHome({ data, state }) {
         <source media="(max-width: 760px)" srcset="../media/optimized/webp/hero/st-juice-hero-960.webp" />
         <img class="hero__image" src="../media/optimized/webp/hero/st-juice-hero-1600.webp" alt="ST. JUICE drinks and desserts" width="1599" height="900" fetchpriority="high" />
       </picture>
-      <span class="media-status" style="top:1rem;left:auto;right:1rem">Concept visual</span>
       <div class="hero__veil" aria-hidden="true"></div>
       <div class="hero__content">
         <div class="hero__copy">
@@ -133,8 +132,8 @@ function renderHome({ data, state }) {
           </div>
           <div class="hero__meta">
             <span>Open from 6:30 AM</span>
-            <span>Pickup · Delivery · Dine-in</span>
-            <span>Friday + Saturday until 11 PM</span>
+            <span>Dine-in · Pickup · Delivery</span>
+            <span>11 S Vandeventer Ave</span>
           </div>
         </div>
       </div>
@@ -154,33 +153,27 @@ function renderHome({ data, state }) {
     <section class="section section--cream">
       <div class="container">
         <div class="section-heading">
-          <div>
-            <p class="eyebrow">THIS WEEK AT ST. JUICE</p>
-            <h2>${escapeHtml(copy.drops.title)}</h2>
-            <p class="lede">${escapeHtml(copy.drops.intro)}</p>
-          </div>
-          <a class="text-link" href="#/drops">See both drops ${icon("arrow")}</a>
+          <div><p class="eyebrow">NEW AT ST. JUICE</p><h2>Try what just dropped.</h2><p class="lede">Limited releases and new combinations live here first.</p></div>
+          <a class="text-link" href="#/drops">Explore New Drops ${icon("arrow")}</a>
         </div>
         <div class="feature-grid">
           ${drops.map((product) => `
             <article class="feature-card">
-              ${mediaBadge()}
-              <img src="${productImage(product)}" alt="Concept visual for ${escapeHtml(product.name)}" loading="lazy" width="720" height="900" />
+              <img src="${productImage(product)}" alt="${escapeHtml(product.name)}" loading="lazy" width="720" height="900" />
               <div class="feature-card__content">
-                <p class="eyebrow">ACTIVE DROP</p>
+                <p class="eyebrow">NEW DROP</p>
                 <h3>${escapeHtml(product.name)}</h3>
                 <p>${escapeHtml(product.description)}</p>
-                <a class="button button--light button--small" href="#/product/${escapeHtml(product.id)}">Order the drop</a>
+                <a class="button button--light button--small" href="#/product/${escapeHtml(product.id)}">View drop</a>
               </div>
             </article>`).join("")}
           <article class="feature-card">
-            ${mediaBadge("Packaging concept")}
-            <img src="../media/optimized/webp/packaging/birthday-box-concept-v1.webp" alt="Concept Birthday Box presentation" loading="lazy" width="720" height="900" />
+            <img src="../media/optimized/webp/packaging/birthday-box-concept-v1.webp" alt="ST. JUICE Birthday Box" loading="lazy" width="720" height="900" />
             <div class="feature-card__content">
-              <p class="eyebrow">GROUP MOOD</p>
-              <h3>Build the table.</h3>
-              <p>Study night, birthdays and the whole office—one format, a lot of ways to finish it.</p>
-              <a class="button button--light button--small" href="#/boxes">Explore boxes</a>
+              <p class="eyebrow">FOR THE GROUP</p>
+              <h3>Bring the whole table.</h3>
+              <p>Study nights, birthdays and office runs get a format of their own.</p>
+              <a class="button button--light button--small" href="#/boxes">Explore Party Boxes</a>
             </div>
           </article>
         </div>
@@ -190,8 +183,8 @@ function renderHome({ data, state }) {
     <section class="section section--surface">
       <div class="container">
         <div class="section-heading">
-          <div><p class="eyebrow">SHOP BY TYPE</p><h2>Find the lane. Then make it yours.</h2></div>
-          <a class="text-link" href="#/menu">View the full menu ${icon("arrow")}</a>
+          <div><p class="eyebrow">SHOP THE MENU</p><h2>Juice, dessert and everything between.</h2><p class="lede">Start by category or search the full menu when you already know the mood.</p></div>
+          <a class="button button--outline" href="#/menu">See full menu</a>
         </div>
         <div class="category-grid">${categoryCards(data)}</div>
       </div>
@@ -200,12 +193,8 @@ function renderHome({ data, state }) {
     <section class="section section--cream">
       <div class="container">
         <div class="section-heading">
-          <div>
-            <p class="eyebrow">SIGNATURES FIRST</p>
-            <h2>${escapeHtml(copy.home.signatures.headline)}</h2>
-            <p class="lede">${escapeHtml(copy.home.signatures.body)}</p>
-          </div>
-          <a class="button button--outline" href="#/menu?category=signatures">${escapeHtml(copy.home.signatures.cta)}</a>
+          <div><p class="eyebrow">ST. JUICE SIGNATURES</p><h2>${escapeHtml(copy.home.signatures.headline)}</h2><p class="lede">${escapeHtml(copy.home.signatures.body)}</p></div>
+          <a class="text-link" href="#/menu?category=signatures">Shop signatures ${icon("arrow")}</a>
         </div>
         <div class="product-grid">${featured.map((product, index) => buildProductCard(product, data, { eager: index < 2 })).join("")}</div>
       </div>
@@ -220,8 +209,7 @@ function renderHome({ data, state }) {
           <div class="button-row"><a class="button" href="#/build">${escapeHtml(copy.home.builder.cta)}</a></div>
         </div>
         <div class="split-feature__media">
-          <span class="media-status">Original motion prototype</span>
-          <img src="../media/motion/st-juice-hero-loop.svg" alt="Abstract pistachio motion illustration" loading="lazy" width="1600" height="900" />
+          <img src="../media/motion/st-juice-hero-loop.svg" alt="ST. JUICE Build Your Mood artwork" loading="lazy" width="1600" height="900" />
         </div>
       </div>
     </section>
@@ -230,16 +218,15 @@ function renderHome({ data, state }) {
       <div class="container">
         <div class="section-heading">
           <div><p class="eyebrow">${escapeHtml(modeFeature.eyebrow)}</p><h2>${escapeHtml(modeFeature.title)}</h2><p class="lede">${escapeHtml(modeFeature.body)}</p></div>
-          <button class="button" type="button" data-action="open-account">Choose your experience</button>
+          <button class="button" type="button" data-action="open-account">${state.account?.signedIn ? "Manage experience" : "Create your account"}</button>
         </div>
         <div class="account-showcase">
-          ${mediaBadge()}
-          <img src="../media/optimized/webp/account-modes/account-modes-concept-v1.webp" alt="Concept scenes for regular, student and business experiences" loading="lazy" width="1400" height="700" />
+          <img src="../media/optimized/webp/account-modes/account-modes-concept-v1.webp" alt="Regular, Student and Business ST. JUICE experiences" loading="lazy" width="1400" height="700" />
           <div class="account-showcase__overlay">
             <div class="account-showcase__copy">
-              <p class="eyebrow">ONE CATALOG · THREE DIRECTIONS</p>
-              <h2>Same ST. JUICE. Your shortcuts.</h2>
-              <p>Theme, offers and merchandising can change. Product facts, allergens, fees and availability never change silently.</p>
+              <p class="eyebrow">ONE MENU · YOUR EXPERIENCE</p>
+              <h2>Guest, Regular, Student or Business.</h2>
+              <p>Guest stays simple. Member experiences unlock account-based shortcuts and, as they launch, account-specific benefits.</p>
             </div>
           </div>
         </div>
@@ -249,8 +236,8 @@ function renderHome({ data, state }) {
     <section class="section section--cream">
       <div class="container">
         <div class="section-heading">
-          <div><p class="eyebrow">BOXED FOR THE MOMENT</p><h2>${escapeHtml(copy.boxes.title)}</h2><p class="lede">${escapeHtml(copy.boxes.intro)}</p></div>
-          <a class="button button--outline" href="#/boxes">${escapeHtml(copy.boxes.cta)}</a>
+          <div><p class="eyebrow">PARTY BOXES</p><h2>${escapeHtml(copy.boxes.title)}</h2><p class="lede">${escapeHtml(copy.boxes.intro)}</p></div>
+          <a class="button button--outline" href="#/boxes">Explore boxes</a>
         </div>
         <div class="product-grid">${boxes.map((product) => buildProductCard(product, data)).join("")}</div>
       </div>
@@ -258,26 +245,11 @@ function renderHome({ data, state }) {
 
     <section class="section section--dark">
       <div class="container">
-        <div class="section-heading"><div><p class="eyebrow">WHY ST. JUICE</p><h2>Bright when you need it. Extra when you want it.</h2></div></div>
+        <div class="section-heading"><div><p class="eyebrow">WHY ST. JUICE</p><h2>Fresh early. Sweet late. Built for the whole day.</h2></div></div>
         <div class="principle-grid">
           <article class="principle-card"><span class="principle-card__number">01</span><h3>Fresh starts early.</h3><p>Juices, smoothies, protein-ready blends and bowls begin at 6:30 AM.</p></article>
-          <article class="principle-card"><span class="principle-card__number">02</span><h3>Dessert owns the night.</h3><p>Crepes, chocolate, mini pancakes, pistachio and limited drops carry the late shift.</p></article>
-          <article class="principle-card"><span class="principle-card__number">03</span><h3>The whole table counts.</h3><p>Personal builds, date-night formats, student boxes and catering all share one system.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section--surface">
-      <div class="container split-feature">
-        <div class="split-feature__media">
-          ${mediaBadge("Storyboard concept")}
-          <img src="../media/optimized/webp/motion/hero-loop-storyboard-concept-v1.webp" alt="Six-frame concept storyboard for ST. JUICE motion" loading="lazy" width="1200" height="800" />
-        </div>
-        <div class="split-feature__copy">
-          <p class="eyebrow">FRESH BY DAY · SWEET AFTER DARK</p>
-          <h2>Made to move, never to slow the order.</h2>
-          <p class="lede">The visual direction starts with pours, drizzles, finishing and unboxing. Every important video keeps a still fallback.</p>
-          <a class="text-link" href="#/states">Preview interface states ${icon("arrow")}</a>
+          <article class="principle-card"><span class="principle-card__number">02</span><h3>Dessert owns the night.</h3><p>Crepes, chocolate, mini pancakes, pistachio and new drops carry the late shift.</p></article>
+          <article class="principle-card"><span class="principle-card__number">03</span><h3>Groups have their own lane.</h3><p>Party Boxes and catering make the bigger order feel just as intentional as the single cup.</p></article>
         </div>
       </div>
     </section>
@@ -285,18 +257,18 @@ function renderHome({ data, state }) {
     <section class="section section--soft">
       <div class="container location-layout">
         <div class="location-card">
-          <p class="eyebrow">FIRST HOME</p>
+          <p class="eyebrow">VANDEVENTER</p>
           <h2>${escapeHtml(copy.home.location.headline)}</h2>
           <div class="location-card__facts">
             <div class="location-fact"><span class="location-fact__icon">${icon("pin")}</span><div><strong>${escapeHtml(copy.home.location.address)}</strong><span>St. Louis, Missouri</span></div></div>
-            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(copy.home.location.hours)}</strong><span>One branch at launch</span></div></div>
-            <div class="location-fact"><span class="location-fact__icon">${icon("pickup")}</span><div><strong>Dine-in · Pickup · Delivery</strong><span>No dedicated private parking is advertised.</span></div></div>
+            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(copy.home.location.hours)}</strong><span>Open daily</span></div></div>
+            <div class="location-fact"><span class="location-fact__icon">${icon("pickup")}</span><div><strong>Dine-in · Pickup · Delivery</strong><span>Choose the handoff that fits the day.</span></div></div>
           </div>
-          <a class="button" href="#/location">View location details</a>
+          <a class="button" href="#/location">Location & hours</a>
         </div>
-        <div class="map-card" aria-label="Stylized location placeholder">
+        <div class="map-card" aria-label="ST. JUICE location">
           <div class="map-pin"><img src="../brand/assets/logos/st-juice-fruit-mark.svg" alt="" /></div>
-          <div class="map-card__label"><strong>11 S Vandeventer Ave</strong><br /><span>Map service connects at launch.</span></div>
+          <div class="map-card__label"><strong>11 S Vandeventer Ave</strong><br /><span>St. Louis, Missouri</span></div>
         </div>
       </div>
     </section>`;
@@ -465,6 +437,10 @@ function renderProduct(productId, { data, state }) {
   const category = data.categoryById.get(product.categoryId);
   const pairings = (product.pairingIds || []).map((id) => data.productById.get(id)).filter(Boolean).slice(0, 4);
   const alternatives = (product.alternativeIds || []).map((id) => data.productById.get(id)).filter(Boolean).slice(0, 4);
+  const channels = (product.availability?.channels || []).map(titleCase);
+  const prep = product.prepTimeMinutes?.min && product.prepTimeMinutes?.max
+    ? `${product.prepTimeMinutes.min}–${product.prepTimeMinutes.max} min`
+    : "Made to order";
 
   return `
     <section class="product-page">
@@ -473,20 +449,20 @@ function renderProduct(productId, { data, state }) {
         <div class="product-detail">
           <div class="product-detail__media">
             <div class="product-detail__image">
-              ${mediaBadge()}
-              <img src="${productImage(product)}" alt="Concept visual for ${escapeHtml(product.name)}" width="720" height="900" fetchpriority="high" />
+              <img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="900" fetchpriority="high" />
             </div>
-            <div class="product-detail__thumbs">
-              <div class="product-detail__thumb"><strong>Concept packshot</strong><br />Replace with real front image.</div>
-              <div class="product-detail__thumb"><strong>Macro pending</strong><br />Real texture capture required.</div>
-              <div class="product-detail__thumb"><strong>Scale pending</strong><br />Real vessel and hand view.</div>
+            <div class="product-detail__facts">
+              <span>${escapeHtml(prep)}</span>
+              ${channels.map((channel) => `<span>${escapeHtml(channel)}</span>`).join("")}
+              ${product.catalogRole === "group_format" ? "<span>Group format</span>" : "<span>Made to order</span>"}
             </div>
           </div>
+
           <div class="product-detail__copy">
-            <p class="eyebrow">${escapeHtml(category?.name || "ST. JUICE")} · ${product.catalogRole === "group_format" ? "GROUP FORMAT" : "MADE TO ORDER"}</p>
+            <p class="eyebrow">${escapeHtml(category?.name || "ST. JUICE")}</p>
             <h1>${escapeHtml(product.name)}</h1>
             <p class="product-detail__description">${escapeHtml(product.description)}</p>
-            <div class="product-detail__price">${money(total)} <span class="working-badge">Working price</span></div>
+            <div class="product-detail__price">${money(total)}</div>
 
             <fieldset class="choice-group">
               <legend>Choose your size <span class="choice-group__hint">Required</span></legend>
@@ -504,27 +480,21 @@ function renderProduct(productId, { data, state }) {
 
             <label class="form-field"><span class="form-field__label">Special instructions</span><textarea class="field" data-product-instructions="${escapeHtml(product.id)}" maxlength="180" placeholder="Keep requests short. Ingredient substitutions are not guaranteed.">${escapeHtml(draft.instructions)}</textarea></label>
 
-            <div class="info-panel" style="margin-top:1.5rem">
-              <h3>What's inside</h3>
-              <p>${escapeHtml((product.draftIngredients || []).join(" · ") || "Recipe detail pending operational verification.")}</p>
-            </div>
-            <div class="info-panel">
-              <h3>Allergen information</h3>
-              <p>${escapeHtml(data.copy.product.allergenNote)}</p>
-              <div class="allergen-row">${(product.containsAllergens || []).length ? product.containsAllergens.map((item) => `<span class="allergen-pill">Contains ${escapeHtml(titleCase(item))}</span>`).join("") : `<span class="chip">No fixed allergen listed · cross-contact possible</span>`}</div>
-            </div>
-            <div class="info-panel">
-              <h3>Nutrition status</h3>
-              <p>${escapeHtml(data.copy.product.nutritionUnverified)}</p>
-            </div>
-            <div class="info-panel">
-              <h3>Service and preparation</h3>
-              <p>${escapeHtml((product.availability?.channels || []).map(titleCase).join(" · "))} · Working prep estimate ${product.prepTimeMinutes?.min || "—"}–${product.prepTimeMinutes?.max || "—"} minutes · delivery suitability ${escapeHtml(product.availability?.deliverySuitability || "pending")}.</p>
+            <div class="product-info-grid">
+              <div class="info-panel">
+                <h3>What's inside</h3>
+                <p>${escapeHtml((product.draftIngredients || []).join(" · ") || "Ask the team for the current recipe details.")}</p>
+              </div>
+              <div class="info-panel">
+                <h3>Allergen information</h3>
+                <p>${escapeHtml(data.copy.product.allergenNote)}</p>
+                <div class="allergen-row">${(product.containsAllergens || []).length ? product.containsAllergens.map((item) => `<span class="allergen-pill">Contains ${escapeHtml(titleCase(item))}</span>`).join("") : `<span class="chip">Cross-contact may still occur</span>`}</div>
+              </div>
             </div>
 
             <div class="product-order-bar">
-              <div class="product-order-bar__total"><small>Live total</small><strong>${money(total)}</strong></div>
-              <button class="button button--outline" type="button" data-action="toggle-favorite" data-product-id="${escapeHtml(product.id)}">${state.account.favorites.includes(product.id) ? "Saved favorite" : "Save favorite"}</button>
+              <div class="product-order-bar__total"><small>Your item</small><strong>${money(total)}</strong></div>
+              <button class="button button--outline" type="button" data-action="toggle-favorite" data-product-id="${escapeHtml(product.id)}">${state.account.favorites.includes(product.id) ? "Saved" : "Save"}</button>
               <button class="button" type="button" data-action="add-product" data-product-id="${escapeHtml(product.id)}">${escapeHtml(data.copy.product.primaryCta)}</button>
             </div>
           </div>
@@ -534,7 +504,7 @@ function renderProduct(productId, { data, state }) {
     ${(pairings.length || alternatives.length) ? `
       <section class="section section--surface">
         <div class="container">
-          <div class="section-heading"><div><p class="eyebrow">GOES WELL WITH</p><h2>Keep the mood going.</h2></div></div>
+          <div class="section-heading"><div><p class="eyebrow">PAIR IT UP</p><h2>Keep the mood going.</h2></div></div>
           <div class="product-grid">${[...pairings, ...alternatives].slice(0, 4).map((item) => buildProductCard(item, data)).join("")}</div>
         </div>
       </section>` : ""}`;
@@ -818,32 +788,45 @@ function renderCatering({ data, state }) {
 }
 
 function renderGiftCards() {
-  const amounts = [25, 50, 100];
   return `
-    ${pageHero("GIFT CARDS", "Send a fresh mood.", "Digital and physical gift cards are designed into the launch system and activate with the approved payment provider and terms.")}
-    <section class="section section--cream"><div class="container"><div class="section-heading"><div><p class="eyebrow">CHOOSE A VALUE</p><h2>Ready for birthdays, thank-yous and cravings.</h2></div><p>Values and artwork are review-ready. No card is sold or balance created in safe-test mode.</p></div><div class="box-grid">${amounts.map((amount) => `<article class="box-card"><div><p class="eyebrow">ST. JUICE GIFT</p><h3>$${amount}</h3><p>For drinks, desserts and custom moods after live gift-card activation.</p></div><button class="button button--outline" type="button" disabled aria-disabled="true">Available after activation</button></article>`).join("")}</div></div></section>
-    <section class="section section--surface"><div class="container split-feature"><div class="split-feature__copy"><p class="eyebrow">BUSINESS GIFTING</p><h2>Built for teams and client moments.</h2><p class="lede">Bulk purchasing, recipient delivery, expiration, refunds, lost-card handling and balance rules remain blocked until the owner and payment provider approve them.</p><a class="button" href="#/catering">Review business ordering</a></div><div class="info-panel"><h3>Activation requirements</h3><p>Approved gift-card terms, provider ledger, fraud controls, receipt delivery, balance lookup and accounting treatment.</p></div></div></section>`;
-}
-
-function renderRewards({ data, state }) {
-  state.account ||= { signedIn: false, favorites: [], savedMixes: [], orderHistory: [], points: 0, profile: {}, student: {}, business: {} };
-  const account = accountView(state.account);
-  if (account.signedIn) return `${pageHero("ST. REWARDS · WORKING PROGRAM", `You have ${account.points} points.`, `${rewardsConfig.redemption}. Final earning and redemption rules require owner approval.`)}<section class="section section--cream"><div class="container account-grid"><article class="account-panel account-panel--accent"><p class="eyebrow">AVAILABLE WORKING VALUE</p><h2>$${account.rewardDollars}</h2><p>${account.pointsToNext} points until your next working reward dollar.</p><div class="reward-meter"><span style="width:${account.points % 100}%"></span></div></article><article class="account-panel"><h2>How the prototype works</h2><ul class="feature-list"><li>10 working points per dollar</li><li>Favorites and saved mixes on this device</li><li>Order history from safe-test orders</li><li>Birthday reward pending approval</li></ul><p class="legal-note">No cash value. No live loyalty liability is created in this stage.</p></article></div></section>`;
-  const tiers = [
-    { name: "Fresh", cue: "Start earning", body: "A clean entry point for eligible purchases and birthday details." },
-    { name: "Gold", cue: "Keep the streak", body: "Preview challenges, add-on offers and saved favorites." },
-    { name: "Saint", cue: "Get there early", body: "Early-access eligibility and drop bonuses when configured." },
-    { name: "Icon", cue: "Top mood", body: "A future high-engagement tier; exact liability and benefits remain unapproved." }
-  ];
-  return `
-    ${pageHero("REWARDS · FAVORITES · REORDER", data.copy.rewards.title, data.copy.rewards.intro, `<button class="button" type="button" data-action="open-account">${escapeHtml(data.copy.rewards.cta)}</button>`)}
+    ${pageHero("GIFT CARDS", "A little ST. JUICE, on them.", "Digital and physical gift cards are part of the upcoming ST. JUICE account experience.")}
     <section class="section section--cream">
       <div class="container">
-        <div class="reward-grid">${tiers.map((tier, index) => `<article class="reward-card"><span class="principle-card__number">0${index + 1}</span><p class="eyebrow">${escapeHtml(tier.cue)}</p><h3>${escapeHtml(tier.name)}</h3><p>${escapeHtml(tier.body)}</p></article>`).join("")}</div>
-        <div class="info-panel" style="margin-top:1.5rem"><h3>Rules are not invented</h3><p>${escapeHtml(data.copy.rewards.disclaimer)} Points-per-dollar, redemption value, expiration, birthday value and referral terms will not be published until approved.</p></div>
+        <div class="coming-soon-card">
+          <p class="eyebrow">COMING SOON</p>
+          <h2>Birthdays, thank-yous and random sweet moves.</h2>
+          <p class="lede">Gift cards will launch with secure balance tracking, receipts and clear terms. Until then, no gift-card balance is created or sold online.</p>
+          <a class="button" href="#/menu">Explore the menu</a>
+        </div>
       </div>
-    </section>
-    <section class="section section--surface"><div class="container split-feature"><div class="split-feature__copy"><p class="eyebrow">CURRENT EXPERIENCE</p><h2>${escapeHtml(modes[state.mode].label)} mode is on.</h2><p class="lede">${escapeHtml(modes[state.mode].line)} Switch modes to see how the palette, messages and shortcuts adapt without duplicating the catalog.</p><button class="button" type="button" data-action="open-account">Change experience</button></div><div class="split-feature__media">${mediaBadge()}<img src="../media/optimized/webp/account-modes/account-modes-concept-v1.webp" alt="Concept account mode scenes" width="1400" height="700" /></div></div></section>`;
+    </section>`;
+}
+
+function renderRewards({ state }) {
+  const signedIn = Boolean(state.account?.signedIn);
+  return `
+    ${pageHero("ST. REWARDS", "The more ST. JUICE becomes your spot, the more your account should give back.", "Rewards, account offers and birthday benefits are the next system being connected to member accounts.")}
+    <section class="section section--cream">
+      <div class="container rewards-preview-grid">
+        <article class="account-panel account-panel--accent">
+          <p class="eyebrow">${signedIn ? "YOUR ACCOUNT" : "MEMBER BENEFITS"}</p>
+          <h2>${signedIn ? "You're ready for rewards." : "Create an account once. Keep the benefits together."}</h2>
+          <p>${signedIn ? "Your signed-in account is already the home for favorites and saved mixes. Points and redeemable rewards will appear here when the loyalty ledger launches." : "Regular, Student and Business members will use the same account for rewards, offers, birthday benefits and saved activity."}</p>
+          <a class="button" href="#/account">${signedIn ? "Open account" : "Create account"}</a>
+        </article>
+        <article class="account-panel">
+          <p class="eyebrow">WHAT'S COMING</p>
+          <h2>Earn. Unlock. Use it when you want.</h2>
+          <ul class="feature-list">
+            <li>Points tied to eligible purchases</li>
+            <li>Rewards that can be redeemed from your account</li>
+            <li>Birthday benefits</li>
+            <li>Account-type offers for verified members</li>
+          </ul>
+          <p class="legal-note">Exact earning rates, redemption values and eligibility rules will be published with the rewards launch.</p>
+        </article>
+      </div>
+    </section>`;
 }
 
 function renderLocation({ data, state }) {
@@ -863,7 +846,7 @@ function renderLocation({ data, state }) {
           <div class="info-panel"><h3>Contact placeholders</h3><p>Phone and customer-service email are intentionally hidden until real values are confirmed.</p></div>
           <div class="button-row" style="margin-top:1rem"><button class="button" type="button" data-action="open-service">Choose service</button><a class="button button--outline" href="#/menu">Browse menu</a></div>
         </div>
-        <div class="map-card"><div class="map-pin"><img src="../brand/assets/logos/st-juice-fruit-mark.svg" alt="" /></div><div class="map-card__label"><strong>11 S Vandeventer Ave</strong><br /><span>Interactive map and local structured data activate with the approved public origin and map listing.</span></div></div>
+        <div class="map-card"><div class="map-pin"><img src="../brand/assets/logos/st-juice-fruit-mark.svg" alt="" /></div><div class="map-card__label"><strong>11 S Vandeventer Ave</strong><br /><span>Directions and map details will be available here.</span></div></div>
       </div>
     </section>`;
 }
@@ -871,11 +854,11 @@ function renderLocation({ data, state }) {
 function dashboardContent(mode, data) {
   if (mode === "guest") return `<div class="empty-state" style="min-height:22rem"><span class="empty-state__icon">${icon("user")}</span><h2>Keep browsing as a guest.</h2><p>Your cart and service choice work without an account. Choose an account type only when it adds value.</p><button class="button" type="button" data-action="open-account">See account options</button></div>`;
   const content = {
-    regular: { title: "Your regular dashboard", metrics: [["—", "Prototype points"], ["0", "Saved favorites"], ["0", "Saved mixes"]], note: "Orders, favorites, rewards and saved addresses share one account after production activation." },
+    regular: { title: "Your regular dashboard", metrics: [["—", "Rewards"], ["0", "Saved favorites"], ["0", "Saved mixes"]], note: "Orders, favorites, rewards and saved addresses share one account after production activation." },
     student: { title: "Your student dashboard", metrics: [["Pending", "Verification status"], ["—", "Eligible offers"], ["1", "Study Night Box"]], note: "Verification must be minimal, visible and free of implied university affiliation." },
     business: { title: "Your business dashboard", metrics: [["0", "Upcoming events"], ["0", "Saved locations"], ["Draft", "Quote status"]], note: "Recurring orders, business contacts, quotes and receipts appear here after integrations." }
   }[mode];
-  return `<div class="dashboard-panel"><p class="eyebrow">${escapeHtml(modes[mode].label)}</p><h2>${escapeHtml(content.title)}</h2><p class="lede">${escapeHtml(content.note)}</p><div class="metric-grid">${content.metrics.map(([value, label]) => `<div class="metric"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></div>`).join("")}</div><div class="info-panel" style="margin-top:1rem"><h3>Prototype boundary</h3><p>No identity or verification profile is stored. Checkout contact and address stay in session memory; no raw card data is collected.</p></div></div>`;
+  return `<div class="dashboard-panel"><p class="eyebrow">${escapeHtml(modes[mode].label)}</p><h2>${escapeHtml(content.title)}</h2><p class="lede">${escapeHtml(content.note)}</p><div class="metric-grid">${content.metrics.map(([value, label]) => `<div class="metric"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></div>`).join("")}</div><div class="info-panel" style="margin-top:1rem"><h3>Account privacy</h3><p>Your member experience follows the signed-in account. Sensitive payment details are never stored in the browser.</p></div></div>`;
 }
 
 function renderAccount({ data, state }) {
@@ -885,7 +868,7 @@ function renderAccount({ data, state }) {
     const favorites = account.favorites.map((id) => data.productById.get(id)).filter(Boolean);
     return `${pageHero("YOUR ST. JUICE", `Hey, ${account.profile.name || "friend"}.`, modes[state.mode].line, `<button class="button button--outline" type="button" data-action="account-signout">Sign out</button>`)}
     <section class="section section--cream"><div class="container account-dashboard">
-      <div class="account-stats"><article><span>Rewards</span><strong>${account.points}</strong><small>Points activate with the loyalty program</small></article><article><span>Favorites</span><strong>${favorites.length}</strong><small>Saved products</small></article><article><span>Saved moods</span><strong>${account.savedMixes.length}</strong><small>Custom mixes</small></article><article><span>Recent orders</span><strong>${account.orderHistory.length}</strong><small>Linked to your account as ordering is activated</small></article></div>
+      <div class="account-stats"><article><span>Rewards</span><strong>${account.points}</strong><small>Rewards will appear here when the loyalty program launches</small></article><article><span>Favorites</span><strong>${favorites.length}</strong><small>Saved products</small></article><article><span>Saved moods</span><strong>${account.savedMixes.length}</strong><small>Custom mixes</small></article><article><span>Recent orders</span><strong>${account.orderHistory.length}</strong><small>Linked to your account as ordering is activated</small></article></div>
       ${state.mode === "student" ? `<div class="verification-card"><p class="eyebrow">STUDENT VERIFICATION</p><h2>${account.student.status === "pending_manual_review" ? "Pending manual review" : "Not submitted"}</h2><p>No discount is activated until an approved verification provider or manual policy is connected. No university affiliation is implied.</p></div>` : ""}
       ${state.mode === "business" ? `<div class="verification-card"><p class="eyebrow">BUSINESS PROFILE</p><h2>${escapeHtml(account.business.company || "Your business")}</h2><p>${escapeHtml(account.business.recurringCadence || "No recurring cadence saved yet.")} · Quotes and bulk pricing require confirmation.</p><a class="button button--outline" href="#/catering">Plan catering</a></div>` : ""}
       <div class="account-section"><div><p class="eyebrow">FAVORITES</p><h2>Your repeat cravings</h2></div><div class="product-grid">${favorites.length ? favorites.map((product) => buildProductCard(product, data)).join("") : `<div class="empty-state"><span class="empty-state__icon">${icon("heart")}</span><h3>No favorites yet.</h3><p>Use the heart button on a product page.</p><a class="button" href="#/menu">Browse menu</a></div>`}</div></div>
@@ -1029,20 +1012,15 @@ function renderNotFound() {
 }
 
 function quoteTotals(quote) {
-  if (!quote) return `<div class="info-panel"><h3>Totals are not ready</h3><p>Use “Refresh secure totals” to validate every item against the server catalog.</p></div>`;
-  const rows = [
-    ["Subtotal", quote.totals.subtotal.amount],
-    [quote.promo?.status === "applied_test" ? `Test promo · ${quote.promo.code}` : "Discount", -quote.totals.discount.amount],
-    ["Tax · not configured", quote.totals.tax.amount],
-    ["Delivery fee · not configured", quote.totals.deliveryFee.amount],
-    ["Service fee · not configured", quote.totals.serviceFee.amount],
-    [`Tip · ${quote.totals.tip.percent}%`, quote.totals.tip.amount]
-  ];
-  return `<div class="quote-totals">${rows.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${value < 0 ? `−${money(Math.abs(value))}` : money(value)}</strong></div>`).join("")}<div class="quote-totals__grand"><span>Safe test total</span><strong>${money(quote.totals.total.amount)}</strong></div></div>`;
+  if (!quote) return `<div class="info-panel"><h3>Order total</h3><p>Your items will be recalculated before the order preview is created.</p></div>`;
+  const rows = [["Subtotal", quote.totals.subtotal.amount]];
+  if (quote.totals.discount.amount > 0) rows.push(["Discount", -quote.totals.discount.amount]);
+  if (quote.totals.tip.amount > 0) rows.push([`Tip · ${quote.totals.tip.percent}%`, quote.totals.tip.amount]);
+  return `<div class="quote-totals">${rows.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${value < 0 ? `−${money(Math.abs(value))}` : money(value)}</strong></div>`).join("")}<div class="quote-totals__grand"><span>Preview total</span><strong>${money(quote.totals.total.amount)}</strong></div><p class="quote-totals__note">Tax and any delivery/service fees will be finalized when online ordering goes live.</p></div>`;
 }
 
 function checkoutProgress(step) {
-  const labels = ["Fulfillment", "Guest details", "Review", "Test payment"];
+  const labels = ["Fulfillment", "Details", "Review", "Payment"];
   return `<ol class="checkout-progress" aria-label="Checkout progress">${labels.map((label, index) => `<li class="${index === step ? "is-current" : index < step ? "is-complete" : ""}"><span>${index < step ? "✓" : index + 1}</span><small>${escapeHtml(label)}</small></li>`).join("")}</ol>`;
 }
 
@@ -1050,26 +1028,26 @@ function checkoutFulfillment(state) {
   const checkout = state.checkout;
   return `<div class="checkout-card"><p class="eyebrow">STEP 1</p><h2>How should we make the handoff?</h2>
     <div class="service-grid checkout-services">${Object.entries(serviceModes).map(([id, service]) => `<button class="service-option ${state.service === id ? "is-active" : ""}" type="button" data-action="checkout-service" data-service="${id}"><span data-icon="${service.icon}"></span><strong>${escapeHtml(service.label)}</strong><small>${escapeHtml(service.detail)}</small></button>`).join("")}</div>
-    <div class="privacy-note"><span>${icon("clock")}</span><p><strong>Order for now.</strong> No date or time selection is needed. We begin preparing the order as soon as it is accepted.</p></div>
-    ${state.service === "delivery" ? `<div class="delivery-panel"><h3>Delivery address</h3><p>Complete addresses may continue for manual review in this test. This does not prove a real delivery radius or fee.</p><div class="form-grid"><label class="form-field form-field--full"><span>Street *</span><input class="field" autocomplete="street-address" data-address-field="street" value="${escapeHtml(checkout.address.street)}" /></label><label class="form-field"><span>City *</span><input class="field" autocomplete="address-level2" data-address-field="city" value="${escapeHtml(checkout.address.city)}" /></label><label class="form-field"><span>State *</span><input class="field" autocomplete="address-level1" maxlength="30" data-address-field="state" value="${escapeHtml(checkout.address.state)}" /></label><label class="form-field"><span>Postal code *</span><input class="field" autocomplete="postal-code" data-address-field="postalCode" value="${escapeHtml(checkout.address.postalCode)}" /></label></div><button class="button button--outline" type="button" data-action="validate-delivery">${checkout.deliveryCheck ? "Address checked · test only" : "Check address"}</button></div>` : ""}
+    <div class="privacy-note"><span>${icon("clock")}</span><p><strong>Order for now.</strong> No date or time selection is needed.</p></div>
+    ${state.service === "delivery" ? `<div class="delivery-panel"><h3>Delivery address</h3><p>Enter the full address so delivery availability can be reviewed.</p><div class="form-grid"><label class="form-field form-field--full"><span>Street *</span><input class="field" autocomplete="street-address" data-address-field="street" value="${escapeHtml(checkout.address.street)}" /></label><label class="form-field"><span>City *</span><input class="field" autocomplete="address-level2" data-address-field="city" value="${escapeHtml(checkout.address.city)}" /></label><label class="form-field"><span>State *</span><input class="field" autocomplete="address-level1" maxlength="30" data-address-field="state" value="${escapeHtml(checkout.address.state)}" /></label><label class="form-field"><span>Postal code *</span><input class="field" autocomplete="postal-code" data-address-field="postalCode" value="${escapeHtml(checkout.address.postalCode)}" /></label></div><button class="button button--outline" type="button" data-action="validate-delivery">${checkout.deliveryCheck ? "Address reviewed" : "Check address"}</button></div>` : ""}
     <div class="checkout-actions"><a class="button button--outline" href="#/menu">Keep shopping</a><button class="button" type="button" data-action="checkout-next">Continue</button></div></div>`;
 }
 
 function checkoutGuest(state) {
   const checkout = state.checkout;
-  return `<div class="checkout-card"><p class="eyebrow">STEP 2</p><h2>Guest contact details</h2><p>We use these details only to identify and communicate about this test order. No account is required.</p><div class="form-grid checkout-fields"><label class="form-field form-field--full"><span>Name *</span><input class="field" autocomplete="name" data-contact-field="name" value="${escapeHtml(checkout.contact.name)}" /></label><label class="form-field"><span>Email *</span><input class="field" type="email" autocomplete="email" data-contact-field="email" value="${escapeHtml(checkout.contact.email)}" /></label><label class="form-field"><span>Phone *</span><input class="field" type="tel" autocomplete="tel" data-contact-field="phone" value="${escapeHtml(checkout.contact.phone)}" /></label><label class="checkbox-field form-field--full"><input type="checkbox" data-contact-field="marketingConsent" ${checkout.contact.marketingConsent ? "checked" : ""} /><span>Optional: send me ST. JUICE news and offers. This is separate from order communications.</span></label></div><div class="privacy-note"><span>${icon("info")}</span><p>Contact and address fields are kept only in browser memory during this session; they are never written to localStorage.</p></div><div class="checkout-actions"><button class="button button--outline" type="button" data-action="checkout-back">Back</button><button class="button" type="button" data-action="checkout-next">Review order</button></div></div>`;
+  return `<div class="checkout-card"><p class="eyebrow">STEP 2</p><h2>Contact details</h2><p>We use these details for order communication. Guest checkout does not require an account.</p><div class="form-grid checkout-fields"><label class="form-field form-field--full"><span>Name *</span><input class="field" autocomplete="name" data-contact-field="name" value="${escapeHtml(checkout.contact.name)}" /></label><label class="form-field"><span>Email *</span><input class="field" type="email" autocomplete="email" data-contact-field="email" value="${escapeHtml(checkout.contact.email)}" /></label><label class="form-field"><span>Phone *</span><input class="field" type="tel" autocomplete="tel" data-contact-field="phone" value="${escapeHtml(checkout.contact.phone)}" /></label><label class="checkbox-field form-field--full"><input type="checkbox" data-contact-field="marketingConsent" ${checkout.contact.marketingConsent ? "checked" : ""} /><span>Optional: send me ST. JUICE news and offers.</span></label></div><div class="checkout-actions"><button class="button button--outline" type="button" data-action="checkout-back">Back</button><button class="button" type="button" data-action="checkout-next">Review order</button></div></div>`;
 }
 
 function checkoutReview(state) {
   const checkout = state.checkout;
   const quote = checkout.quote;
-  return `<div class="checkout-card"><p class="eyebrow">STEP 3</p><h2>Review authoritative totals</h2><div class="safe-test-banner"><strong>Safe test mode</strong><span>Working prices only. Tax and delivery/service fees are explicitly unconfigured and therefore $0—not silently estimated.</span></div>
-    ${quote?.items?.length ? `<div class="review-lines">${quote.items.map((item) => `<article><div><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.sizeLabel || item.baseLabel || "Custom build")} · Qty ${item.quantity}</small>${item.allergens?.length ? `<small>Contains/flags: ${escapeHtml(item.allergens.join(", "))}</small>` : ""}</div><strong>${money(item.lineTotal.amount)}</strong></article>`).join("")}</div>` : ""}
-    ${quote?.warnings?.length ? `<details class="quote-warnings"><summary>${quote.warnings.length} safe-test notice${quote.warnings.length === 1 ? "" : "s"}</summary><ul>${quote.warnings.map((warning) => `<li>${escapeHtml(warning.message)}</li>`).join("")}</ul></details>` : ""}
-    <div class="form-grid checkout-fields"><label class="form-field"><span>Promo code</span><div class="inline-control"><input class="field" data-checkout-field="promoCode" value="${escapeHtml(checkout.promoCode)}" placeholder="TEST10" /><button class="button button--outline" type="button" data-action="refresh-quote">Apply</button></div><small>TEST10 is a test-only 10% code, capped at $10.</small></label><fieldset class="form-field"><legend>Optional tip</legend><div class="tip-options">${[0, 15, 18, 20].map((value) => `<label><input type="radio" name="tip" data-tip-percent="${value}" ${checkout.tipPercent === value ? "checked" : ""} /><span>${value === 0 ? "No tip" : `${value}%`}</span></label>`).join("")}</div></fieldset></div>
+  return `<div class="checkout-card"><p class="eyebrow">STEP 3</p><h2>Review your order</h2>
+    ${quote?.items?.length ? `<div class="review-lines">${quote.items.map((item) => `<article><div><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.sizeLabel || item.baseLabel || "Custom build")} · Qty ${item.quantity}</small>${item.allergens?.length ? `<small>Allergen flags: ${escapeHtml(item.allergens.join(", "))}</small>` : ""}</div><strong>${money(item.lineTotal.amount)}</strong></article>`).join("")}</div>` : ""}
+    ${quote?.warnings?.length ? `<details class="quote-warnings"><summary>Important order notes</summary><ul>${quote.warnings.map((warning) => `<li>${escapeHtml(warning.message.replace(/safe[- ]test/ig, "ordering preview"))}</li>`).join("")}</ul></details>` : ""}
+    <fieldset class="form-field"><legend>Optional tip</legend><div class="tip-options">${[0, 15, 18, 20].map((value) => `<label><input type="radio" name="tip" data-tip-percent="${value}" ${checkout.tipPercent === value ? "checked" : ""} /><span>${value === 0 ? "No tip" : `${value}%`}</span></label>`).join("")}</div></fieldset>
     ${quoteTotals(quote)}
-    <label class="checkbox-field allergen-ack"><input type="checkbox" data-checkout-field="allergenAcknowledged" ${checkout.allergenAcknowledged ? "checked" : ""} /><span>I reviewed ingredient/allergen flags and understand the kitchen handles shared ingredients. Final recipes and cross-contact controls require owner verification before launch.</span></label>
-    <div class="checkout-actions"><button class="button button--outline" type="button" data-action="checkout-back">Back</button><button class="button" type="button" data-action="checkout-next">Continue to safe payment</button></div></div>`;
+    <label class="checkbox-field allergen-ack"><input type="checkbox" data-checkout-field="allergenAcknowledged" ${checkout.allergenAcknowledged ? "checked" : ""} /><span>I reviewed the ingredient and allergen information and understand cross-contact may occur.</span></label>
+    <div class="checkout-actions"><button class="button button--outline" type="button" data-action="checkout-back">Back</button><button class="button" type="button" data-action="checkout-next">Continue</button></div></div>`;
 }
 
 function checkoutPayment(state) {
@@ -1077,23 +1055,23 @@ function checkoutPayment(state) {
   const cashAllowed = state.service !== "delivery";
   if (!cashAllowed && checkout.paymentMethod === "cash") checkout.paymentMethod = "card";
   const cash = cashAllowed && checkout.paymentMethod === "cash";
-  return `<div class="checkout-card"><p class="eyebrow">STEP 4</p><h2>Choose payment</h2><fieldset class="form-field"><legend>Payment method</legend><div class="tip-options"><label><input type="radio" name="payment-method" value="card" data-payment-method ${!cash ? "checked" : ""} /><span>Pay online</span></label>${cashAllowed ? `<label><input type="radio" name="payment-method" value="cash" data-payment-method ${cash ? "checked" : ""} /><span>Cash at ${state.service === "pickup" ? "pickup" : "the counter"}</span></label>` : ""}</div>${state.service === "delivery" ? `<small>Delivery orders require online payment. Cash is not available for delivery.</small>` : ""}</fieldset><div class="test-payment-card"><span class="test-payment-card__mark">${cash ? "CASH" : "TEST"}</span><div><strong>${cash ? "Pay when you receive your order." : "No card fields. No live charge."}</strong><p>${cash ? `Cash payment of ${money(checkout.quote?.totals?.total?.amount || 0)} will be due at ${state.service === "pickup" ? "pickup" : "the counter"}.` : `The server creates a short-lived test token for exactly ${money(checkout.quote?.totals?.total?.amount || 0)}. A live launch must connect a PCI-compliant payment provider.`}</p></div></div>${quoteTotals(checkout.quote)}<div class="privacy-note"><span>${icon("check")}</span><p>Your order is submitted once and protected against accidental duplicate creation.</p></div><div class="checkout-actions"><button class="button button--outline" type="button" data-action="checkout-back">Back</button><button class="button" type="button" data-action="submit-test-order" ${checkout.busy ? "disabled" : ""}>${checkout.busy ? "Creating order…" : cash ? "Place cash order" : "Place order"}</button></div></div>`;
+  return `<div class="checkout-card"><p class="eyebrow">STEP 4</p><h2>Choose payment</h2><fieldset class="form-field"><legend>Payment method</legend><div class="tip-options"><label><input type="radio" name="payment-method" value="card" data-payment-method ${!cash ? "checked" : ""} /><span>Pay online</span></label>${cashAllowed ? `<label><input type="radio" name="payment-method" value="cash" data-payment-method ${cash ? "checked" : ""} /><span>Cash at ${state.service === "pickup" ? "pickup" : "the counter"}</span></label>` : ""}</div>${state.service === "delivery" ? `<small>Delivery orders require online payment. Cash is not available for delivery.</small>` : ""}</fieldset><div class="test-payment-card"><span class="test-payment-card__mark">${cash ? "CASH" : "PREVIEW"}</span><div><strong>${cash ? "Pay when you receive your order." : "Online payment is not live yet."}</strong><p>${cash ? `Cash payment of ${money(checkout.quote?.totals?.total?.amount || 0)} would be due at ${state.service === "pickup" ? "pickup" : "the counter"}.` : "No card details are collected and no live charge will occur while ordering remains in preview."}</p></div></div>${quoteTotals(checkout.quote)}<div class="checkout-actions"><button class="button button--outline" type="button" data-action="checkout-back">Back</button><button class="button" type="button" data-action="submit-test-order" ${checkout.busy ? "disabled" : ""}>${checkout.busy ? "Creating preview…" : "Create order preview"}</button></div></div>`;
 }
 
 function renderCheckout({ state }) {
   if (!state.cart.length) return `${pageHero("CHECKOUT", "Your bag needs a mood.", "Add at least one item before checkout.")}<section class="section section--cream"><div class="container"><div class="empty-state"><span class="empty-state__icon">${icon("bag")}</span><h2>Your bag is empty.</h2><a class="button" href="#/menu">Explore menu</a></div></div></section>`;
   const panels = [checkoutFulfillment, checkoutGuest, checkoutReview, checkoutPayment];
-  return `${pageHero("SECURE ORDER FLOW · SAFE TEST", "Checkout without surprises.", "Server-validated products, explicit working totals and no raw card collection.")}<section class="section section--cream checkout-section"><div class="container checkout-layout"><div>${checkoutProgress(state.checkout.step)}${state.checkout.error ? `<div class="checkout-error" role="alert"><strong>Check this step</strong><p>${escapeHtml(state.checkout.error)}</p></div>` : ""}${panels[state.checkout.step](state)}</div><aside class="checkout-aside"><p class="eyebrow">ORDER SNAPSHOT</p><h3>${state.cart.reduce((sum, item) => sum + item.quantity, 0)} item${state.cart.length === 1 ? "" : "s"}</h3><p>${escapeHtml(serviceModes[state.service].label)} · 11 S Vandeventer Ave</p>${quoteTotals(state.checkout.quote)}<p class="checkout-aside__note">Orders and payments are test-only and reset when the server restarts.</p></aside></div></section>`;
+  return `${pageHero("ORDERING PREVIEW", "Checkout without surprises.", "Build the full order flow now. Live payment and final fees will switch on with production ordering.")}<section class="section section--cream checkout-section"><div class="container checkout-layout"><div><div class="launch-notice"><strong>Ordering preview</strong><span>No live card charge will occur yet.</span></div>${checkoutProgress(state.checkout.step)}${state.checkout.error ? `<div class="checkout-error" role="alert"><strong>Check this step</strong><p>${escapeHtml(state.checkout.error)}</p></div>` : ""}${panels[state.checkout.step](state)}</div><aside class="checkout-aside"><p class="eyebrow">YOUR BAG</p><h3>${state.cart.reduce((sum, item) => sum + item.quantity, 0)} item${state.cart.reduce((sum, item) => sum + item.quantity, 0) === 1 ? "" : "s"}</h3><p>${escapeHtml(serviceModes[state.service].label)} · 11 S Vandeventer Ave</p>${quoteTotals(state.checkout.quote)}<p class="checkout-aside__note">Final taxes, fees and live payment activate with production ordering.</p></aside></div></section>`;
 }
 
 const statusLabels = { received: "Received", confirmed: "Confirmed", in_preparation: "In preparation", ready_for_pickup: "Ready for pickup", out_for_delivery: "Out for delivery", complete: "Complete", canceled: "Canceled" };
 
 function renderOrder(orderId, { state }) {
   const order = state.order;
-  if (state.orderLoading || !order || order.id !== orderId) return `${pageHero("ORDER STATUS", "Loading your test order…", "Checking the in-memory order service.")}<section class="section section--cream"><div class="container"><div class="skeleton skeleton--line"></div></div></section>`;
+  if (state.orderLoading || !order || order.id !== orderId) return `${pageHero("ORDER STATUS", "Loading your order preview…", "Checking the latest status.")}<section class="section section--cream"><div class="container"><div class="skeleton skeleton--line"></div></div></section>`;
   const flow = order.service === "delivery" ? ["received", "confirmed", "in_preparation", "out_for_delivery", "complete"] : ["received", "confirmed", "in_preparation", "ready_for_pickup", "complete"];
   const current = flow.indexOf(order.status);
-  return `${pageHero("TEST ORDER CONFIRMED", `Thanks, ${order.customer.name}.`, `${order.orderNumber} is ${statusLabels[order.status].toLowerCase()}.`)}<section class="section section--cream"><div class="container order-confirmation"><div class="order-card"><div class="safe-test-banner"><strong>Safe test receipt</strong><span>No live charge or POS transaction occurred.</span></div><div class="order-meta"><div><span>Order</span><strong>${escapeHtml(order.orderNumber)}</strong></div><div><span>Service</span><strong>${escapeHtml(serviceModes[order.service].label)}</strong></div><div><span>Scheduled</span><strong>${escapeHtml(String(order.schedule).replace("T", " · ").slice(0, 18))}</strong></div><div><span>Total</span><strong>${money(order.totals.total.amount)}</strong></div></div><ol class="status-tracker">${flow.map((status, index) => `<li class="${index <= current ? "is-complete" : ""} ${index === current ? "is-current" : ""}"><span>${index < current ? "✓" : index + 1}</span><div><strong>${statusLabels[status]}</strong>${index === current ? `<small>Current test status</small>` : ""}</div></li>`).join("")}</ol><div class="order-lines">${order.items.map((item) => `<div><span>${item.quantity} × ${escapeHtml(item.name)}</span><strong>${money(item.lineTotal.amount)}</strong></div>`).join("")}</div>${quoteTotals({ totals: order.totals })}<div class="checkout-actions"><button class="button button--outline" type="button" data-action="refresh-order" data-order-id="${escapeHtml(order.id)}">Refresh status</button></div></div><aside class="checkout-aside"><p class="eyebrow">TEST POS</p><h3>${escapeHtml(order.pos.reference)}</h3><p>Adapter: ${escapeHtml(order.pos.adapter)}</p><p>Status: ${escapeHtml(order.pos.status)}</p><hr /><p>Confirmation contact: ${escapeHtml(order.customer.email)} · ${escapeHtml(order.customer.phone)}</p><p class="checkout-aside__note">Only masked contact data is returned by the public order API.</p><a class="button button--outline" href="#/menu">Start another order</a></aside></div></section>`;
+  return `${pageHero("ORDER PREVIEW", `Thanks, ${order.customer.name}.`, `${order.orderNumber} is ${statusLabels[order.status].toLowerCase()}.`)}<section class="section section--cream"><div class="container order-confirmation"><div class="order-card"><div class="launch-notice"><strong>Preview receipt</strong><span>No live card charge occurred.</span></div><div class="order-meta"><div><span>Order</span><strong>${escapeHtml(order.orderNumber)}</strong></div><div><span>Service</span><strong>${escapeHtml(serviceModes[order.service].label)}</strong></div><div><span>When</span><strong>${order.schedule === "asap" ? "Now" : escapeHtml(String(order.schedule).replace("T", " · ").slice(0, 18))}</strong></div><div><span>Total</span><strong>${money(order.totals.total.amount)}</strong></div></div><ol class="status-tracker">${flow.map((status, index) => `<li class="${index <= current ? "is-complete" : ""} ${index === current ? "is-current" : ""}"><span>${index < current ? "✓" : index + 1}</span><div><strong>${statusLabels[status]}</strong>${index === current ? `<small>Current status</small>` : ""}</div></li>`).join("")}</ol><div class="order-lines">${order.items.map((item) => `<div><span>${item.quantity} × ${escapeHtml(item.name)}</span><strong>${money(item.lineTotal.amount)}</strong></div>`).join("")}</div>${quoteTotals({ totals: order.totals })}<div class="checkout-actions"><button class="button button--outline" type="button" data-action="refresh-order" data-order-id="${escapeHtml(order.id)}">Refresh status</button></div></div><aside class="checkout-aside"><p class="eyebrow">CONTACT</p><h3>${escapeHtml(order.customer.name)}</h3><p>${escapeHtml(order.customer.email)} · ${escapeHtml(order.customer.phone)}</p><p class="checkout-aside__note">Only masked contact details are returned here.</p><a class="button button--outline" href="#/menu">Start another order</a></aside></div></section>`;
 }
 
 export function renderPage(route, context) {
@@ -1122,11 +1100,11 @@ export function renderFooter(data) {
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand"><img src="../brand/assets/logos/st-juice-lockup-horizontal.svg" alt="ST. JUICE" width="194" height="54" /><p>${escapeHtml(data.copy.footer.line)}</p><p>11 S Vandeventer Ave · St. Louis, Missouri</p></div>
-        <div class="footer-column"><h2>Order</h2><a href="#/menu">Menu</a><a href="#/build">Build Your Mood</a><a href="#/drops">Drops</a><a href="#/boxes">Party Boxes</a><a href="#/gift-cards">Gift Cards</a><a href="#/catering">Catering</a></div>
-        <div class="footer-column"><h2>ST. JUICE</h2><a href="#/about">Our story</a><a href="#/rewards">Rewards</a><a href="#/location">Location & hours</a><a href="#/account">Account modes</a><a href="#/states">Interface states</a></div>
-        <div class="footer-column"><h2>Trust</h2><a href="#/info/allergens">Nutrition & Allergens</a><a href="#/info/privacy">Privacy</a><a href="#/info/terms">Terms</a><a href="#/info/refunds">Refunds</a><a href="#/info/cookies">Cookies</a><a href="#/info/accessibility">Accessibility</a><a href="#/info/contact">Contact</a></div>
+        <div class="footer-column"><h2>Menu</h2><a href="#/menu">Full menu</a><a href="#/build">Build Your Mood</a><a href="#/drops">New Drops</a><a href="#/boxes">Party Boxes</a><a href="#/catering">Catering</a></div>
+        <div class="footer-column"><h2>ST. JUICE</h2><a href="#/about">Our story</a><a href="#/rewards">Rewards</a><a href="#/gift-cards">Gift cards</a><a href="#/location">Location & hours</a><a href="#/account">Account</a></div>
+        <div class="footer-column"><h2>Help</h2><a href="#/info/allergens">Nutrition & Allergens</a><a href="#/info/privacy">Privacy</a><a href="#/info/terms">Terms</a><a href="#/info/refunds">Refunds</a><a href="#/info/accessibility">Accessibility</a><a href="#/info/contact">Contact</a></div>
       </div>
-      <div class="footer-bottom"><span>© 2026 ST. JUICE · Pre-launch ordering preview</span><span>Generated food and packaging visuals are labeled concept placeholders.</span></div>
+      <div class="footer-bottom"><span>© 2026 ST. JUICE</span><span>11 S Vandeventer Ave · St. Louis, Missouri</span></div>
     </div>`;
 }
 
@@ -1165,5 +1143,5 @@ export function renderCart(data, state) {
           <div><span class="cart-item__price">${money(item.unitPrice * item.quantity)}</span><button class="icon-button" type="button" data-action="remove-cart-item" data-key="${escapeHtml(item.key)}" aria-label="Remove ${escapeHtml(item.name)}">${icon("close")}</button></div>
         </article>`).join("")}
     </div>
-    <div class="cart-summary"><div class="cart-summary__row"><span>Service</span><strong>${escapeHtml(serviceModes[state.service].label)}</strong></div><div class="cart-summary__row"><span>Displayed subtotal</span><strong>${money(subtotal)}</strong></div><div class="cart-summary__row"><span>Tax and fees</span><span>Server review required</span></div><div class="cart-summary__row cart-summary__row--total"><span>Current total</span><strong>${money(subtotal)}</strong></div><button class="button" type="button" data-action="checkout-preview">Continue to checkout</button><p style="margin:.7rem 0 0;color:var(--text-muted);font-size:.67rem">The checkout recalculates every line on the server. Safe test payment only—no live charge.</p></div>`;
+    <div class="cart-summary"><div class="cart-summary__row"><span>Service</span><strong>${escapeHtml(serviceModes[state.service].label)}</strong></div><div class="cart-summary__row"><span>Displayed subtotal</span><strong>${money(subtotal)}</strong></div><div class="cart-summary__row"><span>Tax and fees</span><span>Server review required</span></div><div class="cart-summary__row cart-summary__row--total"><span>Current total</span><strong>${money(subtotal)}</strong></div><button class="button" type="button" data-action="checkout-preview">Continue to checkout</button><p style="margin:.7rem 0 0;color:var(--text-muted);font-size:.67rem">Your bag is recalculated before checkout. Online payment is not live yet.</p></div>`;
 }
