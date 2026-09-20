@@ -62,6 +62,27 @@ try {
   const advanced = await json(`/api/orders/${order.payload.order.id}/advance`, { method: "POST", headers: { "X-STJ-Admin-Token": process.env.STJ_TEST_ADMIN_TOKEN }, body: "{}" });
   assert.equal(advanced.payload.order.status, "confirmed");
 
+  const memberEmail = `phase1-${Date.now()}@example.com`;
+  const memberRegistration = await json("/api/account/register", {
+    method: "POST",
+    body: JSON.stringify({ name: "Phase One Member", email: memberEmail, password: "PhaseOneTest!123", type: "regular" })
+  });
+  assert.equal(memberRegistration.response.status, 201);
+  const memberCookie = memberRegistration.response.headers.get("set-cookie")?.split(";")[0];
+  assert.ok(memberCookie?.startsWith("stj_session="), "Registration must create the configured secure account session cookie");
+
+  const memberQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, promoCode: "" }) });
+  const memberPayment = await json("/api/payment/intents", { method: "POST", body: JSON.stringify({ quoteId: memberQuote.payload.quoteId }) });
+  const memberOrder = await json("/api/orders", {
+    method: "POST",
+    headers: { "Idempotency-Key": `${key}-member`, Cookie: memberCookie },
+    body: JSON.stringify({ ...orderBody, quoteId: memberQuote.payload.quoteId, paymentToken: memberPayment.payload.token, schedule: "asap" })
+  });
+  assert.equal(memberOrder.response.status, 201, JSON.stringify(memberOrder.payload));
+  const memberDashboard = await json("/api/account/dashboard", { headers: { Cookie: memberCookie } });
+  assert.equal(memberDashboard.response.status, 200);
+  assert.ok(memberDashboard.payload.orders.some((row) => row.id === memberOrder.payload.order.id), "Signed-in order must attach to the member account exactly once");
+
   const dineQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, service: "dine_in" }) });
   const cashOrder = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": `${key}-cash` }, body: JSON.stringify({ ...orderBody, quoteId: dineQuote.payload.quoteId, paymentMethod: "cash", paymentToken: undefined, schedule: "asap" }) });
   assert.equal(cashOrder.response.status, 201);
@@ -86,7 +107,7 @@ try {
   for (let index = 0; index < 3; index += 1) deliveryStatus = (await json(`/api/orders/${deliveryStatus.id}/advance`, { method: "POST", headers: { "X-STJ-Admin-Token": process.env.STJ_TEST_ADMIN_TOKEN }, body: "{}" })).payload.order;
   assert.equal(deliveryStatus.status, "out_for_delivery");
 
-  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true, unauthorizedOrderReadBlocked: true, unauthorizedAdvanceBlocked: true }, null, 2));
+  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true, unauthorizedOrderReadBlocked: true, unauthorizedAdvanceBlocked: true, signedInOrderAttached: true }, null, 2));
 } finally {
   server.close();
   await once(server, "close");
