@@ -36,7 +36,7 @@ data.modifierById = new Map(data.modifiers.groups.map((item) => [item.id, item])
 const state = { mode: "guest", service: "pickup", cart: [], menuFilters: { query: "", category: "all", mood: "all", occasion: "all", channel: "all" }, productDrafts: {}, builder: { step: 0, selections: { base: null, mood: null, "fruit-flavor": [], texture: null, sauce: [], topping: [], boost: [] }, name: "" }, cateringSuccess: false, cateringEmail: "", checkout: { step: 0, date: "2026-08-17", minDate: "2026-08-17", maxDate: "2026-08-23", slots: [], slot: "", address: {}, contact: {}, promoCode: "", tipPercent: 0, allergenAcknowledged: false, quote: null, preparing: false, busy: false, error: "" }, account: { signedIn: false, favorites: [], savedMixes: [], orderHistory: [] } };
 for (const slug of ["privacy", "terms", "refunds", "cookies", "accessibility", "allergens", "contact"]) {
   const html = renderPage({ path: `/info/${slug}`, params: new URLSearchParams() }, { data, state });
-  assert.ok(html.includes("Pre-launch draft"), `${slug} must identify draft status`);
+  assert.ok(html.includes("Before opening"), `${slug} must identify pre-opening policy status`);
   assert.ok(!html.includes("LAUNCH CONTENT PLACEHOLDER"), `${slug} must not be a dead-end placeholder`);
   assert.ok((html.match(/<h2/g) || []).length >= 3, `${slug} must contain substantive sections`);
 }
