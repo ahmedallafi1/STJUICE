@@ -88,7 +88,9 @@ state.checkout.quote = {
 };
 const checkout = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
 assert.ok(checkout.includes("Checkout without surprises"));
-assert.ok(checkout.includes("SAFE TEST"));
+assert.ok(checkout.includes("ORDERING PREVIEW"));
+assert.ok(checkout.includes("No live card charge will occur yet."));
+assert.ok(!checkout.includes("SAFE TEST"));
 assert.ok(checkout.includes("Order for now."));
 assert.ok(!checkout.includes("Service date"));
 assert.ok(!checkout.includes("Available time"));
