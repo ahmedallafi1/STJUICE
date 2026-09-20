@@ -865,7 +865,7 @@ function renderAccount({ data, state }) {
   const account = accountView(state.account);
   if (account.signedIn) {
     const favorites = account.favorites.map((id) => data.productById.get(id)).filter(Boolean);
-    return `${pageHero("YOUR ST. JUICE", `Hey, ${account.profile.name || "friend"}.`, `${modes[state.mode].line} This prototype profile is stored only on this device.`, `<button class="button button--outline" type="button" data-action="prototype-signout">Sign out</button>`)}
+    return `${pageHero("YOUR ST. JUICE", `Hey, ${account.profile.name || "friend"}.`, modes[state.mode].line, `<button class="button button--outline" type="button" data-action="account-signout">Sign out</button>`)}
     <section class="section section--cream"><div class="container account-dashboard">
       <div class="account-stats"><article><span>Working points</span><strong>${account.points}</strong><small>$${account.rewardDollars} working reward value</small></article><article><span>Favorites</span><strong>${favorites.length}</strong><small>Saved products</small></article><article><span>Saved moods</span><strong>${account.savedMixes.length}</strong><small>Custom mixes</small></article><article><span>Test orders</span><strong>${account.orderHistory.length}</strong><small>On this device</small></article></div>
       ${state.mode === "student" ? `<div class="verification-card"><p class="eyebrow">STUDENT VERIFICATION</p><h2>${account.student.status === "pending_manual_review" ? "Pending manual review" : "Not submitted"}</h2><p>No discount is activated until an approved verification provider or manual policy is connected. No university affiliation is implied.</p></div>` : ""}
@@ -875,18 +875,38 @@ function renderAccount({ data, state }) {
       <div class="account-section"><div><p class="eyebrow">ORDER HISTORY</p><h2>Safe-test receipts</h2></div><div class="saved-list">${account.orderHistory.length ? account.orderHistory.map((order) => `<article><strong>${escapeHtml(order.orderNumber)}</strong><small>${escapeHtml(order.status)} · ${money(order.total)}</small><button class="text-button" data-action="reorder-history" data-order-id="${escapeHtml(order.id)}">Reorder</button></article>`).join("") : `<p>Your completed safe-test orders will appear here.</p>`}</div></div>
     </div></section>`;
   }
+  const requestedType = modes[state.accountIntent] && state.accountIntent !== "guest" ? state.accountIntent : "regular";
   return `
-    ${pageHero("ACCOUNT EXPERIENCE", "One menu. Different shortcuts.", modes[state.mode].line, `<button class="button" type="button" data-action="open-account">Switch mode</button>`)}
-    <section class="section section--cream"><div class="container"><form class="account-form" data-account-form="${escapeHtml(state.mode === "guest" ? "regular" : state.mode)}"><div><p class="eyebrow">DEVICE-LOCAL PREVIEW</p><h2>Create your review profile</h2><p>No password is collected here. Production authentication, consent records and retention rules must be connected before launch.</p></div><div class="form-grid"><label class="form-field"><span>Name *</span><input class="field" name="name" required /></label><label class="form-field"><span>Email *</span><input class="field" name="email" type="email" required /></label><label class="form-field"><span>Phone</span><input class="field" name="phone" type="tel" /></label><label class="form-field"><span>Birthday (optional)</span><input class="field" name="birthday" type="date" /></label>${state.mode === "student" ? `<label class="form-field"><span>School email *</span><input class="field" name="schoolEmail" type="email" required /></label><label class="form-field"><span>Institution *</span><input class="field" name="institution" required /></label>` : ""}${state.mode === "business" ? `<label class="form-field"><span>Company *</span><input class="field" name="company" required /></label><label class="form-field"><span>Your role</span><input class="field" name="contactRole" /></label><label class="form-field"><span>Recurring cadence</span><select class="field" name="recurringCadence"><option value="">Choose</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option></select></label><label class="form-field"><span>Saved event note</span><input class="field" name="savedEvent" /></label>` : ""}</div><button class="button" type="submit">Save preview profile</button></form></div></section>
+    ${pageHero("YOUR ACCOUNT", "Sign in to unlock your ST. JUICE experience.", "Guest checkout stays available. Regular, Student and Business experiences are tied to a real account session.")}
     <section class="section section--cream">
-      <div class="container dashboard">
-        <nav class="dashboard-nav" aria-label="Account sections"><a class="is-active" href="#/account">Overview</a><a href="#/rewards">Rewards</a><a href="#/build">Saved mixes</a><a href="#/menu">Favorites</a><a href="#/states">Order states</a></nav>
-        ${dashboardContent(state.mode, data)}
+      <div class="container account-auth-grid">
+        <form class="account-form" data-login-form>
+          <div><p class="eyebrow">WELCOME BACK</p><h2>Sign in</h2><p>Use your account to access your member experience and order history.</p></div>
+          <div class="form-grid">
+            <label class="form-field form-field--full"><span>Email *</span><input class="field" name="email" type="email" autocomplete="email" required /></label>
+            <label class="form-field form-field--full"><span>Password *</span><input class="field" name="password" type="password" autocomplete="current-password" required /></label>
+          </div>
+          <button class="button" type="submit">Sign in</button>
+        </form>
+        <form class="account-form" data-register-form>
+          <div><p class="eyebrow">NEW ACCOUNT</p><h2>Create your account</h2><p>Choose the account type that matches how you use ST. JUICE.</p></div>
+          <div class="form-grid">
+            <label class="form-field"><span>Name *</span><input class="field" name="name" autocomplete="name" required /></label>
+            <label class="form-field"><span>Email *</span><input class="field" name="email" type="email" autocomplete="email" required /></label>
+            <label class="form-field form-field--full"><span>Password *</span><input class="field" name="password" type="password" minlength="10" autocomplete="new-password" required /></label>
+            <label class="form-field form-field--full"><span>Account type *</span><select class="field" name="type" required>
+              <option value="regular" ${requestedType === "regular" ? "selected" : ""}>Regular</option>
+              <option value="student" ${requestedType === "student" ? "selected" : ""}>Student</option>
+              <option value="business" ${requestedType === "business" ? "selected" : ""}>Business</option>
+            </select></label>
+          </div>
+          <button class="button" type="submit">Create account</button>
+        </form>
       </div>
     </section>`;
 }
 
-function renderAbout({ data }) {
+function renderAboutfunction renderAbout({ data }) {
   return `
     ${pageHero("OUR STORY", data.copy.about.title, data.copy.about.body)}
     <section class="section section--surface"><div class="container split-feature"><div class="split-feature__copy"><p class="eyebrow">YOUR MOOD, MADE FRESH</p><h2>Fresh and indulgent share the same counter.</h2><p class="lede">${escapeHtml(data.copy.about.story)}</p><a class="button" href="#/menu">Explore the menu</a></div><div class="split-feature__media">${mediaBadge("Packaging concept")}<img src="../media/optimized/webp/packaging/packaging-lineup-concept-v1.webp" alt="Concept ST. JUICE packaging lineup" width="1200" height="800" /></div></div></section>
@@ -1093,16 +1113,21 @@ export function renderFooter(data) {
 }
 
 export function renderAccountDialog(state) {
+  const signedIn = Boolean(state.account?.signedIn);
   return `
-    <p class="lede" style="font-size:.9rem">Browse first. Choose a mode only when its shortcuts help you.</p>
+    <p class="lede" style="font-size:.9rem">${signedIn ? `Signed in as ${escapeHtml(state.account.profile.name || state.account.profile.email)}.` : "Guest browsing stays open. Member experiences require an account."}</p>
     <div class="mode-cards">
-      ${Object.entries(modes).map(([id, mode]) => `
+      ${Object.entries(modes).map(([id, mode]) => {
+        const available = id === "guest" || (signedIn && state.account.profile.mode === id);
+        const label = state.mode === id ? "Current experience" : available ? "Open experience" : "Sign in to unlock";
+        return `
         <button class="mode-card ${state.mode === id ? "is-active" : ""}" type="button" data-action="set-mode" data-mode="${id}">
-          <span class="mode-card__icon">${icon(mode.icon)}</span><strong>${escapeHtml(mode.label)}</strong><small>${escapeHtml(mode.line)}</small><span class="mode-card__state">${state.mode === id ? "Current mode" : "Choose mode"}</span>
-        </button>`).join("")}
+          <span class="mode-card__icon">${icon(mode.icon)}</span><strong>${escapeHtml(mode.label)}</strong><small>${escapeHtml(mode.line)}</small><span class="mode-card__state">${label}</span>
+        </button>`;
+      }).join("")}
     </div>
-    <div class="info-panel" style="margin-top:1rem"><h3>Important</h3><p>Mode changes theme, merchandising and shortcuts. It never silently changes product facts, allergens, fees, taxes or availability.</p></div>
-    <a class="button button--outline" href="#/account" data-action="close-dialog" style="margin-top:1rem;width:100%">View account dashboard</a>`;
+    <div class="info-panel" style="margin-top:1rem"><h3>Experience access</h3><p>Regular, Student and Business experiences are tied to the signed-in account. Guest browsing never requires an account.</p></div>
+    <a class="button button--outline" href="#/account" data-action="close-dialog" style="margin-top:1rem;width:100%">Manage account</a>`;
 }
 
 export function renderServiceDialog(state) {
