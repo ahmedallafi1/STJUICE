@@ -33,8 +33,22 @@ function writeStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // The prototype still works when storage is unavailable.
+    // Non-essential browser storage can be unavailable without blocking checkout.
   }
+}
+
+function readSession(key, fallback) {
+  try {
+    const value = sessionStorage.getItem(key);
+    return value === null ? fallback : JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
+function writeSession(key, value) {
+  try { sessionStorage.setItem(key, JSON.stringify(value)); }
+  catch { /* Order tracking can still be recovered from a signed-in account session. */ }
 }
 
 const savedMode = readStorage(storageKeys.mode, readStorage("stjuice-stage05-mode", "guest"));
@@ -77,7 +91,8 @@ const state = {
   checkout: freshCheckout(),
   order: null,
   orderLoading: false,
-  orderRequestedId: ""
+  orderRequestedId: "",
+  orderTrackingTokens: readSession("stjuice-order-tracking", {})
 };
 state.account = loadAccount();
 
@@ -243,7 +258,10 @@ async function prepareCheckout() {
 async function loadOrder(orderId) {
   state.orderRequestedId = orderId;
   state.orderLoading = true;
-  try { state.order = (await orderingApi.getOrder(orderId)).order; if (state.account.signedIn && state.order) rememberOrder(state.account, state.order); }
+  try {
+    state.order = (await orderingApi.getOrder(orderId, state.orderTrackingTokens[orderId] || "")).order;
+    if (state.account.signedIn && state.order) rememberOrder(state.account, state.order);
+  }
   catch (error) {
     state.order = { id: orderId, orderNumber: "Test order unavailable", status: "canceled", statusHistory: [], service: "pickup", schedule: "—", customer: { name: "Guest", email: "—", phone: "—" }, items: [], totals: { subtotal: { amount: 0 }, discount: { amount: 0 }, tax: { amount: 0 }, deliveryFee: { amount: 0 }, serviceFee: { amount: 0 }, tip: { amount: 0, percent: 0 }, total: { amount: 0 } }, pos: { reference: "—", adapter: "—", status: errorMessage(error) } };
   } finally { state.orderLoading = false; render({ preserveScroll: true }); }
@@ -541,6 +559,10 @@ document.addEventListener("click", async (event) => {
       }, state.checkout.idempotencyKey);
       state.order = result.order;
       state.orderRequestedId = result.order.id;
+      if (result.trackingToken) {
+        state.orderTrackingTokens[result.order.id] = result.trackingToken;
+        writeSession("stjuice-order-tracking", state.orderTrackingTokens);
+      }
       state.cart = [];
       writeStorage(storageKeys.cart, []);
       state.checkout = freshCheckout();
@@ -553,9 +575,6 @@ document.addEventListener("click", async (event) => {
     }
   } else if (action === "refresh-order") {
     await loadOrder(actionElement.dataset.orderId);
-  } else if (action === "advance-order") {
-    try { state.order = (await orderingApi.advanceOrder(actionElement.dataset.orderId)).order; render({ preserveScroll: true }); }
-    catch (error) { toast("Status did not update", errorMessage(error)); }
   } else if (action === "prefill-catering") {
     const select = document.querySelector("#package-interest");
     if (select) select.value = actionElement.dataset.package || "";
@@ -709,11 +728,8 @@ document.addEventListener("submit", (event) => {
     event.target.reportValidity();
     return;
   }
-  const formData = new FormData(event.target);
-  state.cateringEmail = String(formData.get("email") || "your email");
-  state.cateringSuccess = true;
-  render({ preserveScroll: true });
-  toast("Catering request preview complete", "This pre-launch preview did not transmit personal data.");
+  state.cateringSuccess = false;
+  toast("Online catering requests are not live yet", "No request was sent. We will only show a confirmation once the request is actually saved.");
 });
 
 for (const dialog of document.querySelectorAll("dialog")) {
