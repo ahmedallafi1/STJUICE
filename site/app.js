@@ -1,6 +1,6 @@
 import { escapeHtml, hydrateIcons, loadProjectData, productImage, routeInfo, titleCase } from "./lib/core.js";
 import { accountApi, orderingApi } from "./lib/api.js";
-import { loadAccount, saveAccount, saveMix, toggleFavorite, rememberOrder } from "./lib/account.js";
+import { loadAccount } from "./lib/account.js";
 import {
   builderAllergens,
   calculateBuilderTotal,
@@ -149,10 +149,33 @@ function applyAccountSession(payload) {
   state.mode = modes[account.type] ? account.type : "regular";
 }
 
+function applyAccountDashboard(payload) {
+  state.account.favorites = Array.isArray(payload?.favorites) ? payload.favorites : [];
+  state.account.savedMixes = Array.isArray(payload?.mixes)
+    ? payload.mixes.map((mix) => ({ ...mix, savedAt: mix.createdAt || mix.savedAt || new Date().toISOString() }))
+    : [];
+  state.account.orderHistory = Array.isArray(payload?.orders)
+    ? payload.orders.map((order) => ({
+        id: order.id,
+        orderNumber: order.orderNumber,
+        service: order.service,
+        status: order.status,
+        total: order.totals?.total?.amount || 0,
+        items: order.items || [],
+        createdAt: order.createdAt
+      }))
+    : [];
+}
+
 async function refreshAccountSession() {
-  try { applyAccountSession(await accountApi.session()); }
-  catch {
+  try {
+    const session = await accountApi.session();
+    applyAccountSession(session);
+    if (session.authenticated) applyAccountDashboard(await accountApi.dashboard());
+    else applyAccountDashboard({});
+  } catch {
     applyAccountSession({ authenticated: false, account: null, csrfToken: null });
+    applyAccountDashboard({});
   }
 }
 
@@ -294,7 +317,9 @@ async function loadOrder(orderId) {
   state.orderLoading = true;
   try {
     state.order = (await orderingApi.getOrder(orderId, state.orderTrackingTokens[orderId] || "")).order;
-    if (state.account.signedIn && state.order) rememberOrder(state.account, state.order);
+    if (state.account.signedIn) {
+      try { applyAccountDashboard(await accountApi.dashboard()); } catch { /* Keep the order view available even if dashboard refresh fails. */ }
+    }
   }
   catch (error) {
     state.order = { id: orderId, orderNumber: "Test order unavailable", status: "canceled", statusHistory: [], service: "pickup", schedule: "—", customer: { name: "Guest", email: "—", phone: "—" }, items: [], totals: { subtotal: { amount: 0 }, discount: { amount: 0 }, tax: { amount: 0 }, deliveryFee: { amount: 0 }, serviceFee: { amount: 0 }, tip: { amount: 0, percent: 0 }, total: { amount: 0 } }, pos: { reference: "—", adapter: "—", status: errorMessage(error) } };
@@ -448,15 +473,42 @@ document.addEventListener("click", async (event) => {
   if (!actionElement) return;
   const action = actionElement.dataset.action;
   if (action === "toggle-favorite") {
-    toggleFavorite(state.account, actionElement.dataset.productId); render({ preserveScroll: true }); toast("Favorites updated"); return;
+    if (!state.account.signedIn) {
+      state.accountIntent = "regular";
+      window.location.hash = "/account";
+      toast("Sign in to save favorites");
+      return;
+    }
+    const productId = actionElement.dataset.productId;
+    const active = !state.account.favorites.includes(productId);
+    try {
+      const result = await accountApi.setFavorite(productId, active, state.account.csrfToken);
+      state.account.favorites = result.productIds || [];
+      render({ preserveScroll: true });
+      toast(active ? "Added to favorites" : "Removed from favorites");
+    } catch (error) { toast("Favorites did not update", errorMessage(error)); }
+    return;
   }
   if (action === "save-builder-mix") {
-    saveMix(state.account, { name: state.builder.name || "My Mood", selections: structuredClone(state.builder.selections) }); render({ preserveScroll: true }); toast("Mix saved", "Available in your account dashboard."); return;
+    if (!state.account.signedIn) {
+      state.accountIntent = "regular";
+      window.location.hash = "/account";
+      toast("Sign in to save your mix");
+      return;
+    }
+    try {
+      const result = await accountApi.saveMix({ name: state.builder.name || "My Mood", selections: structuredClone(state.builder.selections) }, state.account.csrfToken);
+      state.account.savedMixes = [{ ...result.mix, savedAt: result.mix.createdAt }, ...state.account.savedMixes];
+      render({ preserveScroll: true });
+      toast("Mix saved", "Available in your account dashboard.");
+    } catch (error) { toast("Mix did not save", errorMessage(error)); }
+    return;
   }
   if (action === "account-signout") {
     try { await accountApi.logout(state.account.csrfToken); }
     catch { /* Clear the local view even if the expired session is already gone. */ }
     applyAccountSession({ authenticated: false, account: null, csrfToken: null });
+    applyAccountDashboard({});
     render();
     toast("Signed out");
     return;
@@ -770,6 +822,7 @@ document.addEventListener("submit", async (event) => {
     try {
       const payload = await accountApi.login({ email: String(values.get("email") || ""), password: String(values.get("password") || "") });
       applyAccountSession(payload);
+      applyAccountDashboard(await accountApi.dashboard());
       render();
       toast("Welcome back", state.account.profile.name || "Your account is ready.");
     } catch (error) {
@@ -791,6 +844,7 @@ document.addEventListener("submit", async (event) => {
         type
       });
       applyAccountSession(payload);
+      applyAccountDashboard(await accountApi.dashboard());
       render();
       toast("Account created", `${modes[state.mode].label} experience is ready.`);
     } catch (error) {
