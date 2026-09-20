@@ -668,7 +668,7 @@ function renderBuilder({ data, state }) {
           </div>
         </section>
         <aside class="builder-summary" aria-label="Current build summary">
-          <div class="builder-summary__visual"><span class="media-status">Concept visual</span><img src="../media/optimized/webp/products/pistachio-saint-concept-v1.webp" alt="Concept product used as a builder placeholder" width="720" height="900" /></div>
+          <div class="builder-summary__visual"><img src="../media/optimized/webp/products/pistachio-saint-concept-v1.webp" alt="ST. JUICE Build Your Mood preview" width="720" height="900" /></div>
           <div class="builder-summary__body">
             <p class="eyebrow">LIVE BUILD</p>
             <h3>${escapeHtml(state.builder.name || `${moodName === "No mood yet" ? "Your" : moodName} mood`)}</h3>
@@ -937,38 +937,38 @@ function renderInfo(path) {
   const pages = {
     privacy: {
       title: "Privacy Notice",
-      intro: "A review-ready explanation of the information this prototype uses. It must be updated when production vendors and retention periods are chosen.",
+      intro: "A plain-language explanation of how this website handles information before full online ordering launches.",
       sections: [
-        ["What this prototype handles", "Cart preferences may be stored on this device. Checkout contact and address fields stay in session memory. Test orders and prototype accounts are held in server memory and reset when the server restarts."],
-        ["Why information is used", "Information is used to price a test order, prepare fulfillment details, display order status, remember device preferences, and record optional marketing consent separately from transactional communication."],
+        ["What this site handles", "Cart and service preferences may be stored on this device. Account sessions and ordering previews are temporary until durable production storage is connected."],
+        ["Why information is used", "Information is used to prepare an order preview, display status, remember selected preferences, and keep optional marketing consent separate from transactional communication."],
         ["What is not active", "There is no live payment processor, production customer database, analytics pixel, advertising tracker, SMS provider, email provider, or POS connection in this package."],
         ["Before public launch", "Name the business contact, production vendors, retention periods, consumer-request process, cookie choices, and any state-specific rights. Obtain appropriate legal review before publishing."],
       ]
     },
     terms: {
       title: "Website & Ordering Terms",
-      intro: "Working terms for review—not a substitute for approved operating and legal terms.",
+      intro: "Website and ordering terms for the current pre-opening experience. Final operating terms will be published before live commerce begins.",
       sections: [
-        ["Prototype status", "All orders, payments, discounts, points, delivery checks, schedules, availability, taxes, fees, and rewards in this package are demonstrations only. No live sale or reservation is created."],
-        ["Product information", "Menu descriptions, working prices, availability, recipes, portions, nutrition, allergens, and photographs may change before launch. Concept visuals are labeled and do not promise final presentation."],
+        ["Current ordering status", "Online ordering and payment are not live yet. Order previews do not create a live sale, charge, reservation, or rewards liability."],
+        ["Product information", "Menu descriptions, prices, availability, recipes, portions, nutrition, allergens, and photography may change before opening as operations are finalized."],
         ["Customer responsibility", "Customers must review their order details and tell the store about allergies or dietary concerns. Online information cannot guarantee an allergen-free preparation environment."],
         ["Launch approval needed", "The owner must approve governing law, dispute terms, cancellation rules, gift-card terms, promotions, rewards, delivery responsibility, and liability language before publication."],
       ]
     },
     refunds: {
       title: "Refunds & Order Issues",
-      intro: "A launch-policy framework that keeps unapproved promises out of the customer experience.",
+      intro: "How order issues and refunds will be handled as live ordering comes online.",
       sections: [
-        ["Current prototype", "No live payment is processed, so this package cannot issue or promise a real refund."],
+        ["Before live payment", "No live card payment is processed through the current ordering preview, so there is no online card charge to refund yet."],
         ["Recommended service flow", "At launch, customers should contact the store promptly with the order number, item, and issue. The team should review missing, incorrect, damaged, or quality-related items consistently."],
         ["Owner decisions required", "Approve the reporting window, cancellation cutoff, remakes, partial refunds, delivery-platform orders, catering deposits, no-shows, chargebacks, and the original-payment-method rule before going live."],
       ]
     },
     cookies: {
       title: "Cookies & Device Storage",
-      intro: "A plain-language inventory of browser storage in the current prototype.",
+      intro: "A plain-language inventory of browser storage used by the current site.",
       sections: [
-        ["Essential local storage", "The prototype can remember the selected experience mode, service method, cart, favorites, saved mixes, and prototype account preferences on this device."],
+        ["Essential local storage", "The site can remember cart and service preferences on this device. Signed-in member data is handled through the account service."],
         ["No advertising cookies", "This package does not include analytics, advertising pixels, cross-site tracking, or third-party marketing cookies."],
         ["Before adding vendors", "Add a consent mechanism where required, list each vendor and purpose, respect opt-out signals where applicable, and update this notice before enabling analytics or advertising."],
       ]
@@ -978,7 +978,7 @@ function renderInfo(path) {
       intro: "ST. JUICE aims to provide a usable ordering experience across keyboard, touch, screen reader, zoom, and reduced-motion settings.",
       sections: [
         ["Current support", "The interface includes a skip link, semantic landmarks, labeled controls, visible focus, keyboard-operable dialogs, live status messaging, reduced-motion handling, and responsive layouts."],
-        ["Known limits", "Concept imagery and prototype flows still require testing with real users and assistive technologies. Final third-party payment, map, POS, and verification tools must be evaluated after selection."],
+        ["Known limits", "The experience will continue to be tested with real users and assistive technologies as payment, map, POS and verification tools are connected."],
         ["Report a barrier", "A public accessibility contact method is required before launch. Until then, document the page, device, browser, assistive technology, and problem for the owner’s launch review."],
       ]
     },
@@ -996,15 +996,15 @@ function renderInfo(path) {
       title: "Contact ST. JUICE",
       intro: "The first planned location is 11 S Vandeventer Ave, St. Louis, Missouri.",
       sections: [
-        ["Public contact pending", "The public phone number, email address, verified opening hours, map listing, and accessibility contact are not yet approved, so this prototype does not invent them."],
-        ["Catering", "Use the catering request prototype to review the intended flow. A submission does not reserve a date or create a confirmed quote."],
+        ["Public contact pending", "Public phone, email, map listing and accessibility contact details will be published once they are approved for opening."],
+        ["Catering", "The catering request flow is available for planning, but a date is not reserved until the request is saved, reviewed and confirmed."],
         ["Before launch", "Add monitored contact channels, response expectations, holiday hours, parking and pickup instructions, and an escalation path for order issues."],
       ]
     }
   };
   const page = pages[slug];
   if (!page) return renderNotFound();
-  return `${pageHero("PRE-LAUNCH REVIEW", page.title, page.intro)}<section class="section section--cream"><div class="container policy-layout"><aside class="policy-status"><strong>Pre-launch draft</strong><p>Reviewed for completeness and honest pre-launch labeling. Owner and professional approval are still required where noted.</p><p><strong>Updated:</strong> August 17, 2026</p></aside><div class="policy-content">${page.sections.map(([heading, body]) => `<section><h2>${escapeHtml(heading)}</h2><p>${escapeHtml(body)}</p></section>`).join("")}<div class="info-panel"><h2>Launch gate</h2><p>This page must be rechecked after real vendors, policies, recipes, public contacts, and operating details are approved.</p></div></div></div></section>`;
+  return `${pageHero("SITE POLICIES", page.title, page.intro)}<section class="section section--cream"><div class="container policy-layout"><aside class="policy-status"><strong>Before opening</strong><p>These pages reflect the current pre-opening experience and will be updated as live ordering, vendors and operating policies are finalized.</p><p><strong>Updated:</strong> September 20, 2026</p></aside><div class="policy-content">${page.sections.map(([heading, body]) => `<section><h2>${escapeHtml(heading)}</h2><p>${escapeHtml(body)}</p></section>`).join("")}<div class="info-panel"><h2>Before live ordering</h2><p>This page will be updated as final vendors, recipes, public contacts and operating details are approved.</p></div></div></div></section>`;
 }
 
 function renderNotFound() {
