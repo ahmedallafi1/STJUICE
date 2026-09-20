@@ -109,6 +109,7 @@ state.service = "pickup";
 state.order = { id: "order_test", orderNumber: "STJ-0001", status: "received", service: "pickup", schedule: "2026-08-17T08:00:00", customer: { name: "Test Guest", email: "t***@example.com", phone: "***0100" }, items: state.checkout.quote.items, totals: state.checkout.quote.totals, pos: { reference: "test_pos_123", adapter: "test_pos_receipt", status: "accepted_test" } };
 const order = renderPage({ path: "/order/order_test", params: new URLSearchParams() }, { data, state });
 assert.ok(order.includes("STJ-0001"));
-assert.ok(order.includes("Advance test status"));
+assert.ok(order.includes("Refresh status"));
+assert.ok(!order.includes("Advance test status"));
 
 console.log(JSON.stringify({ status: "valid", routesRendered: routes.length + 1, builderStepsRendered: data.builder.steps.length, fullMenuCards: 54, accountModesRendered: 4, checkoutRendered: true, orderRendered: true }, null, 2));
