@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { once } from "node:events";
 import { startOrderingServer } from "../server.mjs";
 
+process.env.STJ_TEST_ADMIN_TOKEN = "phase1-api-test-admin";
 const server = await startOrderingServer({ port: 0 });
 const { port } = server.address();
 const base = `http://127.0.0.1:${port}`;
@@ -52,9 +53,13 @@ try {
   assert.equal(replay.payload.idempotentReplay, true);
   assert.equal(replay.payload.order.id, order.payload.order.id);
 
-  const fetched = await json(`/api/orders/${order.payload.order.id}`);
+  const deniedFetch = await json(`/api/orders/${order.payload.order.id}`);
+  assert.equal(deniedFetch.response.status, 403);
+  const fetched = await json(`/api/orders/${order.payload.order.id}?token=${encodeURIComponent(order.payload.trackingToken)}`);
   assert.equal(fetched.response.status, 200);
-  const advanced = await json(`/api/orders/${order.payload.order.id}/advance`, { method: "POST", body: "{}" });
+  const deniedAdvance = await json(`/api/orders/${order.payload.order.id}/advance`, { method: "POST", body: "{}" });
+  assert.equal(deniedAdvance.response.status, 404);
+  const advanced = await json(`/api/orders/${order.payload.order.id}/advance`, { method: "POST", headers: { "X-STJ-Admin-Token": process.env.STJ_TEST_ADMIN_TOKEN }, body: "{}" });
   assert.equal(advanced.payload.order.status, "confirmed");
 
   const dineQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, service: "dine_in" }) });
@@ -78,10 +83,10 @@ try {
   const deliveryOrder = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": `${key}-delivery` }, body: JSON.stringify({ ...orderBody, quoteId: deliveryQuote.payload.quoteId, paymentToken: deliveryPayment.payload.token, schedule: deliverySlots.payload.slots[0].value, deliveryCheckToken: deliveryCheck.payload.deliveryCheckToken }) });
   assert.equal(deliveryOrder.response.status, 201);
   let deliveryStatus = deliveryOrder.payload.order;
-  for (let index = 0; index < 3; index += 1) deliveryStatus = (await json(`/api/orders/${deliveryStatus.id}/advance`, { method: "POST", body: "{}" })).payload.order;
+  for (let index = 0; index < 3; index += 1) deliveryStatus = (await json(`/api/orders/${deliveryStatus.id}/advance`, { method: "POST", headers: { "X-STJ-Admin-Token": process.env.STJ_TEST_ADMIN_TOKEN }, body: "{}" })).payload.order;
   assert.equal(deliveryStatus.status, "out_for_delivery");
 
-  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true }, null, 2));
+  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true, unauthorizedOrderReadBlocked: true, unauthorizedAdvanceBlocked: true }, null, 2));
 } finally {
   server.close();
   await once(server, "close");
