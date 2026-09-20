@@ -895,7 +895,9 @@ h3 {
 
 .product-card__media {
   position: relative;
-  aspect-ratio: 4 / 4.35;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3.25;
   overflow: hidden;
   background: var(--surface-soft);
 }
@@ -2640,6 +2642,10 @@ h3 {
 
   .product-grid {
     gap: 0.7rem;
+  }
+
+  .product-card__media {
+    aspect-ratio: 4 / 3;
   }
 
   .product-card__body {
