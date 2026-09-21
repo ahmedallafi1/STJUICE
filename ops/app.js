@@ -152,10 +152,13 @@ async function renderCatalog() {
 }
 
 async function renderLaunch() {
-  const [readiness, audit] = await Promise.all([api("readiness"), api("audit?limit=40")]);
+  const [readiness, audit, providerData] = await Promise.all([api("readiness"), api("audit?limit=40"), api("integrations")]);
+  const integrations = Object.entries(providerData.integrations || {});
   els.panel.innerHTML = `
     <div class="section-title"><div><p class="eyebrow">LAUNCH CONTROL</p><h2>${readiness.launchReady ? "Ready for production." : "Production remains gated."}</h2><p class="muted">${readiness.configured} of ${readiness.required} readiness checks currently pass.</p></div></div>
     <div class="blockers">${readiness.blockers.map((b) => `<span>${esc(b)}</span>`).join("")}</div>
+    <div class="section-title"><div><p class="eyebrow">INTEGRATIONS</p><h2>Provider readiness.</h2><p class="muted">This view shows configuration state only. Credentials are never returned to the browser.</p></div></div>
+    <div class="grid">${integrations.map(([key, value]) => `<article class="panel-card"><p class="eyebrow">${esc(key.replaceAll(/([A-Z])/g, " $1").toUpperCase())}</p><h3>${value.configured ? "Configured" : "Blocked"}</h3><p class="muted">Provider: ${esc(value.provider || "not selected")}</p><span class="status-pill ${value.configured ? "ok" : "danger"}">${value.configured ? "Ready" : "Needs setup"}</span></article>`).join("")}</div>
     <div class="section-title"><div><p class="eyebrow">AUDIT</p><h2>Recent staff actions.</h2></div></div>
     <div class="table-wrap"><table><thead><tr><th>Time</th><th>Event</th><th>Details</th></tr></thead><tbody>${audit.events.map((e) => `<tr><td>${esc(e.createdAt)}</td><td>${esc(e.eventType)}</td><td><code>${esc(JSON.stringify(e.metadata))}</code></td></tr>`).join("") || '<tr><td colspan="3">No staff actions yet.</td></tr>'}</tbody></table></div>`;
 }
