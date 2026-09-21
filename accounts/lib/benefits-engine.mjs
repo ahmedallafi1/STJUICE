@@ -233,6 +233,7 @@ export function redeemConfiguredReward(account, rewardId, nowInput = new Date())
     rewardId: reward.id,
     rewardType: reward.type,
     value: reward.value ?? null,
+    pricing: reward.pricing ? structuredClone(reward.pricing) : null,
     status: "available",
     issuedAt: now.toISOString(),
     redeemedAt: null
@@ -258,11 +259,32 @@ export function claimBirthdayReward(account, nowInput = new Date()) {
     kind: "birthday",
     rewardType: reward.type,
     value: reward.value ?? null,
+    pricing: reward.pricing ? structuredClone(reward.pricing) : null,
     status: "available",
     issuedAt: now.toISOString(),
     redeemedAt: null
   };
   grants.unshift(grant);
+  return { grant: structuredClone(grant), idempotentReplay: false };
+}
+
+export function availableRewardGrant(account, grantId) {
+  const id = String(grantId || "").trim();
+  if (!id) return null;
+  const grant = (account?.rewards?.grants || []).find((item) => item.id === id);
+  if (!grant || grant.status !== "available") return null;
+  return structuredClone(grant);
+}
+
+export function consumeRewardGrant(account, grantId, orderId, nowInput = new Date()) {
+  if (!account?.rewards?.grants) fail("Reward wallet is unavailable.", "reward_wallet_unavailable", 422);
+  const grant = account.rewards.grants.find((item) => item.id === String(grantId || ""));
+  if (!grant) fail("Reward grant not found.", "reward_grant_not_found", 404);
+  if (grant.status === "consumed" && grant.orderId === orderId) return { grant: structuredClone(grant), idempotentReplay: true };
+  if (grant.status !== "available") fail("Reward grant is no longer available.", "reward_grant_unavailable", 409);
+  grant.status = "consumed";
+  grant.orderId = String(orderId || "");
+  grant.redeemedAt = (asDate(nowInput) || new Date()).toISOString();
   return { grant: structuredClone(grant), idempotentReplay: false };
 }
 
