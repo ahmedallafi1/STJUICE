@@ -25,6 +25,12 @@ const normalizeBirthday = (value) => {
   if (date.getTime() > Date.now()) fail("Birthday cannot be in the future.", "birthday_future", 422, "birthday");
   return birthday;
 };
+const normalizePhone = (value) => {
+  const phone = clean(value, 40);
+  if (!phone) return "";
+  if (phone.replace(/\D/g, "").length < 7) fail("Enter a valid phone number.", "phone_invalid", 422, "phone");
+  return phone;
+};
 
 export function parseCookies(header = "") { return Object.fromEntries(String(header).split(";").map((part) => part.trim().split("=")).filter(([key]) => key)); }
 export function authRateLimit(key) { const now = Date.now(), windowMs = accountConfig.authentication.loginWindowMinutes * 60_000, row = attempts.get(key) || { count: 0, reset: now + windowMs }; if (row.reset < now) Object.assign(row, { count: 0, reset: now + windowMs }); if (++row.count > accountConfig.authentication.loginMaximumAttempts) fail("Too many sign-in attempts. Try again later.", "rate_limited", 429); attempts.set(key, row); }
@@ -38,7 +44,7 @@ export function registerAccount(input = {}) {
   if (byEmail.has(email)) fail("An account already exists for this email.", "email_exists", 409, "email");
   const createdAt = new Date().toISOString();
   const autoEnrollRewards = Boolean(benefitsConfig.loyalty.enabled && benefitsConfig.loyalty.autoEnrollOnAccountCreation);
-  const account = { id: `acct_${randomUUID()}`, email, name, phone: clean(input.phone, 40), type, birthday: normalizeBirthday(input.birthday), password: hashPassword(password), createdAt, favorites: [], mixes: [], addresses: [], events: [], reservations: [], orderIds: [], rewards: { enrolled: autoEnrollRewards, points: 0, consentAt: autoEnrollRewards ? createdAt : null, enrollmentSource: autoEnrollRewards ? "account_creation" : null, ledger: [], grants: [] }, student: { status: "not_submitted" }, business: { status: "not_submitted" } };
+  const account = { id: `acct_${randomUUID()}`, email, name, phone: normalizePhone(input.phone), type, birthday: normalizeBirthday(input.birthday), password: hashPassword(password), createdAt, favorites: [], mixes: [], addresses: [], events: [], reservations: [], orderIds: [], rewards: { enrolled: autoEnrollRewards, points: 0, consentAt: autoEnrollRewards ? createdAt : null, enrollmentSource: autoEnrollRewards ? "account_creation" : null, ledger: [], grants: [] }, student: { status: "not_submitted" }, business: { status: "not_submitted" } };
   accounts.set(account.id, account); byEmail.set(email, account.id); return account;
 }
 
@@ -49,7 +55,16 @@ export function sessionForRequest(request) { const token = parseCookies(request.
 export function requireAccount(request, { csrf = false } = {}) { const resolved = sessionForRequest(request); if (!resolved) fail("Sign in is required.", "authentication_required", 401); if (csrf && request.headers["x-csrf-token"] !== resolved.session.csrfToken) fail("The account request could not be verified.", "csrf_invalid", 403); return resolved; }
 export function publicAccount(account) { return { id: account.id, email: account.email, name: account.name, phone: account.phone, type: account.type, birthday: account.birthday, createdAt: account.createdAt, rewards: { enrolled: Boolean(account.rewards?.enrolled), points: Number(account.rewards?.points || 0), consentAt: account.rewards?.consentAt || null }, student: account.student, business: account.business }; }
 export function accountCollections(account) { return { favorites: [...account.favorites], mixes: structuredClone(account.mixes), addresses: structuredClone(account.addresses), events: structuredClone(account.events), reservations: structuredClone(account.reservations || []) }; }
-export function updateProfile(account, input = {}) { if (input.name != null) account.name = clean(input.name, 100); if (input.phone != null) account.phone = clean(input.phone, 40); if (input.birthday != null) account.birthday = normalizeBirthday(input.birthday); return account; }
+export function updateProfile(account, input = {}) {
+  if (input.name != null) {
+    const name = clean(input.name, 100);
+    if (name.length < 2) fail("Enter your name.", "name_required", 422, "name");
+    account.name = name;
+  }
+  if (input.phone != null) account.phone = normalizePhone(input.phone);
+  if (input.birthday != null) account.birthday = normalizeBirthday(input.birthday);
+  return account;
+}
 export function setFavorite(account, productId, active = true) { account.favorites = active ? [...new Set([...account.favorites, productId])] : account.favorites.filter((id) => id !== productId); return [...account.favorites]; }
 export function saveMix(account, input = {}) { const mix = { id: `mix_${randomUUID()}`, name: clean(input.name, 60) || "My Mood", selections: structuredClone(input.selections || {}), createdAt: new Date().toISOString() }; account.mixes.unshift(mix); return mix; }
 export function removeMix(account, id) { const before = account.mixes.length; account.mixes = account.mixes.filter((row) => row.id !== id); return before !== account.mixes.length; }
