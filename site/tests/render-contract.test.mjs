@@ -161,6 +161,13 @@ assert.ok(!checkout.includes("SAFE TEST"));
 assert.ok(checkout.includes("Order for now."));
 assert.ok(!checkout.includes("Service date"));
 assert.ok(!checkout.includes("Available time"));
+
+state.runtimeConfig = { mode: "production", payments: { live: true } };
+const liveCheckout = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
+assert.ok(liveCheckout.includes("CHECKOUT"));
+assert.ok(!liveCheckout.includes("ORDERING PREVIEW"));
+assert.ok(!liveCheckout.includes("No live card charge will occur yet."));
+state.runtimeConfig = null;
 assert.ok(checkout.includes("Minimum prep:"));
 assert.ok(checkout.includes("4 hr"));
 
@@ -197,4 +204,10 @@ assert.ok(order.includes("Estimated ready"));
 assert.ok(order.includes("2026-08-17 · 08:30"));
 assert.ok(!order.includes("Advance test status"));
 
-console.log(JSON.stringify({ status: "valid", routesRendered: routes.length + 1, builderStepsRendered: data.builder.steps.length, fullMenuCards: 54, accountModesRendered: 4, checkoutRendered: true, orderRendered: true }, null, 2));
+state.order.mode = "production";
+const liveOrder = renderPage({ path: "/order/order_test", params: new URLSearchParams() }, { data, state });
+assert.ok(liveOrder.includes("ORDER STATUS"));
+assert.ok(!liveOrder.includes("Preview receipt"));
+assert.ok(!liveOrder.includes("No live card charge occurred."));
+
+console.log(JSON.stringify({ status: "valid", routesRendered: routes.length + 1, builderStepsRendered: data.builder.steps.length, fullMenuCards: 54, accountModesRendered: 4, checkoutRendered: true, liveCheckoutCopyValidated: true, orderRendered: true, liveOrderCopyValidated: true }, null, 2));
