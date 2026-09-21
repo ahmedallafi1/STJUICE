@@ -2,6 +2,17 @@ import { projectData } from "../project-data.js";
 
 export async function loadProjectData() {
   const data = projectData;
+  try {
+    const response = await fetch("../api/catalog-status", { credentials: "same-origin" });
+    if (response.ok) {
+      data.runtimeCommercial = await response.json();
+      for (const product of data.catalog.products) {
+        product.runtimeStatus = data.runtimeCommercial.products?.[product.id]?.status || "available";
+      }
+    }
+  } catch {
+    data.runtimeCommercial = null;
+  }
   data.productById = new Map(data.catalog.products.map((item) => [item.id, item]));
   data.categoryById = new Map(data.catalog.categories.map((item) => [item.id, item]));
   data.modifierById = new Map(data.modifiers.groups.map((item) => [item.id, item]));
@@ -115,8 +126,13 @@ export function mediaBadge(label = "Concept visual") {
 export function buildProductCard(product, data, options = {}) {
   const category = data.categoryById.get(product.categoryId);
   const complex = (product.modifierGroupIds || []).length > 2 || product.catalogRole === "group_format";
-  const actionText = complex ? "Customize" : "Quick add";
-  const action = complex ? `href="#/product/${escapeHtml(product.id)}"` : `href="#/product/${escapeHtml(product.id)}" data-action="quick-add" data-product-id="${escapeHtml(product.id)}"`;
+  const unavailable = product.runtimeStatus && product.runtimeStatus !== "available";
+  const actionText = unavailable ? (product.runtimeStatus === "sold_out" ? "Sold out" : "Unavailable") : complex ? "Customize" : "Quick add";
+  const action = unavailable
+    ? `aria-disabled="true" tabindex="-1"`
+    : complex
+      ? `href="#/product/${escapeHtml(product.id)}"`
+      : `href="#/product/${escapeHtml(product.id)}" data-action="quick-add" data-product-id="${escapeHtml(product.id)}"`;
   const loading = options.eager ? "eager" : "lazy";
   return `
     <article class="product-card">
@@ -126,6 +142,7 @@ export function buildProductCard(product, data, options = {}) {
       <div class="product-card__body">
         <div class="product-card__meta">
           <span class="product-card__category">${escapeHtml(category?.name || "ST. JUICE")}</span>
+          ${unavailable ? `<span class="status-pill">${escapeHtml(product.runtimeStatus === "sold_out" ? "Sold out" : "Paused")}</span>` : ""}
         </div>
         <h3><a href="#/product/${escapeHtml(product.id)}">${escapeHtml(product.name)}</a></h3>
         <p class="product-card__description">${escapeHtml(product.description)}</p>
