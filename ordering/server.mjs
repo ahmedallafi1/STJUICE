@@ -11,9 +11,11 @@ import { attachOrder, handleAccountApi } from "../accounts/account-api.mjs";
 import { creditCompletedOrder, sessionForRequest } from "../accounts/lib/account-store.mjs";
 import { availableRewardGrant, benefitSnapshot, benefitsConfig, consumeRewardGrant } from "../accounts/lib/benefits-engine.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
+import { handleAdminApi } from "../operations/admin-api.mjs";
+import { createCateringRequest, publicCateringReceipt } from "../operations/lib/operations-store.mjs";
 
 const packageRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
-const publicRoots = ["site", "brand", "media"].map((name) => resolve(packageRoot, name));
+const publicRoots = ["site", "brand", "media", "ops"].map((name) => resolve(packageRoot, name));
 const quotes = new Map();
 const orders = new Map();
 const idempotency = new Map();
@@ -143,6 +145,57 @@ function publicOrder(order) {
   };
 }
 
+function adminOrderView(order) {
+  return {
+    id: order.id,
+    orderNumber: order.orderNumber,
+    accountId: order.accountId || null,
+    status: order.status,
+    statusHistory: structuredClone(order.statusHistory || []),
+    service: order.service,
+    schedule: order.schedule,
+    payment: structuredClone(order.payment),
+    customer: structuredClone(order.customer),
+    delivery: order.delivery ? structuredClone(order.delivery) : null,
+    items: structuredClone(order.items),
+    totals: structuredClone(order.totals),
+    rewardGrantId: order.rewardGrantId || null,
+    pos: structuredClone(order.pos),
+    createdAt: order.createdAt
+  };
+}
+
+function listOrdersForAdmin() {
+  return [...orders.values()]
+    .map(adminOrderView)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+function adminSetOrderStatus(orderId, requestedStatus) {
+  const order = orders.get(String(orderId || ""));
+  if (!order) throw Object.assign(new Error("Order not found."), { code: "order_not_found", status: 404 });
+  const status = String(requestedStatus || "");
+  if (!config.orders.statuses.includes(status)) throw Object.assign(new Error("Invalid order status."), { code: "order_status_invalid", status: 422 });
+  if (status === order.status) return adminOrderView(order);
+
+  const allowed = {
+    received: ["confirmed", "canceled"],
+    confirmed: ["in_preparation", "canceled"],
+    in_preparation: order.service === "delivery" ? ["out_for_delivery", "canceled"] : ["ready_for_pickup", "canceled"],
+    ready_for_pickup: ["complete", "canceled"],
+    out_for_delivery: ["complete", "canceled"],
+    complete: [],
+    canceled: []
+  };
+  if (!(allowed[order.status] || []).includes(status)) {
+    throw Object.assign(new Error(`Cannot move order from ${order.status} to ${status}.`), { code: "order_transition_invalid", status: 409 });
+  }
+  order.status = status;
+  order.statusHistory.push({ status, at: new Date().toISOString() });
+  if (status === "complete") order.rewards = creditCompletedOrder(order);
+  return adminOrderView(order);
+}
+
 function scheduleValid(service, schedule) {
   if (schedule === "asap") return ["pickup", "delivery", "dine_in"].includes(service);
   const value = String(schedule || "");
@@ -159,15 +212,28 @@ function canReadOrder(request, url, order) {
 }
 
 function testAdminAuthorized(request) {
-  const expected = process.env.STJ_TEST_ADMIN_TOKEN;
+  const expected = process.env.ST_JUICE_ADMIN_TOKEN || process.env.STJ_TEST_ADMIN_TOKEN;
   return Boolean(expected && request.headers["x-stj-admin-token"] === expected);
 }
 
 async function api(request, response, url) {
+  if (await handleAdminApi({
+    request,
+    response,
+    url,
+    json,
+    bodyJson,
+    listOrders: listOrdersForAdmin,
+    updateOrderStatus: adminSetOrderStatus
+  })) return;
   if (await handleAccountApi({ request, response, url, json, bodyJson, getOrder: (id) => orders.get(id), publicOrder })) return;
   if (request.method === "GET" && url.pathname === "/api/health") return json(response, 200, { ok: true, mode: config.meta.mode, payment: "token_only_test", storage: config.orders.storage, accounts: "memory_only_test" });
   if (request.method === "GET" && url.pathname === "/api/launch-readiness") return json(response, 200, getLaunchReadiness());
   if (request.method === "GET" && url.pathname === "/api/config") return json(response, 200, publicConfig());
+  if (request.method === "POST" && url.pathname === "/api/catering/requests") {
+    const row = createCateringRequest(await bodyJson(request));
+    return json(response, 201, { request: publicCateringReceipt(row) });
+  }
   if (request.method === "GET" && url.pathname === "/api/slots") {
     const result = generateSlots(url.searchParams.get("service"), url.searchParams.get("date"));
     return json(response, result.valid ? 200 : 400, result);
@@ -272,11 +338,7 @@ async function api(request, response, url) {
     if (!order) return json(response, 404, { error: { code: "order_not_found", message: "Order not found." } });
     const flow = order.service === "delivery" ? ["received", "confirmed", "in_preparation", "out_for_delivery", "complete"] : ["received", "confirmed", "in_preparation", "ready_for_pickup", "complete"];
     const next = flow[Math.min(flow.length - 1, flow.indexOf(order.status) + 1)];
-    if (next !== order.status) {
-      order.status = next;
-      order.statusHistory.push({ status: next, at: new Date().toISOString() });
-      if (next === "complete") order.rewards = creditCompletedOrder(order);
-    }
+    if (next !== order.status) adminSetOrderStatus(order.id, next);
     return json(response, 200, { order: publicOrder(order) });
   }
   return json(response, 404, { error: { code: "api_not_found", message: "API route not found." } });
