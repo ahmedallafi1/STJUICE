@@ -201,6 +201,15 @@ function adminSetOrderStatus(orderId, requestedStatus) {
   return adminOrderView(order);
 }
 
+function operationalNow() {
+  const configured = config.meta.mode === "safe_test" ? String(process.env.ST_JUICE_TEST_NOW || "").trim() : "";
+  if (configured) {
+    const date = new Date(configured);
+    if (!Number.isNaN(date.getTime())) return date;
+  }
+  return new Date();
+}
+
 function localDateText(now = new Date()) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: config.meta.timezone,
@@ -313,7 +322,7 @@ async function api(request, response, url) {
     const customerResult = validCustomer(input.customer);
     if (!customerResult.valid) return json(response, 422, { valid: false, errors: customerResult.errors });
     if (input.allergenAcknowledged !== true) return json(response, 422, { valid: false, errors: [{ code: "allergen_acknowledgement_required", field: "allergenAcknowledged", message: "Review and acknowledge the allergen notice." }] });
-    const schedule = scheduleResolution(quote.service, input.schedule, quote.fulfillment?.requiredLeadMinutes || 0);
+    const schedule = scheduleResolution(quote.service, input.schedule, quote.fulfillment?.requiredLeadMinutes || 0, operationalNow());
     if (!schedule.valid) return json(response, 422, { valid: false, errors: [{ code: "schedule_invalid", field: "schedule", message: "The store cannot complete this order within today's operating window. Try again during open hours." }] });
     if (quote.service === "delivery" && !deliveryChecks.has(input.deliveryCheckToken)) return json(response, 422, { valid: false, errors: [{ code: "delivery_check_required", message: "Validate the delivery address first." }] });
     const paymentMethod = input.paymentMethod === "cash" ? "cash" : "card";
