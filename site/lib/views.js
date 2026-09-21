@@ -935,7 +935,7 @@ function renderAccount({ data, state }) {
       : "Not required";
     const rewardsLabel = loyalty.enabled ? `${Number(loyalty.points || 0)} points` : "Paused";
     const benefitLabel = Number(discount.activePercentOff || 0) > 0 ? `${discount.activePercentOff}% active` : discount.verificationRequired ? verificationLabel : "Member account";
-    const birthdayLabel = birthday.eligible ? "Available now" : birthday.enabled ? "Outside birthday window" : "Paused";
+    const birthdayLabel = birthday.alreadyIssuedThisYear ? "Added to wallet" : birthday.eligible ? "Available now" : birthday.enabled ? "Outside birthday window" : "Paused";
     const wallet = account.rewardsWallet || { points: Number(loyalty.points || 0), lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
     const rewardsConfig = account.rewardsConfig || { enabled: false, redemptions: [] };
     const availableGrants = (wallet.grants || []).filter((grant) => grant.status === "available");
@@ -973,7 +973,7 @@ function renderAccount({ data, state }) {
             ${birthday.enabled && birthday.eligible ? `<button class="button button--outline" type="button" data-action="claim-birthday">Add birthday benefit</button>` : ""}
           </article>
         </div>
-        ${availableGrants.length ? `<div class="wallet-grants"><p class="eyebrow">READY TO USE</p>${availableGrants.map((grant) => `<article><div><strong>${escapeHtml(titleCase(grant.rewardType || grant.kind))}</strong><small>${escapeHtml(grant.kind === "birthday" ? "Birthday benefit" : "Reward redemption")} · Available</small></div><button class="button button--outline button--small" type="button" data-action="apply-reward-grant" data-grant-id="${escapeHtml(grant.id)}">${state.checkout.rewardGrantId === grant.id ? "Selected" : "Use reward"}</button></article>`).join("")}${state.checkout.rewardGrantId ? `<button class="text-button" type="button" data-action="remove-reward-grant">Remove selected reward</button>` : ""}</div>` : ""}
+        ${availableGrants.length ? `<div class="wallet-grants"><p class="eyebrow">READY TO USE</p>${availableGrants.map((grant) => `<article><div><strong>${escapeHtml(grant.label || titleCase(grant.rewardType || grant.kind))}</strong><small>${escapeHtml(grant.kind === "birthday" ? "Birthday benefit" : "Reward redemption")} · Available</small></div><button class="button button--outline button--small" type="button" data-action="apply-reward-grant" data-grant-id="${escapeHtml(grant.id)}">${state.checkout.rewardGrantId === grant.id ? "Selected" : "Use reward"}</button></article>`).join("")}${state.checkout.rewardGrantId ? `<button class="text-button" type="button" data-action="remove-reward-grant">Remove selected reward</button>` : ""}</div>` : ""}
       </div>
 
       ${state.mode === "student" ? `
