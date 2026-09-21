@@ -71,8 +71,18 @@ try {
   const memberCookie = memberRegistration.response.headers.get("set-cookie")?.split(";")[0];
   assert.ok(memberCookie?.startsWith("stj_session="), "Registration must create the configured secure account session cookie");
 
-  const memberQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, promoCode: "" }) });
+  const memberQuote = await json("/api/cart/validate", { method: "POST", headers: { Cookie: memberCookie }, body: JSON.stringify({ ...cartBody, promoCode: "" }) });
+  assert.equal(memberQuote.payload.accountBenefit.applied, false, "Disabled account benefit must not alter member quote");
   const memberPayment = await json("/api/payment/intents", { method: "POST", body: JSON.stringify({ quoteId: memberQuote.payload.quoteId }) });
+
+  const mismatchedMemberOrder = await json("/api/orders", {
+    method: "POST",
+    headers: { "Idempotency-Key": `${key}-member-mismatch` },
+    body: JSON.stringify({ ...orderBody, quoteId: memberQuote.payload.quoteId, paymentToken: memberPayment.payload.token, schedule: "asap" })
+  });
+  assert.equal(mismatchedMemberOrder.response.status, 409);
+  assert.equal(mismatchedMemberOrder.payload.error.code, "quote_account_mismatch");
+
   const memberOrder = await json("/api/orders", {
     method: "POST",
     headers: { "Idempotency-Key": `${key}-member`, Cookie: memberCookie },
@@ -107,7 +117,7 @@ try {
   for (let index = 0; index < 3; index += 1) deliveryStatus = (await json(`/api/orders/${deliveryStatus.id}/advance`, { method: "POST", headers: { "X-STJ-Admin-Token": process.env.STJ_TEST_ADMIN_TOKEN }, body: "{}" })).payload.order;
   assert.equal(deliveryStatus.status, "out_for_delivery");
 
-  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true, unauthorizedOrderReadBlocked: true, unauthorizedAdvanceBlocked: true, signedInOrderAttached: true }, null, 2));
+  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true, unauthorizedOrderReadBlocked: true, unauthorizedAdvanceBlocked: true, signedInOrderAttached: true, accountQuoteBound: true, forgedAccountBenefitRejected: true }, null, 2));
 } finally {
   server.close();
   await once(server, "close");
