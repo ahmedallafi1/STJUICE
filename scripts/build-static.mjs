@@ -25,6 +25,8 @@ for (const source of files) {
 for (const source of directories) cpSync(resolve(root, source), resolve(output, source), { recursive: true });
 // Keep a root copy for the conservative public-reference audit; the browser uses /site/project-data.js.
 cpSync(resolve(root, "site/project-data.js"), resolve(output, "project-data.js"));
+// robots.txt must exist at the domain root as well as under /site/.
+cpSync(resolve(root, "site/robots.txt"), resolve(output, "robots.txt"));
 
 function countFiles(directory) {
   return readdirSync(directory, { withFileTypes: true }).reduce((total, entry) => total + (entry.isDirectory() ? countFiles(resolve(directory, entry.name)) : 1), 0);
@@ -72,6 +74,7 @@ if (indexingEnabled) {
 
   const robots = `User-agent: *\nAllow: /\n\nSitemap: ${publicOrigin}/sitemap.xml\n`;
   writeFileSync(resolve(output, "site/robots.txt"), robots);
+  writeFileSync(resolve(output, "robots.txt"), robots);
 
   const indexPath = resolve(output, "site/index.html");
   let indexHtml = readFileSync(indexPath, "utf8");
