@@ -1225,7 +1225,6 @@ export function renderPage(route, context) {
   if (path === "/build") return renderBuilder(context);
   if (path === "/drops") return renderDrops(context);
   if (path === "/boxes") return renderBoxes(context);
-  if (path === "/gift-cards") return renderGiftCards(context);
   if (path === "/catering") return renderCatering(context);
   if (path === "/rewards") return renderRewards(context);
   if (path === "/location") return renderLocation(context);
