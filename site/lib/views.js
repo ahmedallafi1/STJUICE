@@ -71,7 +71,7 @@ function pageHero(eyebrow, title, intro, actions = "") {
 
 function categoryCards(data, limit = 12) {
   return data.catalog.categories.slice(0, limit).map((category) => `
-    <a class="category-card" href="#/menu?category=${escapeHtml(category.id)}">
+    <a class="category-card" href="/menu?category=${escapeHtml(category.id)}">
       <div class="category-card__image">
         ${mediaBadge()}
         <img src="${categoryImage(category.id)}" alt="${escapeHtml(category.name)} category preview" loading="lazy" width="360" height="360" />
@@ -130,8 +130,8 @@ function renderHome({ data, state }) {
           <h1>${escapeHtml(copy.home.hero.headline)}</h1>
           <p class="hero__body">${escapeHtml(copy.home.hero.body)}</p>
           <div class="button-row">
-            <a class="button" href="#/menu">${escapeHtml(copy.home.hero.primaryCta)}</a>
-            <a class="button button--outline" href="#/build">${escapeHtml(copy.home.hero.secondaryCta)}</a>
+            <a class="button" href="/menu">${escapeHtml(copy.home.hero.primaryCta)}</a>
+            <a class="button button--outline" href="/build">${escapeHtml(copy.home.hero.secondaryCta)}</a>
           </div>
           <div class="hero__meta">
             <span>Open from 6:30 AM</span>
@@ -157,7 +157,7 @@ function renderHome({ data, state }) {
       <div class="container">
         <div class="section-heading">
           <div><p class="eyebrow">NEW AT ST. JUICE</p><h2>Try what just dropped.</h2><p class="lede">Limited releases and new combinations live here first.</p></div>
-          <a class="text-link" href="#/drops">Explore New Drops ${icon("arrow")}</a>
+          <a class="text-link" href="/drops">Explore New Drops ${icon("arrow")}</a>
         </div>
         <div class="feature-grid">
           ${drops.map((product) => `
@@ -167,7 +167,7 @@ function renderHome({ data, state }) {
                 <p class="eyebrow">NEW DROP</p>
                 <h3>${escapeHtml(product.name)}</h3>
                 <p>${escapeHtml(product.description)}</p>
-                <a class="button button--light button--small ${product.runtimeStatus && product.runtimeStatus !== "available" ? "is-disabled" : ""}" ${product.runtimeStatus && product.runtimeStatus !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="#/product/${escapeHtml(product.id)}"`}>${product.runtimeStatus === "sold_out" ? "Sold out" : product.runtimeStatus === "paused" ? "Unavailable" : "View drop"}</a>
+                <a class="button button--light button--small ${product.runtimeStatus && product.runtimeStatus !== "available" ? "is-disabled" : ""}" ${product.runtimeStatus && product.runtimeStatus !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="/product/${escapeHtml(product.id)}"`}>${product.runtimeStatus === "sold_out" ? "Sold out" : product.runtimeStatus === "paused" ? "Unavailable" : "View drop"}</a>
               </div>
             </article>`).join("")}
           <article class="feature-card">
@@ -176,7 +176,7 @@ function renderHome({ data, state }) {
               <p class="eyebrow">FOR THE GROUP</p>
               <h3>Bring the whole table.</h3>
               <p>Study nights, birthdays and office runs get a format of their own.</p>
-              <a class="button button--light button--small" href="#/boxes">Explore Party Boxes</a>
+              <a class="button button--light button--small" href="/boxes">Explore Party Boxes</a>
             </div>
           </article>
         </div>
@@ -187,7 +187,7 @@ function renderHome({ data, state }) {
       <div class="container">
         <div class="section-heading">
           <div><p class="eyebrow">SHOP THE MENU</p><h2>Juice, dessert and everything between.</h2><p class="lede">Start by category or search the full menu when you already know the mood.</p></div>
-          <a class="button button--outline" href="#/menu">See full menu</a>
+          <a class="button button--outline" href="/menu">See full menu</a>
         </div>
         <div class="category-grid">${categoryCards(data)}</div>
       </div>
@@ -197,7 +197,7 @@ function renderHome({ data, state }) {
       <div class="container">
         <div class="section-heading">
           <div><p class="eyebrow">ST. JUICE SIGNATURES</p><h2>${escapeHtml(copy.home.signatures.headline)}</h2><p class="lede">${escapeHtml(copy.home.signatures.body)}</p></div>
-          <a class="text-link" href="#/menu?category=signatures">Shop signatures ${icon("arrow")}</a>
+          <a class="text-link" href="/menu?category=signatures">Shop signatures ${icon("arrow")}</a>
         </div>
         <div class="product-grid">${featured.map((product, index) => buildProductCard(product, data, { eager: index < 2 })).join("")}</div>
       </div>
@@ -209,7 +209,7 @@ function renderHome({ data, state }) {
           <p class="eyebrow">BUILD YOUR MOOD</p>
           <h2>${escapeHtml(copy.home.builder.headline)}</h2>
           <p class="lede">${escapeHtml(copy.home.builder.body)}</p>
-          <div class="button-row"><a class="button" href="#/build">${escapeHtml(copy.home.builder.cta)}</a></div>
+          <div class="button-row"><a class="button" href="/build">${escapeHtml(copy.home.builder.cta)}</a></div>
         </div>
         <div class="split-feature__media">
           <img src="../media/motion/st-juice-hero-loop.svg" alt="ST. JUICE Build Your Mood artwork" loading="lazy" width="1600" height="900" />
@@ -240,7 +240,7 @@ function renderHome({ data, state }) {
       <div class="container">
         <div class="section-heading">
           <div><p class="eyebrow">PARTY BOXES</p><h2>${escapeHtml(copy.boxes.title)}</h2><p class="lede">${escapeHtml(copy.boxes.intro)}</p></div>
-          <a class="button button--outline" href="#/boxes">Explore boxes</a>
+          <a class="button button--outline" href="/boxes">Explore boxes</a>
         </div>
         <div class="product-grid">${boxes.map((product) => buildProductCard(product, data)).join("")}</div>
       </div>
@@ -267,7 +267,7 @@ function renderHome({ data, state }) {
             <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(copy.home.location.hours)}</strong><span>Open daily</span></div></div>
             <div class="location-fact"><span class="location-fact__icon">${icon("pickup")}</span><div><strong>Dine-in · Pickup · Delivery</strong><span>Choose the handoff that fits the day.</span></div></div>
           </div>
-          <a class="button" href="#/location">Location & hours</a>
+          <a class="button" href="/location">Location & hours</a>
         </div>
         <div class="map-card" aria-label="ST. JUICE location">
           <div class="map-pin"><img src="../brand/assets/logos/st-juice-fruit-mark.svg" alt="" /></div>
@@ -450,7 +450,7 @@ function renderProduct(productId, { data, state }) {
   return `
     <section class="product-page">
       <div class="container">
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/menu">Menu</a><span>/</span><a href="#/menu?category=${escapeHtml(product.categoryId)}">${escapeHtml(category?.name || "Category")}</a><span>/</span><span aria-current="page">${escapeHtml(product.name)}</span></nav>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/menu">Menu</a><span>/</span><a href="/menu?category=${escapeHtml(product.categoryId)}">${escapeHtml(category?.name || "Category")}</a><span>/</span><span aria-current="page">${escapeHtml(product.name)}</span></nav>
         <div class="product-detail">
           <div class="product-detail__media">
             <div class="product-detail__image">
@@ -706,7 +706,7 @@ function renderDrops({ data }) {
               <h2>${escapeHtml(lead.name)}</h2>
               <p class="lede">${escapeHtml(lead.description)}</p>
               <div class="drop-hero__meta"><span>Limited release</span><span>${lead.runtimeStatus === "sold_out" ? "Sold out today" : "Available while offered"}</span></div>
-              <a class="button ${lead.runtimeStatus === "sold_out" ? "is-disabled" : ""}" ${lead.runtimeStatus === "sold_out" ? 'aria-disabled="true" tabindex="-1"' : `href="#/product/${escapeHtml(lead.id)}"`}>${lead.runtimeStatus === "sold_out" ? "Sold out" : "Order the drop"}</a>
+              <a class="button ${lead.runtimeStatus === "sold_out" ? "is-disabled" : ""}" ${lead.runtimeStatus === "sold_out" ? 'aria-disabled="true" tabindex="-1"' : `href="/product/${escapeHtml(lead.id)}"`}>${lead.runtimeStatus === "sold_out" ? "Sold out" : "Order the drop"}</a>
             </div>
           </article>` : ""}
         ${rest.length ? `
@@ -714,13 +714,13 @@ function renderDrops({ data }) {
           <div class="drop-grid">
             ${rest.map((product) => `
               <article class="drop-card">
-                <a class="drop-card__media" href="#/product/${escapeHtml(product.id)}"><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="720" /></a>
-                <div class="drop-card__body"><p class="eyebrow">CURRENT DROP</p><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><a class="text-link" href="#/product/${escapeHtml(product.id)}">View drop ${icon("arrow")}</a></div>
+                <a class="drop-card__media" href="/product/${escapeHtml(product.id)}"><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="720" /></a>
+                <div class="drop-card__body"><p class="eyebrow">CURRENT DROP</p><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><a class="text-link" href="/product/${escapeHtml(product.id)}">View drop ${icon("arrow")}</a></div>
               </article>`).join("")}
           </div>` : ""}
         <div class="drop-archive">
           <div><p class="eyebrow">DROP ARCHIVE</p><h2>Past favorites make room for what is next.</h2><p>When a release ends, it moves here instead of disappearing from the story.</p></div>
-          <a class="button button--outline" href="#/menu?category=desserts-drops">Shop what is available</a>
+          <a class="button button--outline" href="/menu?category=desserts-drops">Shop what is available</a>
         </div>
       </div>
     </section>`;
@@ -733,19 +733,19 @@ function renderBoxes({ data }) {
     runtime: data.runtimeCommercial?.boxes?.[box.productId] || null
   }));
   return `
-    ${pageHero("PARTY BOXES", data.copy.boxes.title, "Built for study nights, birthdays, office tables and the moments that need more than one order.", `<a class="button" href="#/catering">Planning something bigger?</a>`)}
+    ${pageHero("PARTY BOXES", data.copy.boxes.title, "Built for study nights, birthdays, office tables and the moments that need more than one order.", `<a class="button" href="/catering">Planning something bigger?</a>`)}
     <section class="section section--surface">
       <div class="container box-showcase">
         ${cards.map(({ product, runtime, ...box }) => `
           <article class="party-box-card">
-            <a class="party-box-card__media" href="#/product/${escapeHtml(box.productId)}">
+            <a class="party-box-card__media" href="/product/${escapeHtml(box.productId)}">
               <img src="${productImage(product || { id: box.productId, categoryId: "flights-liters-boxes" })}" alt="${escapeHtml(product?.name || box.productId)}" loading="lazy" width="720" height="620" />
             </a>
             <div class="party-box-card__body">
               <div class="party-box-card__heading"><div><p class="eyebrow">SERVES ${box.serves.min}–${box.serves.max}</p><h3>${escapeHtml(product?.name || box.productId)}</h3></div><strong>${box.startingAt ? "From " : ""}${money(box.basePrice)}</strong></div>
               <ul class="compact-list">${box.includes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
               <div class="party-box-card__meta"><span>${(runtime?.leadTime || box.leadTime).type === "scheduled" ? `${(runtime?.leadTime || box.leadTime).minimumHours} hr minimum prep` : `${(runtime?.leadTime || box.leadTime).minimumMinutes} min minimum prep`}</span><span>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Temporarily unavailable" : "Customize before checkout"}</span></div>
-              <a class="button ${runtime?.status && runtime.status !== "available" ? "is-disabled" : ""}" ${runtime?.status && runtime.status !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="#/product/${escapeHtml(box.productId)}"`}>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Unavailable" : "Customize box"}</a>
+              <a class="button ${runtime?.status && runtime.status !== "available" ? "is-disabled" : ""}" ${runtime?.status && runtime.status !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="/product/${escapeHtml(box.productId)}"`}>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Unavailable" : "Customize box"}</a>
             </div>
           </article>`).join("")}
       </div>
@@ -754,7 +754,7 @@ function renderBoxes({ data }) {
 
 function renderCatering({ data, state }) {
   return `
-    ${pageHero("CATERING", data.copy.catering.title, "Drinks, desserts and full-table moments for teams, celebrations and groups.", `<a class="button" href="#catering-form">Start a request</a><a class="button button--outline" href="#/boxes">Shop party boxes</a>`)}
+    ${pageHero("CATERING", data.copy.catering.title, "Drinks, desserts and full-table moments for teams, celebrations and groups.", `<a class="button" href="#catering-form">Start a request</a><a class="button button--outline" href="/boxes">Shop party boxes</a>`)}
     <section class="section section--cream">
       <div class="container">
         <div class="section-heading"><div><p class="eyebrow">CHOOSE YOUR FORMAT</p><h2>Start with the kind of service you need.</h2><p class="lede">Every catering request is reviewed around guest count, date, setup and menu availability before it is confirmed.</p></div></div>
@@ -810,7 +810,7 @@ function renderGiftCards() {
           <p class="eyebrow">COMING SOON</p>
           <h2>Birthdays, thank-yous and random sweet moves.</h2>
           <p class="lede">Gift cards will launch with secure balance tracking, receipts and clear terms. Until then, no gift-card balance is created or sold online.</p>
-          <a class="button" href="#/menu">Explore the menu</a>
+          <a class="button" href="/menu">Explore the menu</a>
         </div>
       </div>
     </section>`;
@@ -826,7 +826,7 @@ function renderRewards({ state }) {
           <p class="eyebrow">${signedIn ? "YOUR ACCOUNT" : "MEMBER BENEFITS"}</p>
           <h2>${signedIn ? "You're ready for rewards." : "Create an account once. Keep the benefits together."}</h2>
           <p>${signedIn ? "Your signed-in account is already the home for favorites and saved mixes. Points and redeemable rewards will appear here when the loyalty ledger launches." : "Regular, Student and Business members will use the same account for rewards, offers, birthday benefits and saved activity."}</p>
-          <a class="button" href="#/account">${signedIn ? "Open account" : "Create account"}</a>
+          <a class="button" href="/account">${signedIn ? "Open account" : "Create account"}</a>
         </article>
         <article class="account-panel">
           <p class="eyebrow">WHAT'S COMING</p>
@@ -858,7 +858,7 @@ function renderLocation({ data, state }) {
           </div>
           <p>${escapeHtml(location.parking)}</p>
           <div class="info-panel"><h3>Contact placeholders</h3><p>Phone and customer-service email are intentionally hidden until real values are confirmed.</p></div>
-          <div class="button-row" style="margin-top:1rem"><button class="button" type="button" data-action="open-service">Choose service</button><a class="button button--outline" href="#/menu">Browse menu</a></div>
+          <div class="button-row" style="margin-top:1rem"><button class="button" type="button" data-action="open-service">Choose service</button><a class="button button--outline" href="/menu">Browse menu</a></div>
         </div>
         <div class="map-card"><div class="map-pin"><img src="../brand/assets/logos/st-juice-fruit-mark.svg" alt="" /></div><div class="map-card__label"><strong>11 S Vandeventer Ave</strong><br /><span>Directions and map details will be available here.</span></div></div>
       </div>
@@ -962,7 +962,7 @@ function renderAccount({ data, state }) {
                 <label class="form-field form-field--full"><span>Typical ordering cadence</span><select class="field" name="recurringCadence"><option value="">Choose one</option>${["Weekly","Monthly","Quarterly","Occasional"].map((value) => `<option ${String(account.business.recurringCadence || "").toLowerCase() === value.toLowerCase() ? "selected" : ""}>${value}</option>`).join("")}</select></label>
               </div>
               <button class="button" type="submit">${account.business.status === "pending_review" ? "Update business profile" : "Submit business profile"}</button>
-            </form>` : `<a class="button button--outline" href="#/catering">Plan catering</a>`}
+            </form>` : `<a class="button button--outline" href="/catering">Plan catering</a>`}
         </div>` : ""}
 
       <div class="account-section reservation-section">
@@ -994,8 +994,8 @@ function renderAccount({ data, state }) {
         </div>
       </div>
 
-      <div class="account-section"><div><p class="eyebrow">FAVORITES</p><h2>Your repeat cravings</h2></div><div class="product-grid">${favorites.length ? favorites.map((product) => buildProductCard(product, data)).join("") : `<div class="empty-state"><span class="empty-state__icon">${icon("heart")}</span><h3>No favorites yet.</h3><p>Use the heart button on a product page.</p><a class="button" href="#/menu">Browse menu</a></div>`}</div></div>
-      <div class="account-section"><div><p class="eyebrow">SAVED MIXES</p><h2>Your moods</h2></div><div class="saved-list">${account.savedMixes.length ? account.savedMixes.map((mix) => `<article><strong>${escapeHtml(mix.name)}</strong><small>${new Date(mix.savedAt).toLocaleDateString()}</small><a href="#/build">Open builder</a></article>`).join("") : `<p>No saved mixes yet. Finish a Build Your Mood recipe and save it here.</p>`}</div></div>
+      <div class="account-section"><div><p class="eyebrow">FAVORITES</p><h2>Your repeat cravings</h2></div><div class="product-grid">${favorites.length ? favorites.map((product) => buildProductCard(product, data)).join("") : `<div class="empty-state"><span class="empty-state__icon">${icon("heart")}</span><h3>No favorites yet.</h3><p>Use the heart button on a product page.</p><a class="button" href="/menu">Browse menu</a></div>`}</div></div>
+      <div class="account-section"><div><p class="eyebrow">SAVED MIXES</p><h2>Your moods</h2></div><div class="saved-list">${account.savedMixes.length ? account.savedMixes.map((mix) => `<article><strong>${escapeHtml(mix.name)}</strong><small>${new Date(mix.savedAt).toLocaleDateString()}</small><a href="/build">Open builder</a></article>`).join("") : `<p>No saved mixes yet. Finish a Build Your Mood recipe and save it here.</p>`}</div></div>
       <div class="account-section"><div><p class="eyebrow">ORDER HISTORY</p><h2>Your recent orders</h2></div><div class="saved-list">${account.orderHistory.length ? account.orderHistory.map((order) => `<article><strong>${escapeHtml(order.orderNumber)}</strong><small>${escapeHtml(order.status)} · ${money(order.total)}</small><button class="text-button" data-action="reorder-history" data-order-id="${escapeHtml(order.id)}">Reorder</button></article>`).join("") : `<p>Your completed orders will appear here.</p>`}</div></div>
     </div></section>`;
   }
@@ -1036,7 +1036,7 @@ function renderAccount({ data, state }) {
 function renderAbout({ data }) {
   return `
     ${pageHero("OUR STORY", data.copy.about.title, data.copy.about.body)}
-    <section class="section section--surface"><div class="container split-feature"><div class="split-feature__copy"><p class="eyebrow">YOUR MOOD, MADE FRESH</p><h2>Fresh and indulgent share the same counter.</h2><p class="lede">${escapeHtml(data.copy.about.story)}</p><a class="button" href="#/menu">Explore the menu</a></div><div class="split-feature__media">${mediaBadge("Packaging concept")}<img src="../media/optimized/webp/packaging/packaging-lineup-concept-v1.webp" alt="Concept ST. JUICE packaging lineup" width="1200" height="800" /></div></div></section>
+    <section class="section section--surface"><div class="container split-feature"><div class="split-feature__copy"><p class="eyebrow">YOUR MOOD, MADE FRESH</p><h2>Fresh and indulgent share the same counter.</h2><p class="lede">${escapeHtml(data.copy.about.story)}</p><a class="button" href="/menu">Explore the menu</a></div><div class="split-feature__media">${mediaBadge("Packaging concept")}<img src="../media/optimized/webp/packaging/packaging-lineup-concept-v1.webp" alt="Concept ST. JUICE packaging lineup" width="1200" height="800" /></div></div></section>
     <section class="section section--dark"><div class="container"><div class="principle-grid"><article class="principle-card"><span class="principle-card__number">01</span><h3>St. Louis first.</h3><p>The first home is 11 S Vandeventer Ave, with one branch at launch.</p></article><article class="principle-card"><span class="principle-card__number">02</span><h3>Original identity.</h3><p>No competitor imagery, recipes, protected marks or university identity is copied.</p></article><article class="principle-card"><span class="principle-card__number">03</span><h3>Truth before claims.</h3><p>Prices, nutrition, allergens, rewards and packaging advance only with verification.</p></article></div></div></section>`;
 }
 
@@ -1134,7 +1134,7 @@ function renderInfo(path) {
 }
 
 function renderNotFound() {
-  return `${pageHero("404", "That mood is not here.", "The route may have moved, or the item is not part of the launch catalog.")}<section class="section section--cream"><div class="container"><div class="empty-state"><span class="empty-state__icon">${icon("search")}</span><h2>Try the full menu.</h2><p>Every launch category and active product is available from one canonical source.</p><a class="button" href="#/menu">Explore the menu</a></div></div></section>`;
+  return `${pageHero("404", "That mood is not here.", "The route may have moved, or the item is not part of the launch catalog.")}<section class="section section--cream"><div class="container"><div class="empty-state"><span class="empty-state__icon">${icon("search")}</span><h2>Try the full menu.</h2><p>Every launch category and active product is available from one canonical source.</p><a class="button" href="/menu">Explore the menu</a></div></div></section>`;
 }
 
 function quoteTotals(quote) {
@@ -1161,7 +1161,7 @@ function checkoutFulfillment(state) {
     <div class="service-grid checkout-services">${Object.entries(serviceModes).map(([id, service]) => `<button class="service-option ${state.service === id ? "is-active" : ""}" type="button" data-action="checkout-service" data-service="${id}"><span data-icon="${service.icon}"></span><strong>${escapeHtml(service.label)}</strong><small>${escapeHtml(service.detail)}</small></button>`).join("")}</div>
     <div class="privacy-note"><span>${icon("clock")}</span><p><strong>Order for now.</strong> No date or time selection is needed.</p></div>
     ${state.service === "delivery" ? `<div class="delivery-panel"><h3>Delivery address</h3><p>Enter the full address so delivery availability can be reviewed.</p><div class="form-grid"><label class="form-field form-field--full"><span>Street *</span><input class="field" autocomplete="street-address" data-address-field="street" value="${escapeHtml(checkout.address.street)}" /></label><label class="form-field"><span>City *</span><input class="field" autocomplete="address-level2" data-address-field="city" value="${escapeHtml(checkout.address.city)}" /></label><label class="form-field"><span>State *</span><input class="field" autocomplete="address-level1" maxlength="30" data-address-field="state" value="${escapeHtml(checkout.address.state)}" /></label><label class="form-field"><span>Postal code *</span><input class="field" autocomplete="postal-code" data-address-field="postalCode" value="${escapeHtml(checkout.address.postalCode)}" /></label></div><button class="button button--outline" type="button" data-action="validate-delivery">${checkout.deliveryCheck ? "Address reviewed" : "Check address"}</button></div>` : ""}
-    <div class="checkout-actions"><a class="button button--outline" href="#/menu">Keep shopping</a><button class="button" type="button" data-action="checkout-next">Continue</button></div></div>`;
+    <div class="checkout-actions"><a class="button button--outline" href="/menu">Keep shopping</a><button class="button" type="button" data-action="checkout-next">Continue</button></div></div>`;
 }
 
 function checkoutGuest(state) {
@@ -1190,7 +1190,7 @@ function checkoutPayment(state) {
 }
 
 function renderCheckout({ state }) {
-  if (!state.cart.length) return `${pageHero("CHECKOUT", "Your bag needs a mood.", "Add at least one item before checkout.")}<section class="section section--cream"><div class="container"><div class="empty-state"><span class="empty-state__icon">${icon("bag")}</span><h2>Your bag is empty.</h2><a class="button" href="#/menu">Explore menu</a></div></div></section>`;
+  if (!state.cart.length) return `${pageHero("CHECKOUT", "Your bag needs a mood.", "Add at least one item before checkout.")}<section class="section section--cream"><div class="container"><div class="empty-state"><span class="empty-state__icon">${icon("bag")}</span><h2>Your bag is empty.</h2><a class="button" href="/menu">Explore menu</a></div></div></section>`;
   const panels = [checkoutFulfillment, checkoutGuest, checkoutReview, checkoutPayment];
   return `${pageHero("ORDERING PREVIEW", "Checkout without surprises.", "Build the full order flow now. Live payment and final fees will switch on with production ordering.")}<section class="section section--cream checkout-section"><div class="container checkout-layout"><div><div class="launch-notice"><strong>Ordering preview</strong><span>No live card charge will occur yet.</span></div>${checkoutProgress(state.checkout.step)}${state.checkout.error ? `<div class="checkout-error" role="alert"><strong>Check this step</strong><p>${escapeHtml(state.checkout.error)}</p></div>` : ""}${panels[state.checkout.step](state)}</div><aside class="checkout-aside"><p class="eyebrow">YOUR BAG</p><h3>${state.cart.reduce((sum, item) => sum + item.quantity, 0)} item${state.cart.reduce((sum, item) => sum + item.quantity, 0) === 1 ? "" : "s"}</h3><p>${escapeHtml(serviceModes[state.service].label)} · 11 S Vandeventer Ave</p>${state.checkout.quote?.fulfillment?.requiredLeadMinutes ? `<p class="checkout-aside__note"><strong>Minimum prep:</strong> ${state.checkout.quote.fulfillment.requiredLeadMinutes >= 60 ? `${Math.floor(state.checkout.quote.fulfillment.requiredLeadMinutes / 60)} hr${state.checkout.quote.fulfillment.requiredLeadMinutes % 60 ? ` ${state.checkout.quote.fulfillment.requiredLeadMinutes % 60} min` : ""}` : `${state.checkout.quote.fulfillment.requiredLeadMinutes} min`}</p>` : ""}${quoteTotals(state.checkout.quote)}<p class="checkout-aside__note">Final taxes, fees and live payment activate with production ordering.</p></aside></div></section>`;
 }
@@ -1202,7 +1202,7 @@ function renderOrder(orderId, { state }) {
   if (state.orderLoading || !order || order.id !== orderId) return `${pageHero("ORDER STATUS", "Loading your order preview…", "Checking the latest status.")}<section class="section section--cream"><div class="container"><div class="skeleton skeleton--line"></div></div></section>`;
   const flow = order.service === "delivery" ? ["received", "confirmed", "in_preparation", "out_for_delivery", "complete"] : ["received", "confirmed", "in_preparation", "ready_for_pickup", "complete"];
   const current = flow.indexOf(order.status);
-  return `${pageHero("ORDER PREVIEW", `Thanks, ${order.customer.name}.`, `${order.orderNumber} is ${statusLabels[order.status].toLowerCase()}.`)}<section class="section section--cream"><div class="container order-confirmation"><div class="order-card"><div class="launch-notice"><strong>Preview receipt</strong><span>No live card charge occurred.</span></div><div class="order-meta"><div><span>Order</span><strong>${escapeHtml(order.orderNumber)}</strong></div><div><span>Service</span><strong>${escapeHtml(serviceModes[order.service].label)}</strong></div><div><span>When</span><strong>${order.schedule === "asap" ? "Order now" : escapeHtml(String(order.schedule).replace("T", " · ").slice(0, 18))}</strong></div>${order.estimatedReadyAt ? `<div><span>Estimated ready</span><strong>${escapeHtml(String(order.estimatedReadyAt).replace("T", " · ").slice(0, 18))}</strong></div>` : ""}<div><span>Total</span><strong>${money(order.totals.total.amount)}</strong></div></div><ol class="status-tracker">${flow.map((status, index) => `<li class="${index <= current ? "is-complete" : ""} ${index === current ? "is-current" : ""}"><span>${index < current ? "✓" : index + 1}</span><div><strong>${statusLabels[status]}</strong>${index === current ? `<small>Current status</small>` : ""}</div></li>`).join("")}</ol><div class="order-lines">${order.items.map((item) => `<div><span>${item.quantity} × ${escapeHtml(item.name)}</span><strong>${money(item.lineTotal.amount)}</strong></div>`).join("")}</div>${quoteTotals({ totals: order.totals })}<div class="checkout-actions"><button class="button button--outline" type="button" data-action="refresh-order" data-order-id="${escapeHtml(order.id)}">Refresh status</button></div></div><aside class="checkout-aside"><p class="eyebrow">CONTACT</p><h3>${escapeHtml(order.customer.name)}</h3><p>${escapeHtml(order.customer.email)} · ${escapeHtml(order.customer.phone)}</p><p class="checkout-aside__note">Only masked contact details are returned here.</p><a class="button button--outline" href="#/menu">Start another order</a></aside></div></section>`;
+  return `${pageHero("ORDER PREVIEW", `Thanks, ${order.customer.name}.`, `${order.orderNumber} is ${statusLabels[order.status].toLowerCase()}.`)}<section class="section section--cream"><div class="container order-confirmation"><div class="order-card"><div class="launch-notice"><strong>Preview receipt</strong><span>No live card charge occurred.</span></div><div class="order-meta"><div><span>Order</span><strong>${escapeHtml(order.orderNumber)}</strong></div><div><span>Service</span><strong>${escapeHtml(serviceModes[order.service].label)}</strong></div><div><span>When</span><strong>${order.schedule === "asap" ? "Order now" : escapeHtml(String(order.schedule).replace("T", " · ").slice(0, 18))}</strong></div>${order.estimatedReadyAt ? `<div><span>Estimated ready</span><strong>${escapeHtml(String(order.estimatedReadyAt).replace("T", " · ").slice(0, 18))}</strong></div>` : ""}<div><span>Total</span><strong>${money(order.totals.total.amount)}</strong></div></div><ol class="status-tracker">${flow.map((status, index) => `<li class="${index <= current ? "is-complete" : ""} ${index === current ? "is-current" : ""}"><span>${index < current ? "✓" : index + 1}</span><div><strong>${statusLabels[status]}</strong>${index === current ? `<small>Current status</small>` : ""}</div></li>`).join("")}</ol><div class="order-lines">${order.items.map((item) => `<div><span>${item.quantity} × ${escapeHtml(item.name)}</span><strong>${money(item.lineTotal.amount)}</strong></div>`).join("")}</div>${quoteTotals({ totals: order.totals })}<div class="checkout-actions"><button class="button button--outline" type="button" data-action="refresh-order" data-order-id="${escapeHtml(order.id)}">Refresh status</button></div></div><aside class="checkout-aside"><p class="eyebrow">CONTACT</p><h3>${escapeHtml(order.customer.name)}</h3><p>${escapeHtml(order.customer.email)} · ${escapeHtml(order.customer.phone)}</p><p class="checkout-aside__note">Only masked contact details are returned here.</p><a class="button button--outline" href="/menu">Start another order</a></aside></div></section>`;
 }
 
 export function renderPage(route, context) {
@@ -1230,9 +1230,9 @@ export function renderFooter(data) {
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand"><img src="../brand/assets/logos/st-juice-lockup-horizontal.svg" alt="ST. JUICE" width="194" height="54" /><p>${escapeHtml(data.copy.footer.line)}</p><p>11 S Vandeventer Ave · St. Louis, Missouri</p></div>
-        <div class="footer-column"><h2>Menu</h2><a href="#/menu">Full menu</a><a href="#/build">Build Your Mood</a><a href="#/drops">New Drops</a><a href="#/boxes">Party Boxes</a><a href="#/catering">Catering</a></div>
-        <div class="footer-column"><h2>ST. JUICE</h2><a href="#/about">Our story</a><a href="#/rewards">Rewards</a><a href="#/gift-cards">Gift cards</a><a href="#/location">Location & hours</a><a href="#/account">Account</a></div>
-        <div class="footer-column"><h2>Help</h2><a href="#/info/allergens">Nutrition & Allergens</a><a href="#/info/privacy">Privacy</a><a href="#/info/terms">Terms</a><a href="#/info/refunds">Refunds</a><a href="#/info/cookies">Cookies</a><a href="#/info/accessibility">Accessibility</a><a href="#/info/contact">Contact</a></div>
+        <div class="footer-column"><h2>Menu</h2><a href="/menu">Full menu</a><a href="/build">Build Your Mood</a><a href="/drops">New Drops</a><a href="/boxes">Party Boxes</a><a href="/catering">Catering</a></div>
+        <div class="footer-column"><h2>ST. JUICE</h2><a href="/about">Our story</a><a href="/rewards">Rewards</a><a href="/location">Location & hours</a><a href="/account">Account</a></div>
+        <div class="footer-column"><h2>Help</h2><a href="/info/allergens">Nutrition & Allergens</a><a href="/info/privacy">Privacy</a><a href="/info/terms">Terms</a><a href="/info/refunds">Refunds</a><a href="/info/cookies">Cookies</a><a href="/info/accessibility">Accessibility</a><a href="/info/contact">Contact</a></div>
       </div>
       <div class="footer-bottom"><span>© 2026 ST. JUICE</span><span>11 S Vandeventer Ave · St. Louis, Missouri</span></div>
     </div>`;
@@ -1253,7 +1253,7 @@ export function renderAccountDialog(state) {
       }).join("")}
     </div>
     <div class="info-panel" style="margin-top:1rem"><h3>Experience access</h3><p>Regular, Student and Business experiences are tied to the signed-in account. Guest browsing never requires an account.</p></div>
-    <a class="button button--outline" href="#/account" data-action="close-dialog" style="margin-top:1rem;width:100%">Manage account</a>`;
+    <a class="button button--outline" href="/account" data-action="close-dialog" style="margin-top:1rem;width:100%">Manage account</a>`;
 }
 
 export function renderServiceDialog(state) {
@@ -1262,7 +1262,7 @@ export function renderServiceDialog(state) {
 }
 
 export function renderCart(data, state) {
-  if (!state.cart.length) return `<div class="empty-state"><span class="empty-state__icon">${icon("bag")}</span><h3>${escapeHtml(data.copy.cartCheckout.emptyCart)}</h3><p>Start with a signature, a drop or a mood of your own.</p><a class="button" href="#/menu" data-action="close-dialog">${escapeHtml(data.copy.cartCheckout.emptyCartCta)}</a></div>`;
+  if (!state.cart.length) return `<div class="empty-state"><span class="empty-state__icon">${icon("bag")}</span><h3>${escapeHtml(data.copy.cartCheckout.emptyCart)}</h3><p>Start with a signature, a drop or a mood of your own.</p><a class="button" href="/menu" data-action="close-dialog">${escapeHtml(data.copy.cartCheckout.emptyCartCta)}</a></div>`;
   const subtotal = state.cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
   return `
     <div class="cart-list">
