@@ -36,6 +36,22 @@ export function rewardGrantDiscount({ subtotalCents, items = [], grant = null } 
     };
   }
 
+  if (kind === "item_discount") {
+    const eligible = new Set(Array.isArray(pricing.eligibleProductIds) ? pricing.eligibleProductIds.map(String) : []);
+    if (!eligible.size) return { applicable: false, discountCents: 0, reason: "grant_eligibility_unconfigured" };
+    const matching = items.find((item) => eligible.has(String(item.productId || "")) && Number(item.quantity || 0) > 0);
+    if (!matching) return { applicable: false, discountCents: 0, reason: "eligible_product_missing" };
+    const amount = Number(pricing.amount ?? grant.value);
+    if (!(amount > 0)) return { applicable: false, discountCents: 0, reason: "grant_value_unconfigured" };
+    const unitCents = Math.max(0, Number(matching.unitPrice?.cents || 0));
+    return {
+      applicable: true,
+      discountCents: Math.min(subtotal, unitCents, cents(amount)),
+      kind,
+      productId: matching.productId
+    };
+  }
+
   return { applicable: false, discountCents: 0, reason: "grant_pricing_unsupported" };
 }
 
