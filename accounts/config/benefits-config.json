@@ -94,7 +94,17 @@
       "confirmed",
       "declined",
       "canceled"
-    ]
+    ],
+    "resources": [
+      {
+        "id": "main-lounge",
+        "label": "Main lounge",
+        "capacity": 40,
+        "active": true
+      }
+    ],
+    "defaultResourceId": "main-lounge",
+    "bufferMinutes": 0
   },
   "stacking": {
     "accountDiscountWithPromo": "best_discount",
