@@ -58,7 +58,7 @@ function publicConfig() {
     mode: accountConfig.meta.mode,
     storage: accountConfig.meta.storage,
     accountTypes: accountConfig.accountTypes,
-    rewards: accountConfig.rewards,
+    rewards: publicBenefitsConfig().loyalty,
     benefits: publicBenefitsConfig(),
     studentVerification: {
       mode: accountConfig.studentVerification.mode,
@@ -217,7 +217,7 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
     if (request.method === "POST" && url.pathname === "/api/account/rewards/enroll") {
       const { account } = requireAccount(request, { csrf: true });
       const input = await bodyJson(request);
-      json(response, 200, { rewards: enrollRewards(account, input.consent), config: publicConfig().rewards });
+      json(response, 200, { rewards: enrollRewards(account, input.consent), config: publicBenefitsConfig().loyalty });
       return true;
     }
 
