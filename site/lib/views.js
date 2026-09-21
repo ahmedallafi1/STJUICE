@@ -74,7 +74,7 @@ function categoryCards(data, limit = 12) {
     <a class="category-card" href="#/menu?category=${escapeHtml(category.id)}">
       <div class="category-card__image">
         ${mediaBadge()}
-        <img src="${categoryImage(category.id)}" alt="Concept scene for ${escapeHtml(category.name)}" loading="lazy" width="360" height="360" />
+        <img src="${categoryImage(category.id)}" alt="${escapeHtml(category.name)} category preview" loading="lazy" width="360" height="360" />
       </div>
       <h3>${escapeHtml(category.name)}</h3>
     </a>`).join("");
@@ -1216,7 +1216,6 @@ export function renderPage(route, context) {
   if (path === "/location") return renderLocation(context);
   if (path === "/account") return renderAccount(context);
   if (path === "/about") return renderAbout(context);
-  if (path === "/states") return renderStates(context);
   if (path === "/checkout") return renderCheckout(context);
   if (path.startsWith("/order/")) return renderOrder(decodeURIComponent(path.split("/")[2] || ""), context);
   if (path.startsWith("/info/")) return renderInfo(path);
