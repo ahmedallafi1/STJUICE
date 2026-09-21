@@ -25,6 +25,20 @@ const allowedStatuses = new Set([
   "canceled"
 ]);
 
+const allowedTransitions = {
+  requested: ["needs_clarification", "quoted", "declined", "canceled"],
+  needs_clarification: ["requested", "quoted", "declined", "canceled"],
+  quoted: ["accepted", "needs_clarification", "declined", "canceled"],
+  accepted: ["payment_required", "confirmed", "canceled"],
+  payment_required: ["confirmed", "canceled"],
+  confirmed: ["in_preparation", "canceled"],
+  in_preparation: ["ready_or_out_for_delivery", "canceled"],
+  ready_or_out_for_delivery: ["completed", "canceled"],
+  completed: [],
+  declined: [],
+  canceled: []
+};
+
 function recordAudit(eventType, metadata = {}) {
   const event = {
     id: `audit_${randomUUID()}`,
@@ -239,23 +253,42 @@ export function adminUpdateCateringRequest(id, input = {}, now = new Date()) {
   if (status && !allowedStatuses.has(status)) fail("Invalid catering request status.", "catering_status_invalid", 422);
 
   const candidate = structuredClone(row);
-  if (status) candidate.status = status;
+  let quoteChanged = false;
   if (input.quote != null) {
     const amount = Number(input.quote.amount);
     if (!Number.isFinite(amount) || amount <= 0) fail("Quote amount must be greater than $0.", "catering_quote_invalid", 422);
-    candidate.quote = {
-      amount: Number(amount.toFixed(2)),
-      notes: clean(input.quote.notes, 600),
-      version: Number(row.quote?.version || 0) + 1,
-      createdAt: now.toISOString()
-    };
-    if (!status) candidate.status = "quoted";
+    const notes = clean(input.quote.notes, 600);
+    const normalizedAmount = Number(amount.toFixed(2));
+    quoteChanged = !row.quote || row.quote.amount !== normalizedAmount || row.quote.notes !== notes;
+    if (quoteChanged) {
+      candidate.quote = {
+        amount: normalizedAmount,
+        notes,
+        version: Number(row.quote?.version || 0) + 1,
+        createdAt: now.toISOString()
+      };
+    }
+  }
+
+  const requestedStatus = status || (quoteChanged ? "quoted" : candidate.status);
+  if (requestedStatus !== row.status) {
+    const allowed = allowedTransitions[row.status] || [];
+    if (!allowed.includes(requestedStatus)) {
+      fail(`Cannot move catering request from ${row.status} to ${requestedStatus}.`, "catering_transition_invalid", 409);
+    }
+    candidate.status = requestedStatus;
   }
   if (candidate.status === "quoted" && !candidate.quote) fail("A quoted request requires a quote amount.", "catering_quote_required", 422);
   candidate.updatedAt = now.toISOString();
 
   requests.set(candidate.id, candidate);
-  recordAudit("catering.updated", { cateringRequestId: candidate.id, status: candidate.status, quoteVersion: candidate.quote?.version || null });
+  recordAudit("catering.updated", {
+    cateringRequestId: candidate.id,
+    previousStatus: row.status,
+    status: candidate.status,
+    quoteVersion: candidate.quote?.version || null,
+    quoteChanged
+  });
   return structuredClone(candidate);
 }
 
