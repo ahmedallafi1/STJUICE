@@ -45,7 +45,7 @@ export function rewardLedger(account) {
   const ledger = Array.isArray(account?.rewards?.ledger) ? account.rewards.ledger : [];
   const balance = ledger.reduce((sum, entry) => sum + Number(entry.points || 0), 0);
   const lifetimeEarned = ledger.filter((entry) => Number(entry.points) > 0).reduce((sum, entry) => sum + Number(entry.points), 0);
-  const lifetimeRedeemed = Math.abs(ledger.filter((entry) => Number(entry.points) < 0).reduce((sum, entry) => sum + Number(entry.points), 0));
+  const lifetimeRedeemed = Math.abs(ledger.filter((entry) => entry.type === "redeem").reduce((sum, entry) => sum + Number(entry.points), 0));
   return {
     points: balance,
     lifetimeEarned,
@@ -102,12 +102,15 @@ export function benefitSnapshot(account, nowInput = new Date()) {
   const activeBirthdayAgeSatisfied = activeBirthdayRules
     ? accountAgeDays(account, now) >= Number(activeBirthdayRules.minimumAccountAgeDays || 0)
     : false;
+  const birthdayYear = now.getUTCFullYear();
+  const birthdayAlreadyIssued = Boolean((account?.rewards?.grants || []).some((grant) => grant.sourceId === `birthday:${birthdayYear}`));
   const birthdayEligible = Boolean(
     activeBirthdayRules
     && activeBirthdayRules.reward
     && account?.birthday
     && activeBirthdayInWindow
     && activeBirthdayAgeSatisfied
+    && !birthdayAlreadyIssued
   );
 
   const rewards = rewardLedger(account || {});
@@ -130,6 +133,7 @@ export function benefitSnapshot(account, nowInput = new Date()) {
       hasBirthday: Boolean(account?.birthday),
       inWindow: activeBirthdayInWindow,
       accountAgeSatisfied: activeBirthdayAgeSatisfied,
+      alreadyIssuedThisYear: birthdayAlreadyIssued,
       eligible: birthdayEligible
     }
   };
@@ -158,6 +162,7 @@ export function publicBenefitSnapshot(account, nowInput = new Date()) {
       hasBirthday: snapshot.birthday.hasBirthday,
       inWindow: snapshot.birthday.inWindow,
       accountAgeSatisfied: snapshot.birthday.accountAgeSatisfied,
+      alreadyIssuedThisYear: snapshot.birthday.alreadyIssuedThisYear,
       eligible: snapshot.birthday.eligible
     }
   };
@@ -225,6 +230,7 @@ export function redeemConfiguredReward(account, rewardId, nowInput = new Date())
     id: `grant_${randomUUID()}`,
     kind: "loyalty_redemption",
     rewardId: reward.id,
+    label: reward.label || reward.id,
     rewardType: reward.type,
     value: reward.value ?? null,
     pricing: reward.pricing ? structuredClone(reward.pricing) : null,
@@ -251,6 +257,7 @@ export function claimBirthdayReward(account, nowInput = new Date()) {
     id: `grant_${randomUUID()}`,
     sourceId,
     kind: "birthday",
+    label: reward.label || "Birthday reward",
     rewardType: reward.type,
     value: reward.value ?? null,
     pricing: reward.pricing ? structuredClone(reward.pricing) : null,
