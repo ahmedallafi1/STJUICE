@@ -76,6 +76,23 @@ try {
   assert.equal(boxQuote.response.status, 200, JSON.stringify(boxQuote.payload));
   assert.equal(boxQuote.payload.fulfillment.requiredLeadMinutes, 240);
 
+  const scheduled = await json("/api/admin/commercial/drops/dragon-cloud-cup", {
+    method: "PATCH",
+    headers: adminHeaders,
+    body: JSON.stringify({ status: "scheduled", startsAt: "2999-01-01", endsAt: "2999-01-31" })
+  });
+  assert.equal(scheduled.response.status, 200);
+  const scheduledPublic = await json("/api/catalog-status");
+  assert.ok(scheduledPublic.payload.drops.some((row) => row.productId === "dragon-cloud-cup" && row.status === "scheduled"));
+
+  const invalidWindow = await json("/api/admin/commercial/drops/dragon-cloud-cup", {
+    method: "PATCH",
+    headers: adminHeaders,
+    body: JSON.stringify({ status: "scheduled", startsAt: "2999-02-01", endsAt: "2999-01-01" })
+  });
+  assert.equal(invalidWindow.response.status, 422);
+  assert.equal(invalidWindow.payload.error.code, "drop_window_invalid");
+
   const archived = await json("/api/admin/commercial/drops/dragon-cloud-cup", {
     method: "PATCH",
     headers: adminHeaders,
@@ -99,6 +116,7 @@ try {
     soldOutBlockedServerSide: true,
     partyBoxLeadTimeEnforced: true,
     dropLifecycleControlled: true,
+    dropPublishWindowControlled: true,
     publicCommercialStateAvailable: true
   }, null, 2));
 } finally {
