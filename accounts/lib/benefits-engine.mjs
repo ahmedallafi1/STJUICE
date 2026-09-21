@@ -64,7 +64,7 @@ export function appendRewardTransaction(account, input = {}) {
     if (duplicate) return { entry: structuredClone(duplicate), summary: rewardLedger(account), idempotentReplay: true };
   }
   const current = rewardLedger(account).points;
-  if (current + points < 0) fail("Not enough reward points.", "reward_points_insufficient", 422);
+  if (current + points < 0 && type !== "refund_reversal") fail("Not enough reward points.", "reward_points_insufficient", 422);
   const entry = {
     id: `rwd_${randomUUID()}`,
     type,
