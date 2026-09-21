@@ -52,5 +52,11 @@
     "legalContentApproved": false,
     "realOrderTestPassed": false,
     "rollbackOwnerAssigned": false
+  },
+  "operations": {
+    "console": "preview_available",
+    "staffAuthentication": "shared_secret_preview",
+    "roleBasedAccess": false,
+    "auditPersistence": "memory_only_test"
   }
 }
