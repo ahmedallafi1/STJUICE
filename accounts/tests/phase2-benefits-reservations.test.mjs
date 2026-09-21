@@ -6,9 +6,11 @@ import {
 } from "../lib/account-store.mjs";
 import {
   appendRewardTransaction,
+  availableRewardGrant,
   benefitSnapshot,
   benefitsConfig,
   claimBirthdayReward,
+  consumeRewardGrant,
   creditOrderRewards,
   publicBenefitSnapshot,
   redeemConfiguredReward,
@@ -139,6 +141,12 @@ assert.equal(rewardLedger(rewardMember).points, 90);
 const redeemedReward = redeemConfiguredReward(rewardMember, "reward-test", now);
 assert.equal(redeemedReward.rewards.points, 40);
 assert.equal(redeemedReward.grant.status, "available");
+assert.equal(availableRewardGrant(rewardMember, redeemedReward.grant.id)?.id, redeemedReward.grant.id);
+const consumedGrant = consumeRewardGrant(rewardMember, redeemedReward.grant.id, "order_grant_test", now);
+assert.equal(consumedGrant.grant.status, "consumed");
+assert.equal(availableRewardGrant(rewardMember, redeemedReward.grant.id), null, "Consumed grant must no longer be available");
+const consumedReplay = consumeRewardGrant(rewardMember, redeemedReward.grant.id, "order_grant_test", now);
+assert.equal(consumedReplay.idempotentReplay, true, "Grant consumption must be idempotent for the same order");
 const reversed = reverseOrderRewards(rewardMember, rewardOrder, "Refunded test order");
 assert.equal(reversed.reversed, true);
 assert.equal(rewardLedger(rewardMember).points, -50, "Refund clawback must remain auditable even after earned points were partially spent");
