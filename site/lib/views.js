@@ -880,6 +880,9 @@ function renderAccount({ data, state }) {
     const rewardsLabel = loyalty.enabled ? `${Number(loyalty.points || 0)} points` : "Coming soon";
     const benefitLabel = Number(discount.activePercentOff || 0) > 0 ? `${discount.activePercentOff}% active` : discount.verificationRequired ? verificationLabel : "Member account";
     const birthdayLabel = birthday.eligible ? "Available now" : birthday.enabled ? "Not active today" : "Coming soon";
+    const wallet = account.rewardsWallet || { points: Number(loyalty.points || 0), lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
+    const rewardsConfig = account.rewardsConfig || { enabled: false, redemptions: [] };
+    const availableGrants = (wallet.grants || []).filter((grant) => grant.status === "available");
 
     return `${pageHero("YOUR ST. JUICE", `Hey, ${account.profile.name || "friend"}.`, modes[state.mode].line, `<button class="button button--outline" type="button" data-action="account-signout">Sign out</button>`)}
     <section class="section section--cream"><div class="container account-dashboard">
@@ -888,6 +891,33 @@ function renderAccount({ data, state }) {
         <article><span>Account benefit</span><strong>${escapeHtml(benefitLabel)}</strong><small>${discount.verificationRequired ? "Verification controls eligibility" : "Your member experience"}</small></article>
         <article><span>Birthday</span><strong>${escapeHtml(birthdayLabel)}</strong><small>Benefits appear here only when eligible and active</small></article>
         <article><span>Reservations</span><strong>${reservations.filter((item) => ["requested", "confirmed"].includes(item.status)).length}</strong><small>Open group requests</small></article>
+      </div>
+
+      <div class="account-section member-wallet">
+        <div class="section-heading account-section__heading">
+          <div><p class="eyebrow">MEMBER WALLET</p><h2>Rewards, benefits and offers in one place.</h2><p class="lede">Only active, account-eligible benefits appear here. Proposed program values are never shown as live offers.</p></div>
+        </div>
+        <div class="wallet-grid">
+          <article class="account-panel">
+            <p class="eyebrow">POINTS</p>
+            <h2>${rewardsConfig.enabled ? `${Number(wallet.points || 0)} points` : "Rewards coming soon"}</h2>
+            <p>${rewardsConfig.enabled ? `${Number(wallet.lifetimeEarned || 0)} earned · ${Number(wallet.lifetimeRedeemed || 0)} redeemed` : "Your account is ready for the loyalty program when the final earning and redemption rules are approved."}</p>
+            ${rewardsConfig.enabled && !loyalty.enrolled ? `<button class="button" type="button" data-action="enroll-rewards">Join ST. Rewards</button>` : ""}
+          </article>
+          <article class="account-panel">
+            <p class="eyebrow">AVAILABLE REWARDS</p>
+            ${rewardsConfig.enabled && loyalty.enrolled && (rewardsConfig.redemptions || []).length
+              ? `<div class="wallet-rewards">${rewardsConfig.redemptions.map((reward) => `<div class="wallet-reward"><div><strong>${escapeHtml(titleCase(reward.type))}</strong><small>${reward.points} points</small></div><button class="button button--outline button--small" type="button" data-action="redeem-reward" data-reward-id="${escapeHtml(reward.id)}" ${Number(wallet.points || 0) < Number(reward.points || 0) ? "disabled" : ""}>Redeem</button></div>`).join("")}</div>`
+              : `<p>${rewardsConfig.enabled ? "No redeemable rewards are configured for this account yet." : "Rewards will appear here after the program is activated."}</p>`}
+          </article>
+          <article class="account-panel">
+            <p class="eyebrow">BIRTHDAY</p>
+            <h2>${escapeHtml(birthdayLabel)}</h2>
+            <p>${birthday.enabled ? "Birthday eligibility is calculated from your account birthday and program rules." : "Birthday benefits will appear here when the program is activated."}</p>
+            ${birthday.enabled && birthday.eligible ? `<button class="button button--outline" type="button" data-action="claim-birthday">Add birthday benefit</button>` : ""}
+          </article>
+        </div>
+        ${availableGrants.length ? `<div class="wallet-grants"><p class="eyebrow">READY TO USE</p>${availableGrants.map((grant) => `<article><strong>${escapeHtml(titleCase(grant.rewardType || grant.kind))}</strong><small>${escapeHtml(grant.kind === "birthday" ? "Birthday benefit" : "Reward redemption")} · Available</small></article>`).join("")}</div>` : ""}
       </div>
 
       ${state.mode === "student" ? `
@@ -975,6 +1005,8 @@ function renderAccount({ data, state }) {
             <label class="form-field"><span>Name *</span><input class="field" name="name" autocomplete="name" required /></label>
             <label class="form-field"><span>Email *</span><input class="field" name="email" type="email" autocomplete="email" required /></label>
             <label class="form-field form-field--full"><span>Password *</span><input class="field" name="password" type="password" minlength="12" autocomplete="new-password" required /></label>
+            <label class="form-field"><span>Birthday</span><input class="field" name="birthday" type="date" autocomplete="bday" /></label>
+            <label class="form-field"><span>Why we ask</span><input class="field" value="Optional · used for birthday benefits" disabled aria-label="Birthday explanation" /></label>
             <label class="form-field form-field--full"><span>Account type *</span><select class="field" name="type" required>
               <option value="regular" ${requestedType === "regular" ? "selected" : ""}>Regular</option>
               <option value="student" ${requestedType === "student" ? "selected" : ""}>Student</option>
