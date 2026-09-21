@@ -140,7 +140,7 @@ try {
       items: [{
         kind: "catalog",
         productId: "dragon-cloud-cup",
-        sizeId: "regular",
+        sizeId: "standard",
         quantity: 1,
         modifierSelections: {}
       }],
