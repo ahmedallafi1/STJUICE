@@ -626,8 +626,8 @@ function renderBuilder({ data, state }) {
       <div class="review-card"><h3>Base and mood</h3><p>${escapeHtml(baseName)} · ${escapeHtml(moodName)}</p></div>
       <div class="review-card"><h3>Your choices</h3><p>${escapeHtml(data.builder.steps.filter((item) => !["base", "mood", "review"].includes(item.id)).map((item) => builderSelectionLabel(item, data, state)).filter(Boolean).join(" · ") || "No optional additions selected.")}</p></div>
       <div class="review-card"><h3>Draft allergen set</h3><p>${escapeHtml(allergens.map(titleCase).join(" · ") || "No default allergens listed. Cross-contact remains possible.")}</p></div>
-      <div class="review-card"><h3>Quality note</h3><p>${["crepe", "waffle", "mini-pancakes-12", "soft-serve-regular"].includes(base?.id) ? "Warm/frozen quality may change during delivery. Final hold tests remain pending." : "Final delivery quality depends on packaging and operational testing."}</p></div>
-      <div class="review-card"><h3>Save status</h3><p>${state.mode === "guest" ? escapeHtml(data.copy.buildYourMood.guestSaveNote) : "Saved mixes are available on this device and activate across devices with production accounts."}</p></div>
+      <div class="review-card"><h3>Quality note</h3><p>${["crepe", "waffle", "mini-pancakes-12", "soft-serve-regular"].includes(base?.id) ? "Warm and frozen items are best enjoyed promptly; delivery may soften texture." : "Prepared to order; enjoy promptly for the intended texture."}</p></div>
+      <div class="review-card"><h3>Save status</h3><p>${state.mode === "guest" ? escapeHtml(data.copy.buildYourMood.guestSaveNote) : "Save this mix to your account for faster repeats whenever you sign in."}</p></div>
     </div>`;
 
   const optionMarkup = compatible.length ? `
@@ -672,7 +672,7 @@ function renderBuilder({ data, state }) {
           </div>
         </section>
         <aside class="builder-summary" aria-label="Current build summary">
-          <div class="builder-summary__visual"><img src="../media/optimized/webp/products/pistachio-saint-concept-v1.webp" alt="ST. JUICE Build Your Mood preview" width="720" height="900" /></div>
+          <div class="builder-summary__visual"><img src="../media/optimized/webp/products/pistachio-saint-concept-v1.webp" alt="ST. JUICE Build Your Mood visual" width="720" height="900" /></div>
           <div class="builder-summary__body">
             <p class="eyebrow">LIVE BUILD</p>
             <h3>${escapeHtml(state.builder.name || `${moodName === "No mood yet" ? "Your" : moodName} mood`)}</h3>
@@ -915,22 +915,11 @@ function renderLocation({ data, state }) {
             <div class="location-fact"><span class="location-fact__icon">${icon("pickup")}</span><div><strong>${escapeHtml(location.services.join(" · "))}</strong><span>Current selection: ${escapeHtml(serviceModes[state.service].label)}</span></div></div>
           </div>
           <p>${escapeHtml(location.parking)}</p>
-          <div class="info-panel"><h3>Contact placeholders</h3><p>Phone and customer-service email are intentionally hidden until real values are confirmed.</p></div>
-          <div class="button-row" style="margin-top:1rem"><button class="button" type="button" data-action="open-service">Choose service</button><a class="button button--outline" href="/menu">Browse menu</a></div>
+          <div class="button-row" style="margin-top:1rem"><button class="button" type="button" data-action="open-service">Choose service</button><a class="button button--outline" href="/menu">Browse menu</a><a class="button button--outline" href="https://www.google.com/maps/search/?api=1&query=11%20S%20Vandeventer%20Ave%2C%20St.%20Louis%2C%20MO" target="_blank" rel="noreferrer">Open map</a></div>
         </div>
-        <div class="map-card"><div class="map-pin"><img src="../brand/assets/logos/st-juice-fruit-mark.svg" alt="" /></div><div class="map-card__label"><strong>11 S Vandeventer Ave</strong><br /><span>Directions and map details will be available here.</span></div></div>
+        <div class="map-card"><div class="map-pin"><img src="../brand/assets/logos/st-juice-fruit-mark.svg" alt="" /></div><div class="map-card__label"><strong>11 S Vandeventer Ave</strong><br /><span>Open directions for route and arrival details.</span></div></div>
       </div>
     </section>`;
-}
-
-function dashboardContent(mode, data) {
-  if (mode === "guest") return `<div class="empty-state" style="min-height:22rem"><span class="empty-state__icon">${icon("user")}</span><h2>Keep browsing as a guest.</h2><p>Your cart and service choice work without an account. Choose an account type only when it adds value.</p><button class="button" type="button" data-action="open-account">See account options</button></div>`;
-  const content = {
-    regular: { title: "Your regular dashboard", metrics: [["—", "Rewards"], ["0", "Saved favorites"], ["0", "Saved mixes"]], note: "Orders, favorites, rewards and saved addresses share one account after production activation." },
-    student: { title: "Your student dashboard", metrics: [["Pending", "Verification status"], ["—", "Eligible offers"], ["1", "Study Night Box"]], note: "Verification must be minimal, visible and free of implied university affiliation." },
-    business: { title: "Your business dashboard", metrics: [["0", "Upcoming events"], ["0", "Saved locations"], ["Draft", "Quote status"]], note: "Recurring orders, business contacts, quotes and receipts appear here after integrations." }
-  }[mode];
-  return `<div class="dashboard-panel"><p class="eyebrow">${escapeHtml(modes[mode].label)}</p><h2>${escapeHtml(content.title)}</h2><p class="lede">${escapeHtml(content.note)}</p><div class="metric-grid">${content.metrics.map(([value, label]) => `<div class="metric"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></div>`).join("")}</div><div class="info-panel" style="margin-top:1rem"><h3>Account privacy</h3><p>Your member experience follows the signed-in account. Sensitive payment details are never stored in the browser.</p></div></div>`;
 }
 
 function renderAccount({ data, state }) {
@@ -1161,7 +1150,7 @@ function renderStates({ data }) {
   return `
     ${pageHero("SYSTEM STATES", "Ready for the moments that are not perfect.", "Loading, empty, unavailable, error and success treatments are part of the design—not an afterthought.")}
     <section class="section section--cream"><div class="container"><div class="state-grid">${states.map((item) => item.type === "loading" ? `<article class="state-card"><div class="skeleton skeleton--image"></div><div class="skeleton skeleton--line"></div><div class="skeleton skeleton--line"></div></article>` : `<article class="state-card ${item.kind ? `state-card--${item.kind}` : ""}"><span class="state-card__icon">${icon(item.icon)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.text)}</p></article>`).join("")}</div></div></section>
-    <section class="section section--surface"><div class="container"><div class="section-heading"><div><p class="eyebrow">ORDER STATUS PREVIEW</p><h2>One clear sentence at every step.</h2></div></div><div class="timeline">${Object.entries(data.copy.orderStatuses).map(([key, value], index) => `<div class="timeline__item"><span class="timeline__dot">${index + 1}</span><div><h3>${escapeHtml(titleCase(key))}</h3><p>${escapeHtml(value.replace("[PUBLIC PHONE]", "the store"))}</p></div></div>`).join("")}</div></div></section>`;
+    <section class="section section--surface"><div class="container"><div class="section-heading"><div><p class="eyebrow">ORDER STATUS FLOW</p><h2>One clear sentence at every step.</h2></div></div><div class="timeline">${Object.entries(data.copy.orderStatuses).map(([key, value], index) => `<div class="timeline__item"><span class="timeline__dot">${index + 1}</span><div><h3>${escapeHtml(titleCase(key))}</h3><p>${escapeHtml(value.replace("[PUBLIC PHONE]", "the store"))}</p></div></div>`).join("")}</div></div></section>`;
 }
 
 function renderInfo(path) {
