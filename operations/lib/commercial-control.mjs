@@ -37,10 +37,20 @@ const fail = (message, code, status = 400) => {
   throw Object.assign(new Error(message), { code, status });
 };
 
+function effectiveDropStatus(row, now = new Date()) {
+  if (["sold_out", "archived"].includes(row.status)) return row.status;
+  const nowMs = now.getTime();
+  const starts = row.startsAt ? Date.parse(row.startsAt) : null;
+  const ends = row.endsAt ? Date.parse(row.endsAt) : null;
+  if (Number.isFinite(starts) && nowMs < starts) return "scheduled";
+  if (Number.isFinite(ends) && nowMs >= ends) return "archived";
+  return row.status === "scheduled" && (!Number.isFinite(starts) || nowMs >= starts) ? "active" : row.status;
+}
+
 export function publicCommercialSnapshot() {
   return {
     products: Object.fromEntries([...productStates].map(([id, row]) => [id, { status: row.status }])),
-    drops: [...dropStates.values()].map((row) => structuredClone(row)),
+    drops: [...dropStates.values()].map((row) => ({ ...structuredClone(row), status: effectiveDropStatus(row) })),
     boxes: Object.fromEntries([...boxStates].map(([id, row]) => [id, { status: row.status, leadTime: structuredClone(row.leadTime) }])),
     persistence: "memory_only_test"
   };
@@ -49,7 +59,7 @@ export function publicCommercialSnapshot() {
 export function adminCommercialSnapshot() {
   return {
     products: [...productStates.values()].map((row) => structuredClone(row)),
-    drops: [...dropStates.values()].map((row) => structuredClone(row)),
+    drops: [...dropStates.values()].map((row) => ({ ...structuredClone(row), effectiveStatus: effectiveDropStatus(row) })),
     boxes: [...boxStates.values()].map((row) => structuredClone(row)),
     persistence: "memory_only_test"
   };
@@ -85,8 +95,19 @@ export function adminUpdateDropState(productId, input = {}) {
   if (!allowedDropStatus.has(status)) fail("Invalid drop status.", "drop_status_invalid", 422);
   row.status = status;
   if (input.position != null) row.position = Math.max(1, Math.trunc(Number(input.position) || 1));
-  if (input.startsAt !== undefined) row.startsAt = input.startsAt ? String(input.startsAt) : null;
-  if (input.endsAt !== undefined) row.endsAt = input.endsAt ? String(input.endsAt) : null;
+  if (input.startsAt !== undefined) {
+    const startsAt = input.startsAt ? String(input.startsAt) : null;
+    if (startsAt && !Number.isFinite(Date.parse(startsAt))) fail("Invalid drop start date.", "drop_start_invalid", 422);
+    row.startsAt = startsAt;
+  }
+  if (input.endsAt !== undefined) {
+    const endsAt = input.endsAt ? String(input.endsAt) : null;
+    if (endsAt && !Number.isFinite(Date.parse(endsAt))) fail("Invalid drop end date.", "drop_end_invalid", 422);
+    row.endsAt = endsAt;
+  }
+  if (row.startsAt && row.endsAt && Date.parse(row.endsAt) <= Date.parse(row.startsAt)) {
+    fail("Drop end date must be after its start date.", "drop_window_invalid", 422);
+  }
   row.updatedAt = new Date().toISOString();
   return structuredClone(row);
 }
