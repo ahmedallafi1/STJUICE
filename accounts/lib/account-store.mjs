@@ -1,5 +1,5 @@
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from "node:crypto";
-import { creditOrderRewards } from "./benefits-engine.mjs";
+import { creditOrderRewards, reverseOrderRewards } from "./benefits-engine.mjs";
 
 export const accountConfig = {
   meta: { mode: "safe_test", storage: "memory_only_test" },
@@ -48,6 +48,8 @@ export function updateBusiness(account, input = {}) { const company = clean(inpu
 export function saveEvent(account, input = {}) { const event = { id: `evt_${randomUUID()}`, name: clean(input.name, 100), date: clean(input.date, 10), guests: Math.max(0, Number(input.guests || 0)), status: "draft_requires_quote" }; account.events.push(event); return event; }
 export function removeEvent(account, id) { const before = account.events.length; account.events = account.events.filter((row) => row.id !== id); return before !== account.events.length; }
 export function enrollRewards(account, consent) { if (consent !== true) fail("Rewards consent is required.", "rewards_consent_required", 422); account.rewards.enrolled = true; account.rewards.consentAt = new Date().toISOString(); return account.rewards; }
-export function attachOrder(account, order) { if (!account || !order) return; account.orderIds = [...new Set([order.id, ...account.orderIds])]; return creditOrderRewards(account, order); }
+export function attachOrder(account, order) { if (!account || !order) return; account.orderIds = [...new Set([order.id, ...account.orderIds])]; }
+export function creditCompletedOrder(order) { const account = order?.accountId ? accounts.get(order.accountId) : null; return account ? creditOrderRewards(account, order) : { credited: false, reason: "account_not_found" }; }
+export function reverseCompletedOrderRewards(order, reason = "Order refund or reversal") { const account = order?.accountId ? accounts.get(order.accountId) : null; return account ? reverseOrderRewards(account, order, reason) : { reversed: false, reason: "account_not_found" }; }
 export function exportAccount(account, orders) { return { exportedAt: new Date().toISOString(), account: publicAccount(account), ...accountCollections(account), orders }; }
 export function deleteAccount(account, password) { authenticate(account.email, password); accounts.delete(account.id); byEmail.delete(account.email); for (const [token, session] of sessions) if (session.accountId === account.id) sessions.delete(token); }
