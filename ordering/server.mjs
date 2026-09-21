@@ -38,7 +38,8 @@ function headers(type = "application/json; charset=utf-8") {
 }
 
 function json(response, status, payload, extraHeaders = {}) {
-  response.writeHead(status, { ...headers(), ...extraHeaders });
+  const requestHeaders = response.stjRequestId ? { "X-Request-Id": response.stjRequestId } : {};
+  response.writeHead(status, { ...headers(), ...requestHeaders, ...extraHeaders });
   response.end(JSON.stringify(payload));
 }
 
@@ -382,7 +383,7 @@ function staticFile(request, response, url) {
   if (!isPublicPath) return json(response, 403, { error: { code: "forbidden", message: "Forbidden path." } });
   if (existsSync(path) && statSync(path).isDirectory()) path = resolve(path, "index.html");
   if (!existsSync(path) || !statSync(path).isFile()) return json(response, 404, { error: { code: "file_not_found", message: "File not found." } });
-  response.writeHead(200, { ...headers(mime[extname(path)] || "application/octet-stream"), "Cache-Control": "public, max-age=60" });
+  response.writeHead(200, { ...headers(mime[extname(path)] || "application/octet-stream"), ...(response.stjRequestId ? { "X-Request-Id": response.stjRequestId } : {}), "Cache-Control": "public, max-age=60" });
   if (request.method === "HEAD") return response.end();
   createReadStream(path).pipe(response);
 }
@@ -392,12 +393,24 @@ export function createOrderingServer() {
 }
 
 export async function handleNodeRequest(request, response) {
+  response.stjRequestId = `req_${randomUUID()}`;
+  let url;
   try {
-    const url = new URL(request.url || "/", "http://localhost");
+    url = new URL(request.url || "/", "http://localhost");
     if (url.pathname.startsWith("/api/")) await api(request, response, url);
     else staticFile(request, response, url);
   } catch (error) {
-    json(response, error.status || 500, { error: { code: error.code || "server_error", message: error.status ? error.message : "The ordering service could not complete the request." } });
+    const status = error.status || 500;
+    const code = error.code || "server_error";
+    console.error(JSON.stringify({
+      level: "error",
+      requestId: response.stjRequestId,
+      method: request.method || "GET",
+      path: url?.pathname || "/",
+      status,
+      code
+    }));
+    json(response, status, { error: { code, message: error.status ? error.message : "The ordering service could not complete the request.", requestId: response.stjRequestId } });
   }
 }
 
