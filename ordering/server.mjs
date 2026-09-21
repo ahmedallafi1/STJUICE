@@ -9,6 +9,7 @@ import { consumeTestPayment, createTestPaymentIntent, verifyTestPayment } from "
 import { sendToTestPos } from "./adapters/test-pos-adapter.mjs";
 import { attachOrder, handleAccountApi } from "../accounts/account-api.mjs";
 import { sessionForRequest } from "../accounts/lib/account-store.mjs";
+import { benefitSnapshot, benefitsConfig } from "../accounts/lib/benefits-engine.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
 
 const packageRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
@@ -74,8 +75,11 @@ function publicConfig() {
   };
 }
 
-function quoteRecord(request) {
-  const quote = quoteCart(request);
+function quoteRecord(request, account = null) {
+  const quote = quoteCart(request, {
+    benefits: account ? benefitSnapshot(account) : null,
+    stackingPolicy: benefitsConfig.stacking?.accountDiscountWithPromo || "best_discount"
+  });
   const now = Date.now();
   const record = {
     ...quote,
@@ -83,6 +87,12 @@ function quoteRecord(request) {
     createdAt: new Date(now).toISOString(),
     expiresAt: new Date(now + config.orders.quoteMinutes * 60_000).toISOString()
   };
+  Object.defineProperty(record, "accountId", {
+    value: account?.id || null,
+    enumerable: false,
+    configurable: false,
+    writable: false
+  });
   if (record.valid) quotes.set(record.quoteId, record);
   return record;
 }
@@ -170,7 +180,8 @@ async function api(request, response, url) {
   }
   if (request.method === "POST" && (url.pathname === "/api/cart/validate" || url.pathname === "/api/promos/validate")) {
     const input = await bodyJson(request);
-    const quote = quoteRecord(input);
+    const signedIn = sessionForRequest(request);
+    const quote = quoteRecord(input, signedIn?.account || null);
     return json(response, quote.valid ? 200 : 422, quote);
   }
   if (request.method === "POST" && url.pathname === "/api/payment/intents") {
@@ -193,6 +204,10 @@ async function api(request, response, url) {
     const resolved = activeQuote(input.quoteId);
     if (resolved.error) return json(response, 409, resolved);
     const quote = resolved.quote;
+    const signedIn = sessionForRequest(request);
+    if (quote.accountId && signedIn?.account.id !== quote.accountId) {
+      return json(response, 409, { error: { code: "quote_account_mismatch", message: "Refresh the order total from the account that created this quote." } });
+    }
     const customerResult = validCustomer(input.customer);
     if (!customerResult.valid) return json(response, 422, { valid: false, errors: customerResult.errors });
     if (input.allergenAcknowledged !== true) return json(response, 422, { valid: false, errors: [{ code: "allergen_acknowledgement_required", field: "allergenAcknowledged", message: "Review and acknowledge the allergen notice." }] });
@@ -224,7 +239,6 @@ async function api(request, response, url) {
       trackingToken: randomBytes(24).toString("base64url"),
       createdAt
     };
-    const signedIn = sessionForRequest(request);
     if (signedIn) order.accountId = signedIn.account.id;
     order.pos = sendToTestPos(order);
     orders.set(id, order);
