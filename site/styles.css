@@ -3517,3 +3517,75 @@ html[data-theme="student"] .product-order-bar {
     justify-self: start;
   }
 }
+
+/* Phase 2 member wallet */
+.wallet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.wallet-grid .account-panel {
+  display: grid;
+  align-content: start;
+  gap: .8rem;
+  margin: 0;
+}
+
+.wallet-grid .account-panel h2 {
+  margin: 0;
+  font-size: clamp(1.45rem, 3vw, 2.2rem);
+}
+
+.wallet-rewards,
+.wallet-grants {
+  display: grid;
+  gap: .75rem;
+}
+
+.wallet-reward,
+.wallet-grants article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: .85rem 1rem;
+  background: var(--surface);
+}
+
+.wallet-reward strong,
+.wallet-reward small,
+.wallet-grants strong,
+.wallet-grants small {
+  display: block;
+}
+
+.wallet-reward small,
+.wallet-grants small {
+  margin-top: .15rem;
+  color: var(--text-muted);
+  font-size: .72rem;
+}
+
+.wallet-grants {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 1rem;
+  background: var(--surface-soft);
+}
+
+@media (max-width: 900px) {
+  .wallet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .wallet-reward,
+  .wallet-grants article {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
