@@ -45,8 +45,12 @@ export function routeInfo() {
   const hashRaw = window.location.hash.slice(1);
   const raw = hashRaw || (() => {
     const pathname = window.location.pathname || "/";
-    if (pathname === "/site" || pathname === "/site/") return "/";
-    return pathname.startsWith("/site/") ? pathname.slice(5) || "/" : pathname;
+    const routePath = pathname === "/site" || pathname === "/site/"
+      ? "/"
+      : pathname.startsWith("/site/")
+        ? pathname.slice(5) || "/"
+        : pathname;
+    return `${routePath}${window.location.search || ""}`;
   })();
   const [pathPart, queryPart = ""] = raw.split("?");
   const normalized = `/${pathPart}`.replace(/\/{2,}/g, "/").replace(/\/$/, "") || "/";
@@ -145,12 +149,12 @@ export function buildProductCard(product, data, options = {}) {
   const action = unavailable
     ? `aria-disabled="true" tabindex="-1"`
     : complex
-      ? `href="#/product/${escapeHtml(product.id)}"`
-      : `href="#/product/${escapeHtml(product.id)}" data-action="quick-add" data-product-id="${escapeHtml(product.id)}"`;
+      ? `href="/product/${escapeHtml(product.id)}"`
+      : `href="/product/${escapeHtml(product.id)}" data-action="quick-add" data-product-id="${escapeHtml(product.id)}"`;
   const loading = options.eager ? "eager" : "lazy";
   return `
     <article class="product-card">
-      <a class="product-card__media" href="#/product/${escapeHtml(product.id)}" aria-label="View ${escapeHtml(product.name)}">
+      <a class="product-card__media" href="/product/${escapeHtml(product.id)}" aria-label="View ${escapeHtml(product.name)}">
         <img src="${productImage(product)}" alt="${escapeHtml(product.name)}" loading="${loading}" width="720" height="900" />
       </a>
       <div class="product-card__body">
@@ -158,7 +162,7 @@ export function buildProductCard(product, data, options = {}) {
           <span class="product-card__category">${escapeHtml(category?.name || "ST. JUICE")}</span>
           ${unavailable ? `<span class="status-pill">${escapeHtml(product.runtimeStatus === "sold_out" ? "Sold out" : "Paused")}</span>` : ""}
         </div>
-        <h3><a href="#/product/${escapeHtml(product.id)}">${escapeHtml(product.name)}</a></h3>
+        <h3><a href="/product/${escapeHtml(product.id)}">${escapeHtml(product.name)}</a></h3>
         <p class="product-card__description">${escapeHtml(product.description)}</p>
         <div class="price-row">
           <span class="product-card__price">From ${money(productStartingPrice(product))}</span>
@@ -166,7 +170,7 @@ export function buildProductCard(product, data, options = {}) {
         </div>
         <div class="product-card__actions">
           <a class="button button--small" ${action}>${actionText}</a>
-          <a class="button button--outline button--small" href="#/product/${escapeHtml(product.id)}" aria-label="See details for ${escapeHtml(product.name)}">Details</a>
+          <a class="button button--outline button--small" href="/product/${escapeHtml(product.id)}" aria-label="See details for ${escapeHtml(product.name)}">Details</a>
           ${options.favoriteButton ? `<button class="icon-button" type="button" data-action="toggle-favorite" data-product-id="${escapeHtml(product.id)}" aria-label="Toggle ${escapeHtml(product.name)} favorite">${icon("heart")}</button>` : ""}
         </div>
       </div>
