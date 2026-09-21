@@ -3,7 +3,6 @@ import {
   categoryImage,
   escapeHtml,
   icon,
-  mediaBadge,
   money,
   productImage,
   productStartingPrice,
@@ -73,8 +72,7 @@ function categoryCards(data, limit = 12) {
   return data.catalog.categories.slice(0, limit).map((category) => `
     <a class="category-card" href="/menu?category=${escapeHtml(category.id)}">
       <div class="category-card__image">
-        ${mediaBadge()}
-        <img src="${categoryImage(category.id)}" alt="${escapeHtml(category.name)} category preview" loading="lazy" width="360" height="360" />
+        <img src="${categoryImage(category.id)}" alt="${escapeHtml(category.name)}" loading="lazy" width="360" height="360" />
       </div>
       <h3>${escapeHtml(category.name)}</h3>
     </a>`).join("");
@@ -1059,7 +1057,7 @@ function renderAccount({ data, state }) {
 function renderAbout({ data }) {
   return `
     ${pageHero("OUR STORY", data.copy.about.title, data.copy.about.body)}
-    <section class="section section--surface"><div class="container split-feature"><div class="split-feature__copy"><p class="eyebrow">YOUR MOOD, MADE FRESH</p><h2>Fresh and indulgent share the same counter.</h2><p class="lede">${escapeHtml(data.copy.about.story)}</p><a class="button" href="/menu">Explore the menu</a></div><div class="split-feature__media">${mediaBadge("Packaging concept")}<img src="../media/optimized/webp/packaging/packaging-lineup-concept-v1.webp" alt="Concept ST. JUICE packaging lineup" width="1200" height="800" /></div></div></section>
+    <section class="section section--surface"><div class="container split-feature"><div class="split-feature__copy"><p class="eyebrow">YOUR MOOD, MADE FRESH</p><h2>Fresh and indulgent share the same counter.</h2><p class="lede">${escapeHtml(data.copy.about.story)}</p><a class="button" href="/menu">Explore the menu</a></div><div class="split-feature__media"><img src="../media/motion/st-juice-hero-loop.svg" alt="ST. JUICE brand artwork" width="1600" height="900" /></div></div></section>
     <section class="section section--dark"><div class="container"><div class="principle-grid"><article class="principle-card"><span class="principle-card__number">01</span><h3>St. Louis first.</h3><p>The first home is 11 S Vandeventer Ave, with one branch at launch.</p></article><article class="principle-card"><span class="principle-card__number">02</span><h3>Original identity.</h3><p>No competitor imagery, recipes, protected marks or university identity is copied.</p></article><article class="principle-card"><span class="principle-card__number">03</span><h3>Truth before claims.</h3><p>Prices, nutrition, allergens, rewards and packaging advance only with verification.</p></article></div></div></section>`;
 }
 
