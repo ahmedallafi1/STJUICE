@@ -192,6 +192,21 @@ export function creditOrderRewards(account, order) {
   return { credited: !result.idempotentReplay, ...result };
 }
 
+export function reverseOrderRewards(account, order, reason = "Order refund or reversal") {
+  const earned = (account?.rewards?.ledger || []).find((entry) => entry.type === "earn" && entry.sourceId === order?.id);
+  if (!earned) return { reversed: false, reason: "no_earned_points", summary: rewardLedger(account || {}) };
+  const existing = (account?.rewards?.ledger || []).find((entry) => entry.type === "refund_reversal" && entry.sourceId === order?.id);
+  if (existing) return { reversed: false, reason: "already_reversed", entry: structuredClone(existing), summary: rewardLedger(account) };
+  const result = appendRewardTransaction(account, {
+    type: "refund_reversal",
+    points: -Math.abs(Number(earned.points || 0)),
+    sourceId: order.id,
+    reason,
+    createdAt: new Date()
+  });
+  return { reversed: true, ...result };
+}
+
 function ensureGrantStore(account) {
   if (!account?.rewards) fail("Rewards account is unavailable.", "rewards_unavailable", 422);
   account.rewards.grants ||= [];
