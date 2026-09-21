@@ -116,33 +116,45 @@ export function adminUpdateProductState(productId, input = {}) {
 }
 
 export function adminUpdateDropState(productId, input = {}) {
-  let row = dropStates.get(String(productId || ""));
-  if (!row) {
-    if (!productStates.has(String(productId || ""))) fail("Product not found.", "product_not_found", 404);
-    row = { productId: String(productId), status: "scheduled", position: dropStates.size + 1, startsAt: null, endsAt: null, updatedAt: null };
-    dropStates.set(row.productId, row);
-  }
+  const id = String(productId || "");
+  const existing = dropStates.get(id);
+  if (!existing && !productStates.has(id)) fail("Product not found.", "product_not_found", 404);
+
+  const candidate = existing
+    ? structuredClone(existing)
+    : { productId: id, status: "scheduled", position: dropStates.size + 1, startsAt: null, endsAt: null, updatedAt: null };
+
   const status = String(input.status || "");
   if (!allowedDropStatus.has(status)) fail("Invalid drop status.", "drop_status_invalid", 422);
-  row.status = status;
-  if (input.position != null) row.position = Math.max(1, Math.trunc(Number(input.position) || 1));
+  candidate.status = status;
+
+  if (input.position != null) candidate.position = Math.max(1, Math.trunc(Number(input.position) || 1));
+
   if (input.startsAt !== undefined) {
     const startsAt = input.startsAt ? String(input.startsAt) : null;
-    if (startsAt && !/^\d{4}-\d{2}-\d{2}$/.test(startsAt) && !Number.isFinite(Date.parse(startsAt))) fail("Invalid drop start date.", "drop_start_invalid", 422);
-    row.startsAt = startsAt;
+    if (startsAt && !/^\d{4}-\d{2}-\d{2}$/.test(startsAt) && !Number.isFinite(Date.parse(startsAt))) {
+      fail("Invalid drop start date.", "drop_start_invalid", 422);
+    }
+    candidate.startsAt = startsAt;
   }
+
   if (input.endsAt !== undefined) {
     const endsAt = input.endsAt ? String(input.endsAt) : null;
-    if (endsAt && !/^\d{4}-\d{2}-\d{2}$/.test(endsAt) && !Number.isFinite(Date.parse(endsAt))) fail("Invalid drop end date.", "drop_end_invalid", 422);
-    row.endsAt = endsAt;
+    if (endsAt && !/^\d{4}-\d{2}-\d{2}$/.test(endsAt) && !Number.isFinite(Date.parse(endsAt))) {
+      fail("Invalid drop end date.", "drop_end_invalid", 422);
+    }
+    candidate.endsAt = endsAt;
   }
-  if (row.startsAt && row.endsAt) {
-    const startComparable = /^\d{4}-\d{2}-\d{2}$/.test(row.startsAt) ? row.startsAt : new Date(row.startsAt).toISOString();
-    const endComparable = /^\d{4}-\d{2}-\d{2}$/.test(row.endsAt) ? row.endsAt : new Date(row.endsAt).toISOString();
+
+  if (candidate.startsAt && candidate.endsAt) {
+    const startComparable = /^\d{4}-\d{2}-\d{2}$/.test(candidate.startsAt) ? candidate.startsAt : new Date(candidate.startsAt).toISOString();
+    const endComparable = /^\d{4}-\d{2}-\d{2}$/.test(candidate.endsAt) ? candidate.endsAt : new Date(candidate.endsAt).toISOString();
     if (endComparable <= startComparable) fail("Drop end date must be after its start date.", "drop_window_invalid", 422);
   }
-  row.updatedAt = new Date().toISOString();
-  return structuredClone(row);
+
+  candidate.updatedAt = new Date().toISOString();
+  dropStates.set(id, candidate);
+  return structuredClone(candidate);
 }
 
 export function adminUpdateBoxState(productId, input = {}) {
