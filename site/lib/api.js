@@ -43,3 +43,8 @@ export const accountApi = {
   setFavorite: (productId, active, csrfToken) => request("../api/account/favorites", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify({ productId, active }) }),
   saveMix: (mix, csrfToken) => request("../api/account/mixes", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(mix) })
 };
+
+
+export const cateringApi = {
+  createRequest: (input) => request("../api/catering/requests", { method: "POST", body: JSON.stringify(input) })
+};
