@@ -686,7 +686,9 @@ function renderBuilder({ data, state }) {
 }
 
 function renderDrops({ data }) {
-  const runtimeDrops = Array.isArray(data.runtimeCommercial?.drops) ? data.runtimeCommercial.drops : [];
+  const runtimeDrops = Array.isArray(data.runtimeCommercial?.drops) && data.runtimeCommercial.drops.length
+    ? data.runtimeCommercial.drops
+    : (data.copy.drops.activeProductIds || []).map((productId, index) => ({ productId, status: "active", position: index + 1, startsAt: null, endsAt: null }));
   const ordered = [...runtimeDrops].sort((a, b) => Number(a.position || 0) - Number(b.position || 0));
   const liveRows = ordered.filter((row) => ["active", "low_availability", "sold_out"].includes(row.status));
   const scheduledRows = ordered.filter((row) => row.status === "scheduled");
