@@ -7,7 +7,7 @@ import {
   adminReservationsSnapshot,
   adminUpdateReservationStatus
 } from "../accounts/lib/reservation-store.mjs";
-import { benefitsConfig } from "../accounts/lib/benefits-engine.mjs";
+import { adminUpdateBenefitsPolicy, benefitsConfig } from "../accounts/lib/benefits-engine.mjs";
 import { catalog } from "../ordering/lib/catalog-store.mjs";
 import { adminCommercialSnapshot, adminUpdateBoxState, adminUpdateDropState, adminUpdateProductState } from "./lib/commercial-control.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
@@ -209,10 +209,23 @@ export async function handleAdminApi({
 
     if (request.method === "GET" && url.pathname === "/api/admin/rewards") {
       json(response, 200, {
-        storage: "source_controlled_until_persistent_ops_store",
-        editableAtRuntime: false,
+        storage: "runtime_config_until_persistent_ops_store",
+        editableAtRuntime: true,
         config: benefitsConfig
       });
+      return true;
+    }
+
+    if (request.method === "PATCH" && url.pathname === "/api/admin/rewards") {
+      const config = adminUpdateBenefitsPolicy(await bodyJson(request));
+      recordOperationsAudit("benefits.policy_changed", {
+        loyaltyEnabled: config.loyalty.enabled,
+        pointsPerDollar: config.loyalty.pointsPerDollar,
+        studentPercentOff: config.accountDiscounts.student.percentOff,
+        businessPercentOff: config.accountDiscounts.business.percentOff,
+        birthdayEnabled: config.birthday.enabled
+      });
+      json(response, 200, { config });
       return true;
     }
 
