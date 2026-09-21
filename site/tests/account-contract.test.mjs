@@ -4,11 +4,11 @@ const account = await readFile(new URL("../lib/account.js", import.meta.url), "u
 const views = await readFile(new URL("../lib/views.js", import.meta.url), "utf8");
 const app = await readFile(new URL("../app.js", import.meta.url), "utf8");
 const api = await readFile(new URL("../lib/api.js", import.meta.url), "utf8");
-for (const term of ["favorites", "savedMixes", "orderHistory", "student", "business", "points"]) assert.match(account, new RegExp(term));
-for (const term of ["STUDENT VERIFICATION", "BUSINESS PROFILE", "GROUP RESERVATIONS", "ORDER HISTORY", "SAVED MIXES", "Rewards"]) assert.match(views, new RegExp(term, "i"));
-for (const term of ["data-student-verification-form", "data-business-form", "data-reservation-form", "cancel-reservation"]) assert.match(views, new RegExp(term));
-for (const term of ["requestStudentVerification", "updateBusiness", "createReservation", "cancelReservation", "enrollRewards", "redeemReward", "claimBirthday", "rewardsLedger"]) assert.match(api, new RegExp(term));
-for (const term of ["requestStudentVerification", "updateBusiness", "createReservation", "cancelReservation", "enrollRewards", "redeemReward", "claimBirthday", "benefits", "reservations", "rewardsWallet"]) assert.match(app, new RegExp(term));
+for (const term of ["favorites", "savedMixes", "orderHistory", "student", "business", "points", "addresses", "cateringRequests"]) assert.match(account, new RegExp(term));
+for (const term of ["STUDENT VERIFICATION", "BUSINESS PROFILE", "GROUP RESERVATIONS", "ORDER HISTORY", "SAVED MIXES", "MEMBER WALLET", "PROFILE", "SAVED ADDRESSES", "CATERING"]) assert.match(views, new RegExp(term, "i"));
+for (const term of ["data-student-verification-form", "data-business-form", "data-reservation-form", "data-profile-form", "data-address-form", "cancel-reservation", "accept-catering-quote", "reorder-history"]) assert.match(views, new RegExp(term));
+for (const term of ["requestStudentVerification", "updateBusiness", "createReservation", "cancelReservation", "redeemReward", "claimBirthday", "rewardsLedger", "reorder", "updateProfile", "saveAddress", "removeAddress", "acceptCateringQuote"]) assert.match(api, new RegExp(term));
+for (const term of ["requestStudentVerification", "updateBusiness", "createReservation", "cancelReservation", "redeemReward", "claimBirthday", "benefits", "reservations", "rewardsWallet", "cartItemFromReorder", "data-profile-form", "data-address-form", "accept-catering-quote"]) assert.match(app, new RegExp(term));
 assert.doesNotMatch(account, /password|cardNumber|socialSecurity/i);
 assert.doesNotMatch(account, /localStorage|100 points|pointsPerDollar|redemption/i, "Browser account state must not contain loyalty economics or persistence logic");
 assert.match(views, /MEMBER WALLET/);
