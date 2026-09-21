@@ -8,6 +8,10 @@ import {
   appendRewardTransaction,
   benefitSnapshot,
   benefitsConfig,
+  claimBirthdayReward,
+  creditOrderRewards,
+  publicBenefitSnapshot,
+  redeemConfiguredReward,
   rewardLedger
 } from "../lib/benefits-engine.mjs";
 import {
@@ -100,6 +104,61 @@ assert.equal(businessProfile.status, "pending_review");
 const businessBenefits = benefitSnapshot(business, now);
 assert.equal(businessBenefits.discount.proposalPercentOff, 8);
 assert.equal(businessBenefits.discount.activePercentOff, 0);
+
+const publicStudentBenefits = publicBenefitSnapshot(student, now);
+assert.equal("proposalPercentOff" in publicStudentBenefits.discount, false, "Public benefit snapshot must not expose proposal discount economics");
+assert.equal("proposal" in publicStudentBenefits.loyalty, false, "Public benefit snapshot must not expose proposal loyalty thresholds");
+assert.equal("proposalEligible" in publicStudentBenefits.birthday, false, "Public benefit snapshot must not expose proposal birthday eligibility");
+
+const rewardMember = registerAccount({
+  name: "Reward Member",
+  email: "reward-member@example.com",
+  password: "PhaseTwoTest!123",
+  type: "regular"
+});
+rewardMember.rewards.enrolled = true;
+const previousLoyalty = structuredClone(benefitsConfig.loyalty);
+benefitsConfig.loyalty.enabled = true;
+benefitsConfig.loyalty.pointsPerDollar = 10;
+benefitsConfig.loyalty.redemptions = [{ id: "reward-test", points: 50, type: "free_addon", value: null }];
+
+const rewardOrder = {
+  id: "order_reward_test",
+  orderNumber: "STJ-REWARD",
+  createdAt: now.toISOString(),
+  totals: { subtotal: { cents: 1000 }, discount: { cents: 100 } }
+};
+const credited = creditOrderRewards(rewardMember, rewardOrder);
+assert.equal(credited.credited, true);
+assert.equal(rewardLedger(rewardMember).points, 90, "Reward earning must exclude discounts and ignore tax/tip/fees");
+const creditedAgain = creditOrderRewards(rewardMember, rewardOrder);
+assert.equal(creditedAgain.credited, false, "Order rewards must be idempotent by order id");
+assert.equal(rewardLedger(rewardMember).points, 90);
+
+const redeemedReward = redeemConfiguredReward(rewardMember, "reward-test", now);
+assert.equal(redeemedReward.rewards.points, 40);
+assert.equal(redeemedReward.grant.status, "available");
+Object.assign(benefitsConfig.loyalty, previousLoyalty);
+
+const birthdayMember = registerAccount({
+  name: "Birthday Member",
+  email: "birthday-member@example.com",
+  password: "PhaseTwoTest!123",
+  type: "regular",
+  birthday: "1990-09-20"
+});
+birthdayMember.createdAt = "2025-01-01T00:00:00.000Z";
+const previousBirthday = structuredClone(benefitsConfig.birthday);
+benefitsConfig.birthday.enabled = true;
+benefitsConfig.birthday.windowBeforeDays = 3;
+benefitsConfig.birthday.windowAfterDays = 7;
+benefitsConfig.birthday.minimumAccountAgeDays = 30;
+benefitsConfig.birthday.reward = { type: "free_item", value: null };
+const birthdayGrant = claimBirthdayReward(birthdayMember, now);
+assert.equal(birthdayGrant.idempotentReplay, false);
+const birthdayReplay = claimBirthdayReward(birthdayMember, now);
+assert.equal(birthdayReplay.idempotentReplay, true, "Birthday grant must only issue once per calendar year");
+Object.assign(benefitsConfig.birthday, previousBirthday);
 
 const reservation = createReservationRequest(student, {
   purpose: "study_group",
