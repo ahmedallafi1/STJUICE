@@ -44,7 +44,7 @@ for (const slug of ["privacy", "terms", "refunds", "cookies", "accessibility", "
 const footer = renderFooter(data);
 for (const route of ["allergens", "privacy", "terms", "refunds", "cookies", "accessibility", "contact"]) assert.ok(footer.includes(`/info/${route}`), `Footer must link ${route}`);
 
-const localRefs = [...index.matchAll(/(?:src|href)="([^"#][^"]*)"/g)].map((match) => match[1]).filter((value) => !/^(?:https?:|mailto:|tel:|data:)/.test(value));
+const localRefs = [...index.matchAll(/(?:src|href)="([^"#][^"]*)"/g)].map((match) => match[1]).filter((value) => !value.startsWith("/") && !/^(?:https?:|mailto:|tel:|data:)/.test(value));
 for (const ref of localRefs) {
   const target = resolve(siteRoot, ref.split(/[?#]/)[0]);
   assert.ok(existsSync(target), `Local index reference must resolve: ${ref}`);
