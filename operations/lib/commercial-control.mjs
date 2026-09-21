@@ -31,7 +31,7 @@ const boxStates = new Map((bundles.orderNowBoxes || []).map((box) => [box.produc
 }]));
 
 const allowedProductStatus = new Set(["available", "paused", "sold_out"]);
-const allowedDropStatus = new Set(["active", "sold_out", "archived", "scheduled"]);
+const allowedDropStatus = new Set(["active", "low_availability", "sold_out", "archived", "scheduled"]);
 const allowedBoxStatus = new Set(["available", "paused", "sold_out"]);
 
 const fail = (message, code, status = 400) => {
@@ -95,7 +95,7 @@ export function productOperationalStatus(productId) {
   if (drop) {
     const dropStatus = effectiveDropStatus(drop);
     if (dropStatus === "sold_out") return "sold_out";
-    if (dropStatus !== "active") return "paused";
+    if (!["active", "low_availability"].includes(dropStatus)) return "paused";
   }
   return "available";
 }
