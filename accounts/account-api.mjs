@@ -35,15 +35,21 @@ function publicBenefitsConfig() {
     loyalty: {
       enabled: benefitsConfig.loyalty.enabled,
       pointsPerDollar: benefitsConfig.loyalty.enabled ? benefitsConfig.loyalty.pointsPerDollar : null,
+      autoEnrollOnAccountCreation: Boolean(benefitsConfig.loyalty.autoEnrollOnAccountCreation),
       redemptions: benefitsConfig.loyalty.enabled
-        ? (benefitsConfig.loyalty.redemptions || []).map(({ id, points, type, value }) => ({ id, points, type, value: value ?? null }))
+        ? (benefitsConfig.loyalty.redemptions || []).map(({ id, label, points, type, value }) => ({ id, label: label || id, points, type, value: value ?? null }))
         : []
     },
     accountDiscounts: Object.fromEntries(Object.entries(benefitsConfig.accountDiscounts).map(([key, value]) => [key, {
       enabled: value.enabled,
+      percentOff: value.enabled ? Number(value.percentOff || 0) : 0,
       requiresVerification: value.requiresVerification
     }])),
-    birthday: { enabled: benefitsConfig.birthday.enabled },
+    birthday: {
+      enabled: benefitsConfig.birthday.enabled,
+      windowBeforeDays: benefitsConfig.birthday.enabled ? benefitsConfig.birthday.windowBeforeDays : null,
+      windowAfterDays: benefitsConfig.birthday.enabled ? benefitsConfig.birthday.windowAfterDays : null
+    },
     reservations: {
       enabled: benefitsConfig.reservations.enabled,
       partySize: benefitsConfig.reservations.partySize,
