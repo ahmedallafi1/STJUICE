@@ -32,7 +32,7 @@ const state = {
   checkout: {
     step: 0, schedule: "asap", paymentMethod: "card",
     address: { street: "", city: "St. Louis", state: "MO", postalCode: "" }, deliveryCheck: null,
-    contact: { name: "", email: "", phone: "", marketingConsent: false }, promoCode: "", tipPercent: 0,
+    contact: { name: "", email: "", phone: "", marketingConsent: false }, promoCode: "", rewardGrantId: "", tipPercent: 0,
     allergenAcknowledged: false, quote: null, preparing: false, busy: false, error: ""
   },
   order: null,
@@ -95,8 +95,20 @@ state.account = {
   }],
   benefits: {
     discount: { enabled: false, verificationRequired: true, verificationStatus: "not_submitted", activePercentOff: 0 },
-    loyalty: { enabled: false, enrolled: false, points: 0 },
+    loyalty: { enabled: true, enrolled: true, points: 99 },
     birthday: { enabled: false, eligible: false }
+  },
+  rewardsWallet: {
+    points: 99,
+    lifetimeEarned: 99,
+    lifetimeRedeemed: 0,
+    transactions: [],
+    grants: [{ id: "grant_test", kind: "loyalty_redemption", rewardType: "fixed_discount", status: "available" }]
+  },
+  rewardsConfig: {
+    enabled: true,
+    pointsPerDollar: 10,
+    redemptions: [{ id: "reward_test", points: 50, type: "fixed_discount", value: 5 }]
   },
   reservationConfig: {
     enabled: true,
@@ -111,6 +123,9 @@ assert.ok(studentAccount.includes("data-student-verification-form"), "Student ac
 assert.ok(studentAccount.includes("data-reservation-form"), "Signed-in account must render reservation request form");
 assert.ok(studentAccount.includes("Study group"), "Reservation purpose must be customer-readable");
 assert.ok(studentAccount.includes("Requested"), "Reservation status must be visible");
+assert.ok(studentAccount.includes("MEMBER WALLET"), "Signed-in account must render the member wallet");
+assert.ok(studentAccount.includes('data-action="apply-reward-grant"'), "Available wallet grant must be selectable for checkout");
+assert.ok(studentAccount.includes("99 points"), "Active wallet balance must render from server dashboard state");
 assert.ok(!studentAccount.includes("10%"), "Disabled proposal discount must not be advertised as an active benefit");
 
 state.mode = "business";
@@ -145,6 +160,18 @@ assert.ok(!checkout.includes("SAFE TEST"));
 assert.ok(checkout.includes("Order for now."));
 assert.ok(!checkout.includes("Service date"));
 assert.ok(!checkout.includes("Available time"));
+
+state.checkout.quote.discountBreakdown = {
+  promo: { amount: 0 },
+  account: { amount: 1.1 },
+  reward: { amount: 5 }
+};
+state.checkout.quote.totals.discount.amount = 6.1;
+state.checkout.quote.totals.total.amount = 13.8;
+const benefitCheckout = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
+assert.ok(benefitCheckout.includes("Member benefit"));
+assert.ok(benefitCheckout.includes("Reward"));
+assert.ok(!benefitCheckout.includes(">Discount<"), "Detailed discount breakdown should replace generic discount when available");
 
 state.checkout.step = 3;
 state.checkout.paymentMethod = "cash";
