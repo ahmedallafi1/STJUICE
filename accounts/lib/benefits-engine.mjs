@@ -30,8 +30,13 @@ function birthdayDistanceDays(birthday, now) {
     .sort((a, b) => Math.abs(a) - Math.abs(b))[0];
 }
 
-function accountTypeStatus(account) {
-  if (account?.type === "student") return account?.student?.status || "not_submitted";
+function accountTypeStatus(account, now = new Date()) {
+  if (account?.type === "student") {
+    const status = account?.student?.status || "not_submitted";
+    const expiry = asDate(account?.student?.expiresAt);
+    if (status === "verified" && expiry && expiry.getTime() < now.getTime()) return "expired";
+    return status;
+  }
   if (account?.type === "business") return account?.business?.status || "not_submitted";
   return "not_required";
 }
@@ -82,14 +87,13 @@ export function benefitSnapshot(account, nowInput = new Date()) {
   const now = asDate(nowInput) || new Date();
   const type = benefitsConfig.accountDiscounts[account?.type] ? account.type : "regular";
   const discountConfig = benefitsConfig.accountDiscounts[type];
-  const verificationStatus = accountTypeStatus(account);
+  const verificationStatus = accountTypeStatus(account, now);
   const verificationSatisfied = !discountConfig.requiresVerification || verificationStatus === discountConfig.requiredStatus;
   const activePercentOff = discountConfig.enabled && verificationSatisfied
     ? Number(discountConfig.percentOff || 0)
     : 0;
 
   const activeBirthdayRules = benefitsConfig.birthday.enabled ? benefitsConfig.birthday : null;
-  const birthdayProposal = benefitsConfig.birthday.proposal;
   const birthdayDistance = birthdayDistanceDays(account?.birthday, now);
   const activeBirthdayInWindow = activeBirthdayRules && birthdayDistance != null
     ? birthdayDistance >= -Number(activeBirthdayRules.windowBeforeDays || 0)
@@ -106,12 +110,6 @@ export function benefitSnapshot(account, nowInput = new Date()) {
     && activeBirthdayAgeSatisfied
   );
 
-  const proposalInWindow = birthdayDistance != null
-    && birthdayDistance >= -Number(birthdayProposal.windowBeforeDays || 0)
-    && birthdayDistance <= Number(birthdayProposal.windowAfterDays || 0);
-  const proposalAgeSatisfied = accountAgeDays(account, now) >= Number(birthdayProposal.minimumAccountAgeDays || 0);
-  const proposalEligible = Boolean(account?.birthday && proposalInWindow && proposalAgeSatisfied);
-
   const rewards = rewardLedger(account || {});
   return {
     accountType: type,
@@ -120,23 +118,19 @@ export function benefitSnapshot(account, nowInput = new Date()) {
       verificationRequired: Boolean(discountConfig.requiresVerification),
       verificationStatus,
       verificationSatisfied,
-      activePercentOff,
-      proposalPercentOff: Number(discountConfig.proposalPercentOff || 0)
+      activePercentOff
     },
     loyalty: {
       enabled: Boolean(benefitsConfig.loyalty.enabled),
       enrolled: Boolean(account?.rewards?.enrolled),
-      ...rewards,
-      proposal: structuredClone(benefitsConfig.loyalty.proposal)
+      ...rewards
     },
     birthday: {
       enabled: Boolean(benefitsConfig.birthday.enabled),
       hasBirthday: Boolean(account?.birthday),
       inWindow: activeBirthdayInWindow,
       accountAgeSatisfied: activeBirthdayAgeSatisfied,
-      eligible: birthdayEligible,
-      proposalEligible,
-      proposal: structuredClone(birthdayProposal)
+      eligible: birthdayEligible
     }
   };
 }
@@ -286,6 +280,43 @@ export function consumeRewardGrant(account, grantId, orderId, nowInput = new Dat
   grant.orderId = String(orderId || "");
   grant.redeemedAt = (asDate(nowInput) || new Date()).toISOString();
   return { grant: structuredClone(grant), idempotentReplay: false };
+}
+
+export function adminUpdateBenefitsPolicy(input = {}) {
+  if (input.loyalty) {
+    const loyalty = input.loyalty;
+    if (loyalty.enabled != null) benefitsConfig.loyalty.enabled = Boolean(loyalty.enabled);
+    if (loyalty.pointsPerDollar != null) {
+      const rate = Number(loyalty.pointsPerDollar);
+      if (!Number.isFinite(rate) || rate < 0 || rate > 100) fail("Points per dollar must be between 0 and 100.", "loyalty_rate_invalid", 422);
+      benefitsConfig.loyalty.pointsPerDollar = rate;
+    }
+  }
+
+  if (input.accountDiscounts) {
+    for (const type of ["student", "business"]) {
+      const patch = input.accountDiscounts[type];
+      if (!patch) continue;
+      if (patch.enabled != null) benefitsConfig.accountDiscounts[type].enabled = Boolean(patch.enabled);
+      if (patch.percentOff != null) {
+        const percent = Number(patch.percentOff);
+        if (!Number.isFinite(percent) || percent < 0 || percent > 50) fail("Account discount must be between 0% and 50%.", "account_discount_invalid", 422);
+        benefitsConfig.accountDiscounts[type].percentOff = percent;
+      }
+    }
+  }
+
+  if (input.birthday) {
+    if (input.birthday.enabled != null) benefitsConfig.birthday.enabled = Boolean(input.birthday.enabled);
+    for (const key of ["windowBeforeDays", "windowAfterDays", "minimumAccountAgeDays"]) {
+      if (input.birthday[key] == null) continue;
+      const value = Math.trunc(Number(input.birthday[key]));
+      if (!Number.isFinite(value) || value < 0 || value > 365) fail("Birthday policy value is invalid.", "birthday_policy_invalid", 422);
+      benefitsConfig.birthday[key] = value;
+    }
+  }
+
+  return structuredClone(benefitsConfig);
 }
 
 export function rewardWallet(account) {
