@@ -246,12 +246,14 @@ export function claimBirthdayReward(account, nowInput = new Date()) {
   const now = asDate(nowInput) || new Date();
   const snapshot = benefitSnapshot(account, now);
   if (!snapshot.birthday.enabled) fail("Birthday benefits are not active yet.", "birthday_inactive", 409);
-  if (!snapshot.birthday.eligible) fail("This account is not currently eligible for a birthday benefit.", "birthday_not_eligible", 422);
+
   const grants = ensureGrantStore(account);
   const year = now.getUTCFullYear();
   const sourceId = `birthday:${year}`;
   const existing = grants.find((grant) => grant.sourceId === sourceId);
   if (existing) return { grant: structuredClone(existing), idempotentReplay: true };
+
+  if (!snapshot.birthday.eligible) fail("This account is not currently eligible for a birthday benefit.", "birthday_not_eligible", 422);
   const reward = benefitsConfig.birthday.reward;
   const grant = {
     id: `grant_${randomUUID()}`,
