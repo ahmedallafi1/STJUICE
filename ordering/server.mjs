@@ -9,7 +9,7 @@ import { consumeTestPayment, createTestPaymentIntent, verifyTestPayment } from "
 import { sendToTestPos } from "./adapters/test-pos-adapter.mjs";
 import { attachOrder, handleAccountApi } from "../accounts/account-api.mjs";
 import { creditCompletedOrder, sessionForRequest } from "../accounts/lib/account-store.mjs";
-import { benefitSnapshot, benefitsConfig } from "../accounts/lib/benefits-engine.mjs";
+import { availableRewardGrant, benefitSnapshot, benefitsConfig, consumeRewardGrant } from "../accounts/lib/benefits-engine.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
 
 const packageRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
@@ -78,7 +78,10 @@ function publicConfig() {
 function quoteRecord(request, account = null) {
   const quote = quoteCart(request, {
     benefits: account ? benefitSnapshot(account) : null,
-    stackingPolicy: benefitsConfig.stacking?.accountDiscountWithPromo || "best_discount"
+    rewardGrant: account ? availableRewardGrant(account, request.rewardGrantId) : null,
+    accountPromoPolicy: benefitsConfig.stacking?.accountDiscountWithPromo || "best_discount",
+    rewardWithAccount: benefitsConfig.stacking?.loyaltyRedemptionWithAccountDiscount !== false,
+    rewardWithPromo: benefitsConfig.stacking?.loyaltyRedemptionWithPromo === true
   });
   const now = Date.now();
   const record = {
@@ -208,6 +211,12 @@ async function api(request, response, url) {
     if (quote.accountId && signedIn?.account.id !== quote.accountId) {
       return json(response, 409, { error: { code: "quote_account_mismatch", message: "Refresh the order total from the account that created this quote." } });
     }
+    if (quote.rewardBenefit?.applied) {
+      const activeGrant = signedIn ? availableRewardGrant(signedIn.account, quote.rewardBenefit.grantId) : null;
+      if (!activeGrant) {
+        return json(response, 409, { error: { code: "reward_grant_stale", message: "That reward is no longer available. Refresh the order total." } });
+      }
+    }
     const customerResult = validCustomer(input.customer);
     if (!customerResult.valid) return json(response, 422, { valid: false, errors: customerResult.errors });
     if (input.allergenAcknowledged !== true) return json(response, 422, { valid: false, errors: [{ code: "allergen_acknowledgement_required", field: "allergenAcknowledged", message: "Review and acknowledge the allergen notice." }] });
@@ -232,6 +241,7 @@ async function api(request, response, url) {
       items: quote.items,
       totals: quote.totals,
       quoteId: quote.quoteId,
+      rewardGrantId: quote.rewardBenefit?.applied ? quote.rewardBenefit.grantId : null,
       payment: paymentMethod === "cash"
         ? { method: "cash", provider: "pay_at_handoff", status: "due_at_handoff" }
         : { method: "card", provider: payment.intent.provider, status: "captured_test", tokenLast8: payment.intent.token.slice(-8) },
@@ -241,6 +251,7 @@ async function api(request, response, url) {
     };
     if (signedIn) order.accountId = signedIn.account.id;
     order.pos = sendToTestPos(order);
+    if (signedIn && order.rewardGrantId) consumeRewardGrant(signedIn.account, order.rewardGrantId, order.id, createdAt);
     orders.set(id, order);
     if (signedIn) attachOrder(signedIn.account, order);
     if (paymentMethod === "card") consumeTestPayment(input.paymentToken);
