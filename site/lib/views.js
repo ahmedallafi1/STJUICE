@@ -1102,7 +1102,7 @@ export function renderFooter(data) {
         <div class="footer-brand"><img src="../brand/assets/logos/st-juice-lockup-horizontal.svg" alt="ST. JUICE" width="194" height="54" /><p>${escapeHtml(data.copy.footer.line)}</p><p>11 S Vandeventer Ave · St. Louis, Missouri</p></div>
         <div class="footer-column"><h2>Menu</h2><a href="#/menu">Full menu</a><a href="#/build">Build Your Mood</a><a href="#/drops">New Drops</a><a href="#/boxes">Party Boxes</a><a href="#/catering">Catering</a></div>
         <div class="footer-column"><h2>ST. JUICE</h2><a href="#/about">Our story</a><a href="#/rewards">Rewards</a><a href="#/gift-cards">Gift cards</a><a href="#/location">Location & hours</a><a href="#/account">Account</a></div>
-        <div class="footer-column"><h2>Help</h2><a href="#/info/allergens">Nutrition & Allergens</a><a href="#/info/privacy">Privacy</a><a href="#/info/terms">Terms</a><a href="#/info/refunds">Refunds</a><a href="#/info/accessibility">Accessibility</a><a href="#/info/contact">Contact</a></div>
+        <div class="footer-column"><h2>Help</h2><a href="#/info/allergens">Nutrition & Allergens</a><a href="#/info/privacy">Privacy</a><a href="#/info/terms">Terms</a><a href="#/info/refunds">Refunds</a><a href="#/info/cookies">Cookies</a><a href="#/info/accessibility">Accessibility</a><a href="#/info/contact">Contact</a></div>
       </div>
       <div class="footer-bottom"><span>© 2026 ST. JUICE</span><span>11 S Vandeventer Ave · St. Louis, Missouri</span></div>
     </div>`;
