@@ -99,6 +99,7 @@
   "stacking": {
     "accountDiscountWithPromo": "best_discount",
     "loyaltyRedemptionWithAccountDiscount": true,
-    "note": "Account-type benefits are independent from loyalty points. Promo stacking remains owner-policy controlled."
+    "note": "Account-type benefits are independent from loyalty points. Promo stacking remains owner-policy controlled.",
+    "loyaltyRedemptionWithPromo": false
   }
 }
