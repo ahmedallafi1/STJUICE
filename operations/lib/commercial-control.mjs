@@ -5,6 +5,7 @@ const readJson = (url) => JSON.parse(readFileSync(fileURLToPath(url), "utf8"));
 const catalog = readJson(new URL("../../menu/data/catalog.json", import.meta.url));
 const copy = readJson(new URL("../../content/site-copy.json", import.meta.url));
 const bundles = readJson(new URL("../../menu/data/bundles-catering.json", import.meta.url));
+const orderConfig = readJson(new URL("../../ordering/config/order-config.json", import.meta.url));
 
 const productStates = new Map(catalog.products.map((product) => [product.id, {
   productId: product.id,
@@ -37,14 +38,31 @@ const fail = (message, code, status = 400) => {
   throw Object.assign(new Error(message), { code, status });
 };
 
+function localDate(now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: orderConfig.meta.timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(now);
+  const get = (type) => parts.find((part) => part.type === type)?.value;
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+function boundaryPassed(value, now, { end = false } = {}) {
+  if (!value) return false;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return end ? localDate(now) > value : localDate(now) >= value;
+  }
+  const instant = Date.parse(value);
+  return Number.isFinite(instant) ? now.getTime() >= instant : false;
+}
+
 function effectiveDropStatus(row, now = new Date()) {
   if (["sold_out", "archived"].includes(row.status)) return row.status;
-  const nowMs = now.getTime();
-  const starts = row.startsAt ? Date.parse(row.startsAt) : null;
-  const ends = row.endsAt ? Date.parse(row.endsAt) : null;
-  if (Number.isFinite(starts) && nowMs < starts) return "scheduled";
-  if (Number.isFinite(ends) && nowMs >= ends) return "archived";
-  return row.status === "scheduled" && (!Number.isFinite(starts) || nowMs >= starts) ? "active" : row.status;
+  if (row.startsAt && !boundaryPassed(row.startsAt, now)) return "scheduled";
+  if (row.endsAt && boundaryPassed(row.endsAt, now, { end: true })) return "archived";
+  return row.status === "scheduled" ? "active" : row.status;
 }
 
 export function publicCommercialSnapshot() {
@@ -97,16 +115,18 @@ export function adminUpdateDropState(productId, input = {}) {
   if (input.position != null) row.position = Math.max(1, Math.trunc(Number(input.position) || 1));
   if (input.startsAt !== undefined) {
     const startsAt = input.startsAt ? String(input.startsAt) : null;
-    if (startsAt && !Number.isFinite(Date.parse(startsAt))) fail("Invalid drop start date.", "drop_start_invalid", 422);
+    if (startsAt && !/^\d{4}-\d{2}-\d{2}$/.test(startsAt) && !Number.isFinite(Date.parse(startsAt))) fail("Invalid drop start date.", "drop_start_invalid", 422);
     row.startsAt = startsAt;
   }
   if (input.endsAt !== undefined) {
     const endsAt = input.endsAt ? String(input.endsAt) : null;
-    if (endsAt && !Number.isFinite(Date.parse(endsAt))) fail("Invalid drop end date.", "drop_end_invalid", 422);
+    if (endsAt && !/^\d{4}-\d{2}-\d{2}$/.test(endsAt) && !Number.isFinite(Date.parse(endsAt))) fail("Invalid drop end date.", "drop_end_invalid", 422);
     row.endsAt = endsAt;
   }
-  if (row.startsAt && row.endsAt && Date.parse(row.endsAt) <= Date.parse(row.startsAt)) {
-    fail("Drop end date must be after its start date.", "drop_window_invalid", 422);
+  if (row.startsAt && row.endsAt) {
+    const startComparable = /^\d{4}-\d{2}-\d{2}$/.test(row.startsAt) ? row.startsAt : new Date(row.startsAt).toISOString();
+    const endComparable = /^\d{4}-\d{2}-\d{2}$/.test(row.endsAt) ? row.endsAt : new Date(row.endsAt).toISOString();
+    if (endComparable <= startComparable) fail("Drop end date must be after its start date.", "drop_window_invalid", 422);
   }
   row.updatedAt = new Date().toISOString();
   return structuredClone(row);
