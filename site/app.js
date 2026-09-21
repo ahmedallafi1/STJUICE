@@ -224,7 +224,6 @@ function routeTitle(path) {
     "/account": "Account Experience",
     "/about": "Our Story",
     "/checkout": "Checkout",
-    "/states": "Interface States"
   };
   return `${labels[path] || titleCase(path.split("/").pop() || "Page")} — ST. JUICE`;
 }
