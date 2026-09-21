@@ -9,6 +9,8 @@ const seed = {
   savedMixes: [],
   orderHistory: [],
   reservations: [],
+  addresses: [],
+  cateringRequests: [],
   benefits: null,
   rewardsWallet: { points: 0, lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] },
   reservationConfig: null,
