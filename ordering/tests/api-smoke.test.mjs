@@ -117,7 +117,7 @@ try {
   }
   assert.equal(completedMemberOrder.status, "complete");
   const completedDashboard = await json("/api/account/dashboard", { headers: { Cookie: memberCookie } });
-  assert.equal(completedDashboard.payload.rewardsWallet.points, 100, "Completed member order must earn points from eligible spend only");
+  assert.equal(completedDashboard.payload.rewardsWallet.points, 99, "Completed member order must earn whole points from eligible spend only");
 
   const redeemed = await json("/api/account/rewards/redeem", {
     method: "POST",
@@ -125,7 +125,7 @@ try {
     body: JSON.stringify({ rewardId: "api-reward-50" })
   });
   assert.equal(redeemed.response.status, 201);
-  assert.equal(redeemed.payload.rewards.points, 50);
+  assert.equal(redeemed.payload.rewards.points, 49);
   const walletAfterRedeem = await json("/api/account/rewards/ledger", { headers: { Cookie: memberCookie } });
   assert.ok(walletAfterRedeem.payload.rewards.grants.some((grant) => grant.rewardId === "api-reward-50" && grant.status === "available"));
 
