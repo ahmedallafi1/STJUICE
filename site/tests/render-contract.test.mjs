@@ -74,6 +74,57 @@ for (const mode of ["guest", "regular", "student", "business"]) {
   assert.ok(accountHtml.includes("Current experience"), `${mode} selector must expose current state`);
 }
 
+state.account = {
+  signedIn: true,
+  csrfToken: "csrf-test",
+  profile: { name: "Student Tester", email: "student@example.edu", phone: "", birthday: "", mode: "student" },
+  student: { status: "not_submitted" },
+  business: { status: "not_submitted" },
+  points: 0,
+  favorites: [],
+  savedMixes: [],
+  orderHistory: [],
+  reservations: [{
+    id: "res_test",
+    purpose: "study_group",
+    date: "2026-09-21",
+    startTime: "18:00",
+    durationMinutes: 120,
+    partySize: 8,
+    status: "requested"
+  }],
+  benefits: {
+    discount: { enabled: false, verificationRequired: true, verificationStatus: "not_submitted", activePercentOff: 0 },
+    loyalty: { enabled: false, enrolled: false, points: 0 },
+    birthday: { enabled: false, eligible: false }
+  },
+  reservationConfig: {
+    enabled: true,
+    partySize: { min: 2, max: 40 },
+    durationMinutes: { min: 30, max: 240, increment: 30 },
+    purposes: ["study_group", "work_group", "meeting", "social", "other"]
+  }
+};
+state.mode = "student";
+const studentAccount = renderPage({ path: "/account", params: new URLSearchParams() }, { data, state });
+assert.ok(studentAccount.includes("data-student-verification-form"), "Student account must render verification submission");
+assert.ok(studentAccount.includes("data-reservation-form"), "Signed-in account must render reservation request form");
+assert.ok(studentAccount.includes("Study group"), "Reservation purpose must be customer-readable");
+assert.ok(studentAccount.includes("Requested"), "Reservation status must be visible");
+assert.ok(!studentAccount.includes("10%"), "Disabled proposal discount must not be advertised as an active benefit");
+
+state.mode = "business";
+state.account.profile.mode = "business";
+state.account.business = { status: "pending_review", company: "Test Company", role: "Office Manager" };
+state.account.benefits.discount = { enabled: false, verificationRequired: true, verificationStatus: "pending_review", activePercentOff: 0 };
+const businessAccount = renderPage({ path: "/account", params: new URLSearchParams() }, { data, state });
+assert.ok(businessAccount.includes("data-business-form"), "Pending business account must render editable business profile");
+assert.ok(businessAccount.includes("Pending review"), "Business review status must be visible");
+assert.ok(!businessAccount.includes("8%"), "Disabled proposal business discount must not be advertised as active");
+
+state.account = undefined;
+state.mode = "guest";
+
 assert.ok(renderServiceDialog(state).includes("Pickup"), "Service dialog must include pickup");
 assert.ok(renderServiceDialog(state).includes("Delivery"), "Service dialog must include delivery");
 assert.ok(renderCart(data, state).includes(data.copy.cartCheckout.emptyCart), "Empty cart state must use canonical copy");
