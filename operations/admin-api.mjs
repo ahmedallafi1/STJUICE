@@ -9,6 +9,7 @@ import {
 } from "../accounts/lib/reservation-store.mjs";
 import { benefitsConfig } from "../accounts/lib/benefits-engine.mjs";
 import { catalog } from "../ordering/lib/catalog-store.mjs";
+import { adminCommercialSnapshot, adminUpdateBoxState, adminUpdateDropState, adminUpdateProductState } from "./lib/commercial-control.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
 import {
   adminCateringSnapshot,
@@ -167,10 +168,39 @@ export async function handleAdminApi({
       return true;
     }
 
+    if (request.method === "GET" && url.pathname === "/api/admin/commercial") {
+      json(response, 200, adminCommercialSnapshot());
+      return true;
+    }
+
+    const productStateMatch = url.pathname.match(/^\/api\/admin\/commercial\/products\/([^/]+)$/);
+    if (request.method === "PATCH" && productStateMatch) {
+      const row = adminUpdateProductState(decodeURIComponent(productStateMatch[1]), await bodyJson(request));
+      recordOperationsAudit("catalog.product_status_changed", { productId: row.productId, status: row.status });
+      json(response, 200, { product: row });
+      return true;
+    }
+
+    const dropStateMatch = url.pathname.match(/^\/api\/admin\/commercial\/drops\/([^/]+)$/);
+    if (request.method === "PATCH" && dropStateMatch) {
+      const row = adminUpdateDropState(decodeURIComponent(dropStateMatch[1]), await bodyJson(request));
+      recordOperationsAudit("catalog.drop_status_changed", { productId: row.productId, status: row.status });
+      json(response, 200, { drop: row });
+      return true;
+    }
+
+    const boxStateMatch = url.pathname.match(/^\/api\/admin\/commercial\/boxes\/([^/]+)$/);
+    if (request.method === "PATCH" && boxStateMatch) {
+      const row = adminUpdateBoxState(decodeURIComponent(boxStateMatch[1]), await bodyJson(request));
+      recordOperationsAudit("catalog.box_status_changed", { productId: row.productId, status: row.status });
+      json(response, 200, { box: row });
+      return true;
+    }
+
     if (request.method === "GET" && url.pathname === "/api/admin/catalog") {
       json(response, 200, {
         storage: "source_controlled_until_persistent_ops_store",
-        editableAtRuntime: false,
+        editableAtRuntime: true,
         products: catalogSnapshot()
       });
       return true;
