@@ -1,40 +1,128 @@
 {
   "meta": {
-    "version": "2.0.0",
-    "status": "owner_approval_required",
+    "status": "active_configurable_policy",
     "currency": "USD",
-    "notes": "Proposal values are retained for implementation testing but remain disabled until owner approval."
+    "notes": [
+      "Rewards enroll automatically for registered Regular, Student and Business accounts.",
+      "Student and Business discounts remain verification/approval gated and are calculated only by the server.",
+      "All earning, redemption, birthday and stacking values are centralized here and may be changed by authorized operations staff."
+    ]
   },
   "loyalty": {
-    "enabled": false,
-    "proposal": {
-      "pointsPerDollar": 10,
-      "redemptions": [
-        {
-          "id": "reward-500",
-          "points": 500,
-          "type": "discount_or_addon",
-          "value": 5
-        },
-        {
-          "id": "reward-900",
-          "points": 900,
-          "type": "free_drink"
-        },
-        {
-          "id": "reward-1200",
-          "points": 1200,
-          "type": "free_dessert"
-        },
-        {
-          "id": "reward-1800",
-          "points": 1800,
-          "type": "box_reward"
-        }
-      ]
+    "enabled": true,
+    "autoEnrollOnAccountCreation": true,
+    "pointsPerDollar": 10,
+    "earning": {
+      "eligibleSubtotal": "after_eligible_discounts",
+      "exclude": [
+        "tax",
+        "tip",
+        "delivery_fee",
+        "service_fee"
+      ],
+      "creditOn": [
+        "complete"
+      ],
+      "cashCreditOn": "complete_after_collection",
+      "refundBehavior": "reverse_earned_points"
     },
-    "pointsPerDollar": null,
-    "redemptions": []
+    "redemptions": [
+      {
+        "id": "reward-500",
+        "label": "$5 reward",
+        "points": 500,
+        "type": "fixed_discount",
+        "value": 5,
+        "pricing": {
+          "kind": "fixed_discount",
+          "amount": 5
+        }
+      },
+      {
+        "id": "reward-900",
+        "label": "Free drink",
+        "points": 900,
+        "type": "free_product",
+        "value": null,
+        "pricing": {
+          "kind": "free_product",
+          "eligibleProductIds": [
+            "pistachio-saint",
+            "blue-saint",
+            "berry-boulevard",
+            "lemon-chrome",
+            "saint-sunset",
+            "the-vandeventer",
+            "midnight-mango",
+            "green-arch",
+            "orange-press",
+            "watermelon-wave",
+            "pineapple-lime",
+            "carrot-glow",
+            "beet-route",
+            "mango-cloud",
+            "strawberry-yogurt",
+            "berry-flex",
+            "banana-charge",
+            "pistachio-power",
+            "lemon-mint",
+            "strawberry-lemonade",
+            "mango-passion-fizz",
+            "blue-rush",
+            "strawberry-shake",
+            "cookies-cream-shake"
+          ],
+          "maxAmount": 11.45
+        }
+      },
+      {
+        "id": "reward-1200",
+        "label": "Free dessert",
+        "points": 1200,
+        "type": "free_product",
+        "value": null,
+        "pricing": {
+          "kind": "free_product",
+          "eligibleProductIds": [
+            "strawberry-dip-cup",
+            "saint-fruit-stick",
+            "brownie-fruit-stick",
+            "st-crepe",
+            "strawberry-fold",
+            "brownie-fold",
+            "loaded-waffle",
+            "classic-minis",
+            "pistachio-minis",
+            "dubai-minis",
+            "pistachio-soft-serve",
+            "dubai-strawberry-cup",
+            "st-dubai-bar",
+            "loaded-brownie",
+            "midnight-crunch-cookie"
+          ],
+          "maxAmount": 12.95
+        }
+      },
+      {
+        "id": "reward-1800",
+        "label": "$15 Party Box reward",
+        "points": 1800,
+        "type": "item_discount",
+        "value": 15,
+        "pricing": {
+          "kind": "item_discount",
+          "amount": 15,
+          "eligibleProductIds": [
+            "study-night-box",
+            "date-night-box",
+            "game-day-box",
+            "birthday-box",
+            "office-box",
+            "build-your-party-box"
+          ]
+        }
+      }
+    ]
   },
   "accountDiscounts": {
     "regular": {
@@ -43,32 +131,63 @@
       "requiresVerification": false
     },
     "student": {
-      "enabled": false,
-      "proposalPercentOff": 10,
+      "enabled": true,
+      "percentOff": 10,
       "requiresVerification": true,
       "requiredStatus": "verified",
-      "percentOff": null
+      "appliesTo": "eligible_subtotal",
+      "configurable": true
     },
     "business": {
-      "enabled": false,
-      "proposalPercentOff": 8,
+      "enabled": true,
+      "percentOff": 8,
       "requiresVerification": true,
       "requiredStatus": "approved",
-      "percentOff": null
+      "appliesTo": "eligible_subtotal",
+      "configurable": true
     }
   },
   "birthday": {
-    "enabled": false,
-    "proposal": {
-      "windowBeforeDays": 3,
-      "windowAfterDays": 7,
-      "minimumAccountAgeDays": 30,
-      "rewardType": "free_item_or_discount"
-    },
-    "reward": null,
-    "windowBeforeDays": null,
-    "windowAfterDays": null,
-    "minimumAccountAgeDays": null
+    "enabled": true,
+    "windowBeforeDays": 3,
+    "windowAfterDays": 7,
+    "minimumAccountAgeDays": 30,
+    "oncePerCalendarYear": true,
+    "reward": {
+      "label": "Birthday drink",
+      "type": "free_product",
+      "value": null,
+      "pricing": {
+        "kind": "free_product",
+        "eligibleProductIds": [
+          "pistachio-saint",
+          "blue-saint",
+          "berry-boulevard",
+          "lemon-chrome",
+          "saint-sunset",
+          "the-vandeventer",
+          "midnight-mango",
+          "green-arch",
+          "orange-press",
+          "watermelon-wave",
+          "pineapple-lime",
+          "carrot-glow",
+          "beet-route",
+          "mango-cloud",
+          "strawberry-yogurt",
+          "berry-flex",
+          "banana-charge",
+          "pistachio-power",
+          "lemon-mint",
+          "strawberry-lemonade",
+          "mango-passion-fizz",
+          "blue-rush",
+          "strawberry-shake",
+          "cookies-cream-shake"
+        ],
+        "maxAmount": 11.45
+      }
+    }
   },
   "reservations": {
     "enabled": true,
@@ -84,9 +203,12 @@
     },
     "purposes": [
       "study_group",
+      "student_organization",
       "work_group",
       "meeting",
-      "social",
+      "birthday",
+      "celebration",
+      "general_group",
       "other"
     ],
     "statusFlow": [
