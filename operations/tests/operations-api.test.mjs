@@ -3,6 +3,7 @@ import { once } from "node:events";
 import { startOrderingServer } from "../../ordering/server.mjs";
 
 process.env.STJ_TEST_ADMIN_TOKEN = "phase3-ops-test";
+process.env.ST_JUICE_TEST_NOW = "2026-09-20T18:00:00Z";
 const server = await startOrderingServer({ port: 0 });
 const { port } = server.address();
 const base = `http://127.0.0.1:${port}`;
