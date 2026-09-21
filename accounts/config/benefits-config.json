@@ -32,7 +32,9 @@
           "type": "box_reward"
         }
       ]
-    }
+    },
+    "pointsPerDollar": null,
+    "redemptions": []
   },
   "accountDiscounts": {
     "regular": {
@@ -60,7 +62,8 @@
       "windowAfterDays": 7,
       "minimumAccountAgeDays": 30,
       "rewardType": "free_item_or_discount"
-    }
+    },
+    "reward": null
   },
   "reservations": {
     "enabled": true,
