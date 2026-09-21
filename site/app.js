@@ -135,6 +135,8 @@ function applyAccountSession(payload) {
     state.account.benefits = null;
     state.account.reservations = [];
     state.account.reservationConfig = null;
+    state.account.rewardsWallet = { points: 0, lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
+    state.account.rewardsConfig = null;
     return;
   }
   const account = payload.account;
@@ -171,6 +173,9 @@ function applyAccountDashboard(payload) {
   state.account.reservations = Array.isArray(payload?.reservations) ? payload.reservations : [];
   state.account.benefits = payload?.benefits || null;
   state.account.reservationConfig = payload?.config?.benefits?.reservations || null;
+  state.account.rewardsWallet = payload?.rewardsWallet || { points: 0, lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
+  state.account.rewardsConfig = payload?.config?.benefits?.loyalty || null;
+  state.account.points = Number(state.account.rewardsWallet?.points || payload?.account?.rewards?.points || 0);
 }
 
 async function refreshAccountSession() {
@@ -508,6 +513,33 @@ document.addEventListener("click", async (event) => {
       render({ preserveScroll: true });
       toast("Mix saved", "Available in your account dashboard.");
     } catch (error) { toast("Mix did not save", errorMessage(error)); }
+    return;
+  }
+  if (action === "enroll-rewards") {
+    try {
+      await accountApi.enrollRewards(state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Rewards joined", "Your wallet is ready. Points only earn after eligible completed orders.");
+    } catch (error) { toast("Rewards enrollment did not complete", errorMessage(error)); }
+    return;
+  }
+  if (action === "redeem-reward") {
+    try {
+      await accountApi.redeemReward(actionElement.dataset.rewardId || "", state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Reward unlocked", "Your available reward is now in your wallet.");
+    } catch (error) { toast("Reward could not be redeemed", errorMessage(error)); }
+    return;
+  }
+  if (action === "claim-birthday") {
+    try {
+      await accountApi.claimBirthday(state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Birthday benefit added", "Your birthday reward is now in your wallet.");
+    } catch (error) { toast("Birthday benefit unavailable", errorMessage(error)); }
     return;
   }
   if (action === "cancel-reservation") {
@@ -856,6 +888,7 @@ document.addEventListener("submit", async (event) => {
         name: String(values.get("name") || ""),
         email: String(values.get("email") || ""),
         password: String(values.get("password") || ""),
+        birthday: String(values.get("birthday") || ""),
         type
       });
       applyAccountSession(payload);
