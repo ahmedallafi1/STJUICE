@@ -1,5 +1,7 @@
 import { builder, builderOptions, builderStepById, config, modifierById, productById } from "./catalog-store.mjs";
 import { combineCheckoutDiscounts } from "./promotion-engine.mjs";
+import { productOperationalStatus, requiredLeadMinutesForItems } from "../../operations/lib/commercial-control.mjs";
+import { validateDeliveryWithProvider } from "../adapters/delivery-adapter.mjs";
 
 const cents = (value) => Math.round(Number(value || 0) * 100);
 const dollars = (value) => Number((Number(value || 0) / 100).toFixed(2));
@@ -40,6 +42,10 @@ function catalogLine(input, index, service, errors, warnings) {
   if (!product) {
     errors.push({ code: "product_not_found", itemIndex: index, message: "This product is not in the active catalog." });
     return null;
+  }
+  const operationalStatus = productOperationalStatus(product.id);
+  if (operationalStatus !== "available") {
+    errors.push({ code: operationalStatus === "sold_out" ? "product_sold_out" : "product_paused", itemIndex: index, message: `${product.name} is ${operationalStatus === "sold_out" ? "sold out" : "temporarily unavailable"}.` });
   }
   if (!(product.availability?.channels || []).includes(service)) {
     errors.push({ code: "service_unavailable", itemIndex: index, message: `${product.name} is not available for ${service}.` });
@@ -240,14 +246,16 @@ export function quoteCart(request = {}, pricingContext = {}) {
   const tip = Math.round(taxable * tipPercent / 100);
   const total = taxable + tax + deliveryFee + serviceFee + tip;
   warnings.push(
-    { code: "working_catalog_prices", message: "Catalog prices are working values pending owner approval." },
-    { code: "tax_not_configured", message: "Tax is $0 in safe test mode and must be configured before launch." },
-    { code: "fees_not_configured", message: "Delivery and service fees are $0 in safe test mode and must be configured before launch." }
+    { code: "catalog_prices_pending_approval", message: "Catalog prices are pending final approval." },
+    { code: "tax_not_configured", message: "Tax must be configured before live ordering." },
+    { code: "fees_not_configured", message: "Delivery and service fees must be configured before live ordering." }
   );
+  const requiredLeadMinutes = requiredLeadMinutesForItems(items, service);
   return {
     valid: errors.length === 0,
     mode: config.meta.mode,
     service,
+    fulfillment: { requiredLeadMinutes },
     items,
     errors,
     warnings,
@@ -290,7 +298,7 @@ function localParts(now) {
   return { date: `${get("year")}-${get("month")}-${get("day")}`, minute: Number(get("hour")) * 60 + Number(get("minute")) };
 }
 
-export function generateSlots(service, dateText, now = new Date()) {
+export function generateSlots(service, dateText, now = new Date(), leadOverrideMinutes = null) {
   if (!config.fulfillment.supported.includes(service)) return { valid: false, errors: [{ code: "invalid_service", message: "Invalid service." }], slots: [] };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateText || ""))) return { valid: false, errors: [{ code: "invalid_date", message: "Use a YYYY-MM-DD date." }], slots: [] };
   const date = new Date(`${dateText}T12:00:00Z`);
@@ -301,24 +309,15 @@ export function generateSlots(service, dateText, now = new Date()) {
   if (delta < 0 || delta >= config.fulfillment.schedulingDays) return { valid: false, errors: [{ code: "date_out_of_range", message: `Choose a date within ${config.fulfillment.schedulingDays} days.` }], slots: [] };
   const hours = config.fulfillment.hours[dayNames[date.getUTCDay()]];
   const slots = [];
-  const earliest = delta === 0 ? localNow.minute + config.fulfillment.leadMinutes[service] : parseMinutes(hours.open);
-  for (let minute = parseMinutes(hours.open); minute <= parseMinutes(hours.close) - config.fulfillment.leadMinutes[service]; minute += config.fulfillment.slotIncrementMinutes) {
+  const leadMinutes = Math.max(config.fulfillment.leadMinutes[service], Number(leadOverrideMinutes || 0));
+  const earliest = delta === 0 ? localNow.minute + leadMinutes : parseMinutes(hours.open);
+  for (let minute = parseMinutes(hours.open); minute <= parseMinutes(hours.close) - leadMinutes; minute += config.fulfillment.slotIncrementMinutes) {
     if (minute < earliest) continue;
     slots.push({ value: `${dateText}T${clock(minute)}:00`, label: new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", timeZone: "UTC" }).format(new Date(`2000-01-01T${clock(minute)}:00Z`)) });
   }
-  return { valid: true, service, date: dateText, timezone: config.meta.timezone, hours, leadMinutes: config.fulfillment.leadMinutes[service], slots };
+  return { valid: true, service, date: dateText, timezone: config.meta.timezone, hours, leadMinutes, slots };
 }
 
 export function validateDeliveryAddress(address = {}) {
-  const required = ["street", "city", "state", "postalCode"];
-  const missing = required.filter((key) => !cleanText(address[key], 100));
-  if (missing.length) return { valid: false, eligible: false, errors: missing.map((field) => ({ code: "address_required", field, message: `${field} is required.` })) };
-  return {
-    valid: true,
-    eligible: true,
-    mode: config.fulfillment.delivery.mode,
-    address: Object.fromEntries(required.map((key) => [key, cleanText(address[key], 100)])),
-    warning: config.fulfillment.delivery.testBehavior,
-    realEligibilityConfirmed: false
-  };
+  return validateDeliveryWithProvider(address);
 }

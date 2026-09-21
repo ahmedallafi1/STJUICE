@@ -16,7 +16,8 @@ assert.match(styles, /\.app-loader\s*\{[^}]*display:\s*none\s*!important/s, "Loa
 for (const marker of ["<title>", 'name="description"', 'name="robots"', 'property="og:title"', 'name="twitter:card"', 'rel="manifest"']) {
   assert.ok(index.includes(marker), `index.html must include ${marker}`);
 }
-assert.ok(index.includes("noindex, nofollow"), "Pre-launch prototype must not be indexed");
+assert.ok(index.includes("noindex, nofollow"), "Pre-launch site must not be indexed");
+assert.ok(index.includes('<base href="/site/" />'), "Storefront must declare a stable base path for direct routes");
 assert.ok(existsSync(resolve(siteRoot, "robots.txt")), "robots.txt must exist");
 assert.ok(read("site/robots.txt").includes("Disallow: /"), "Pre-launch robots must block indexing");
 assert.doesNotThrow(() => json("site/site.webmanifest"), "Web manifest must be valid JSON");
@@ -41,9 +42,9 @@ for (const slug of ["privacy", "terms", "refunds", "cookies", "accessibility", "
   assert.ok((html.match(/<h2/g) || []).length >= 3, `${slug} must contain substantive sections`);
 }
 const footer = renderFooter(data);
-for (const route of ["allergens", "privacy", "terms", "refunds", "cookies", "accessibility", "contact"]) assert.ok(footer.includes(`#/info/${route}`), `Footer must link ${route}`);
+for (const route of ["allergens", "privacy", "terms", "refunds", "cookies", "accessibility", "contact"]) assert.ok(footer.includes(`/info/${route}`), `Footer must link ${route}`);
 
-const localRefs = [...index.matchAll(/(?:src|href)="([^"#][^"]*)"/g)].map((match) => match[1]).filter((value) => !/^(?:https?:|mailto:|tel:|data:)/.test(value));
+const localRefs = [...index.matchAll(/(?:src|href)="([^"#][^"]*)"/g)].map((match) => match[1]).filter((value) => !value.startsWith("/") && !/^(?:https?:|mailto:|tel:|data:)/.test(value));
 for (const ref of localRefs) {
   const target = resolve(siteRoot, ref.split(/[?#]/)[0]);
   assert.ok(existsSync(target), `Local index reference must resolve: ${ref}`);

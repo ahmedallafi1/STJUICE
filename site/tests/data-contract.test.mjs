@@ -53,7 +53,7 @@ for (const requiredId of ["main-content", "app", "cart-dialog", "account-dialog"
   assert.ok(indexHtml.includes(`id="${requiredId}"`), `Missing application shell ID ${requiredId}`);
 }
 
-for (const route of ["/menu", "/build", "/drops", "/boxes", "/gift-cards", "/catering", "/rewards", "/location", "/account", "/about", "/states", "/checkout", "/order/"]) {
+for (const route of ["/menu", "/build", "/drops", "/boxes", "/catering", "/rewards", "/location", "/account", "/about", "/checkout", "/order/"]) {
   assert.ok(viewsSource.includes(`"${route}"`), `Missing route ${route}`);
 }
 
@@ -64,6 +64,7 @@ assert.ok(viewsSource.includes("ORDERING PREVIEW"), "Ordering preview boundary m
 assert.ok(appSource.includes("orderingApi"), "Checkout must use the authoritative order API");
 assert.ok(appSource.includes("allergenAcknowledged"), "Checkout must require an allergen acknowledgement");
 assert.ok(viewsSource.includes("No live card charge will occur yet."), "Preview payment boundary must be visible");
+assert.ok(!viewsSource.includes('if (path === "/gift-cards")'), "Gift cards must remain unpublished until issuance, balance and redemption are live");
 
 console.log(JSON.stringify({
   status: "valid",
@@ -74,5 +75,5 @@ console.log(JSON.stringify({
   modifierGroups: modifiers.groups.length,
   builderSteps: builder.steps.length,
   manifestAssets: media.assets.length,
-  frontendRoutes: 13
+  frontendRoutes: 11
 }, null, 2));

@@ -63,3 +63,47 @@ export function creditCompletedOrder(order) { const account = order?.accountId ?
 export function reverseCompletedOrderRewards(order, reason = "Order refund or reversal") { const account = order?.accountId ? accounts.get(order.accountId) : null; return account ? reverseOrderRewards(account, order, reason) : { reversed: false, reason: "account_not_found" }; }
 export function exportAccount(account, orders) { return { exportedAt: new Date().toISOString(), account: publicAccount(account), ...accountCollections(account), orders }; }
 export function deleteAccount(account, password) { authenticate(account.email, password); accounts.delete(account.id); byEmail.delete(account.email); for (const [token, session] of sessions) if (session.accountId === account.id) sessions.delete(token); }
+
+export function adminFindAccount(accountId) {
+  return accounts.get(String(accountId || "")) || null;
+}
+
+export function adminAccountsSnapshot() {
+  return [...accounts.values()].map((account) => ({
+    ...publicAccount(account),
+    favoritesCount: account.favorites.length,
+    mixesCount: account.mixes.length,
+    reservationsCount: (account.reservations || []).length,
+    ordersCount: account.orderIds.length
+  }));
+}
+
+export function adminReviewStudent(accountId, { status, expiresAt = "", reviewerReference = "" } = {}) {
+  const account = adminFindAccount(accountId);
+  if (!account) fail("Account not found.", "account_not_found", 404);
+  if (account.type !== "student") fail("Account is not a student account.", "student_account_required", 422);
+  if (!["verified", "declined", "expired", "pending_manual_review"].includes(status)) fail("Invalid student review status.", "student_status_invalid", 422);
+  account.student = {
+    ...account.student,
+    status,
+    expiresAt: clean(expiresAt, 30),
+    reviewedAt: new Date().toISOString(),
+    reviewerReference: clean(reviewerReference, 120),
+    discountActive: status === "verified"
+  };
+  return structuredClone(account.student);
+}
+
+export function adminReviewBusiness(accountId, { status, reviewerReference = "" } = {}) {
+  const account = adminFindAccount(accountId);
+  if (!account) fail("Account not found.", "account_not_found", 404);
+  if (account.type !== "business") fail("Account is not a business account.", "business_account_required", 422);
+  if (!["approved", "declined", "pending_review"].includes(status)) fail("Invalid business review status.", "business_status_invalid", 422);
+  account.business = {
+    ...account.business,
+    status,
+    reviewedAt: new Date().toISOString(),
+    reviewerReference: clean(reviewerReference, 120)
+  };
+  return structuredClone(account.business);
+}

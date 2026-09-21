@@ -3589,3 +3589,10 @@ html[data-theme="student"] .product-order-bar {
     flex-direction: column;
   }
 }
+
+.button[aria-disabled="true"],
+.button.is-disabled {
+  opacity: .5;
+  pointer-events: none;
+  cursor: not-allowed;
+}

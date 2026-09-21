@@ -25,6 +25,7 @@ const health = await invoke("/api/health");
 assert.equal(health.status, 200);
 assert.equal(health.payload.ok, true);
 assert.equal(health.headers["Cache-Control"], "no-store");
+assert.match(health.headers["X-Request-Id"], /^req_/);
 
 const readiness = await invoke("/api/launch-readiness");
 assert.equal(readiness.status, 200);
@@ -35,4 +36,4 @@ const invalidCart = await invoke("/api/cart/validate", { method: "POST", body: {
 assert.equal(invalidCart.status, 422);
 assert.equal(invalidCart.payload.valid, false);
 
-console.log(JSON.stringify({ status: "valid", vercelHandler: true, health: true, readiness: true, parsedBody: true }, null, 2));
+console.log(JSON.stringify({ status: "valid", vercelHandler: true, health: true, readiness: true, parsedBody: true, requestIds: true }, null, 2));

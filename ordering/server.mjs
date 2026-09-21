@@ -5,15 +5,18 @@ import { fileURLToPath } from "node:url";
 import { randomBytes, randomUUID } from "node:crypto";
 import { config } from "./lib/catalog-store.mjs";
 import { generateSlots, quoteCart, validateDeliveryAddress } from "./lib/order-engine.mjs";
-import { consumeTestPayment, createTestPaymentIntent, verifyTestPayment } from "./adapters/test-payment-adapter.mjs";
-import { sendToTestPos } from "./adapters/test-pos-adapter.mjs";
+import { consumePayment, createPaymentIntent, verifyPayment } from "./adapters/payment-adapter.mjs";
+import { sendToPos } from "./adapters/pos-adapter.mjs";
 import { attachOrder, handleAccountApi } from "../accounts/account-api.mjs";
 import { creditCompletedOrder, sessionForRequest } from "../accounts/lib/account-store.mjs";
 import { availableRewardGrant, benefitSnapshot, benefitsConfig, consumeRewardGrant } from "../accounts/lib/benefits-engine.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
+import { handleAdminApi } from "../operations/admin-api.mjs";
+import { createCateringRequest, publicCateringReceipt } from "../operations/lib/operations-store.mjs";
+import { publicCommercialSnapshot } from "../operations/lib/commercial-control.mjs";
 
 const packageRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
-const publicRoots = ["site", "brand", "media"].map((name) => resolve(packageRoot, name));
+const publicRoots = ["site", "brand", "media", "ops"].map((name) => resolve(packageRoot, name));
 const quotes = new Map();
 const orders = new Map();
 const idempotency = new Map();
@@ -35,7 +38,8 @@ function headers(type = "application/json; charset=utf-8") {
 }
 
 function json(response, status, payload, extraHeaders = {}) {
-  response.writeHead(status, { ...headers(), ...extraHeaders });
+  const requestHeaders = response.stjRequestId ? { "X-Request-Id": response.stjRequestId } : {};
+  response.writeHead(status, { ...headers(), ...requestHeaders, ...extraHeaders });
   response.end(JSON.stringify(payload));
 }
 
@@ -68,10 +72,21 @@ function publicConfig() {
     currency: config.meta.currency,
     timezone: config.meta.timezone,
     location: config.location,
-    fulfillment: config.fulfillment,
-    pricing: config.pricing,
-    payments: { adapter: config.payments.adapter, acceptsRawCardData: false, testButtonLabel: config.payments.testButtonLabel },
-    orders: { storage: config.orders.storage, statuses: config.orders.statuses }
+    fulfillment: {
+      supported: config.fulfillment.supported,
+      hours: config.fulfillment.hours,
+      leadMinutes: config.fulfillment.leadMinutes,
+      schedulingDays: config.fulfillment.schedulingDays,
+      delivery: { mode: config.fulfillment.delivery.mode }
+    },
+    pricing: {
+      tax: { status: config.pricing.tax.status },
+      deliveryFee: { status: config.pricing.deliveryFee.status },
+      serviceFee: { status: config.pricing.serviceFee.status },
+      tips: { allowedPercentages: config.pricing.tips.allowedPercentages }
+    },
+    payments: { acceptsRawCardData: false, live: config.payments.adapter !== "safe_test_token" },
+    orders: { statuses: config.orders.statuses }
   };
 }
 
@@ -139,16 +154,100 @@ function publicOrder(order) {
     location: config.location,
     pos: order.pos,
     createdAt: order.createdAt,
-    notices: ["Safe test order only. No live payment or live POS transaction occurred.", "Orders are stored in memory and reset when the server restarts."]
+    estimatedReadyAt: order.estimatedReadyAt || null,
+    notices: config.meta.mode === "safe_test"
+      ? ["Online card payment is not live yet.", "Pre-opening order data may reset during deployments."]
+      : []
   };
 }
 
-function scheduleValid(service, schedule) {
-  if (schedule === "asap") return ["pickup", "delivery", "dine_in"].includes(service);
+function adminOrderView(order) {
+  return {
+    id: order.id,
+    orderNumber: order.orderNumber,
+    accountId: order.accountId || null,
+    status: order.status,
+    statusHistory: structuredClone(order.statusHistory || []),
+    service: order.service,
+    schedule: order.schedule,
+    payment: structuredClone(order.payment),
+    customer: structuredClone(order.customer),
+    delivery: order.delivery ? structuredClone(order.delivery) : null,
+    items: structuredClone(order.items),
+    totals: structuredClone(order.totals),
+    rewardGrantId: order.rewardGrantId || null,
+    pos: structuredClone(order.pos),
+    createdAt: order.createdAt
+  };
+}
+
+function listOrdersForAdmin() {
+  return [...orders.values()]
+    .map(adminOrderView)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+function adminSetOrderStatus(orderId, requestedStatus) {
+  const order = orders.get(String(orderId || ""));
+  if (!order) throw Object.assign(new Error("Order not found."), { code: "order_not_found", status: 404 });
+  const status = String(requestedStatus || "");
+  if (!config.orders.statuses.includes(status)) throw Object.assign(new Error("Invalid order status."), { code: "order_status_invalid", status: 422 });
+  if (status === order.status) return adminOrderView(order);
+
+  const allowed = {
+    received: ["confirmed", "canceled"],
+    confirmed: ["in_preparation", "canceled"],
+    in_preparation: order.service === "delivery" ? ["out_for_delivery", "canceled"] : ["ready_for_pickup", "canceled"],
+    ready_for_pickup: ["complete", "canceled"],
+    out_for_delivery: ["complete", "canceled"],
+    complete: [],
+    canceled: []
+  };
+  if (!(allowed[order.status] || []).includes(status)) {
+    throw Object.assign(new Error(`Cannot move order from ${order.status} to ${status}.`), { code: "order_transition_invalid", status: 409 });
+  }
+  order.status = status;
+  order.statusHistory.push({ status, at: new Date().toISOString() });
+  if (status === "complete") order.rewards = creditCompletedOrder(order);
+  return adminOrderView(order);
+}
+
+function operationalNow() {
+  const configured = config.meta.mode === "safe_test" ? String(process.env.ST_JUICE_TEST_NOW || "").trim() : "";
+  if (configured) {
+    const date = new Date(configured);
+    if (!Number.isNaN(date.getTime())) return date;
+  }
+  return new Date();
+}
+
+function localDateText(now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: config.meta.timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(now);
+  const get = (type) => parts.find((part) => part.type === type)?.value;
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+function scheduleResolution(service, schedule, requiredLeadMinutes = 0, now = new Date()) {
+  if (schedule === "asap") {
+    const date = localDateText(now);
+    const result = generateSlots(service, date, now, requiredLeadMinutes);
+    return {
+      valid: result.valid && result.slots.length > 0,
+      estimatedReadyAt: result.slots[0]?.value || null
+    };
+  }
   const value = String(schedule || "");
   const date = value.slice(0, 10);
-  const result = generateSlots(service, date);
-  return result.valid && result.slots.some((slot) => slot.value === value);
+  const result = generateSlots(service, date, now, requiredLeadMinutes);
+  return {
+    valid: result.valid && result.slots.some((slot) => slot.value === value),
+    estimatedReadyAt: value || null
+  };
 }
 
 function canReadOrder(request, url, order) {
@@ -159,15 +258,29 @@ function canReadOrder(request, url, order) {
 }
 
 function testAdminAuthorized(request) {
-  const expected = process.env.STJ_TEST_ADMIN_TOKEN;
+  const expected = process.env.ST_JUICE_ADMIN_TOKEN || process.env.STJ_TEST_ADMIN_TOKEN;
   return Boolean(expected && request.headers["x-stj-admin-token"] === expected);
 }
 
 async function api(request, response, url) {
+  if (await handleAdminApi({
+    request,
+    response,
+    url,
+    json,
+    bodyJson,
+    listOrders: listOrdersForAdmin,
+    updateOrderStatus: adminSetOrderStatus
+  })) return;
   if (await handleAccountApi({ request, response, url, json, bodyJson, getOrder: (id) => orders.get(id), publicOrder })) return;
   if (request.method === "GET" && url.pathname === "/api/health") return json(response, 200, { ok: true, mode: config.meta.mode, payment: "token_only_test", storage: config.orders.storage, accounts: "memory_only_test" });
   if (request.method === "GET" && url.pathname === "/api/launch-readiness") return json(response, 200, getLaunchReadiness());
   if (request.method === "GET" && url.pathname === "/api/config") return json(response, 200, publicConfig());
+  if (request.method === "GET" && url.pathname === "/api/catalog-status") return json(response, 200, publicCommercialSnapshot());
+  if (request.method === "POST" && url.pathname === "/api/catering/requests") {
+    const row = createCateringRequest(await bodyJson(request));
+    return json(response, 201, { request: publicCateringReceipt(row) });
+  }
   if (request.method === "GET" && url.pathname === "/api/slots") {
     const result = generateSlots(url.searchParams.get("service"), url.searchParams.get("date"));
     return json(response, result.valid ? 200 : 400, result);
@@ -192,7 +305,7 @@ async function api(request, response, url) {
     if (hasCardData(input)) return json(response, 400, { error: { code: "raw_card_data_rejected", message: "Raw card details are never accepted by this server." } });
     const resolved = activeQuote(input.quoteId);
     if (resolved.error) return json(response, 409, resolved);
-    return json(response, 201, createTestPaymentIntent({ quoteId: resolved.quote.quoteId, amount: resolved.quote.totals.total.cents, currency: config.meta.currency }));
+    return json(response, 201, createPaymentIntent({ quoteId: resolved.quote.quoteId, amount: resolved.quote.totals.total.cents, currency: config.meta.currency }));
   }
   if (request.method === "POST" && url.pathname === "/api/orders") {
     const input = await bodyJson(request);
@@ -220,11 +333,12 @@ async function api(request, response, url) {
     const customerResult = validCustomer(input.customer);
     if (!customerResult.valid) return json(response, 422, { valid: false, errors: customerResult.errors });
     if (input.allergenAcknowledged !== true) return json(response, 422, { valid: false, errors: [{ code: "allergen_acknowledgement_required", field: "allergenAcknowledged", message: "Review and acknowledge the allergen notice." }] });
-    if (!scheduleValid(quote.service, input.schedule)) return json(response, 422, { valid: false, errors: [{ code: "schedule_invalid", field: "schedule", message: "Choose an available service time." }] });
+    const schedule = scheduleResolution(quote.service, input.schedule, quote.fulfillment?.requiredLeadMinutes || 0, operationalNow());
+    if (!schedule.valid) return json(response, 422, { valid: false, errors: [{ code: "schedule_invalid", field: "schedule", message: "The store cannot complete this order within today's operating window. Try again during open hours." }] });
     if (quote.service === "delivery" && !deliveryChecks.has(input.deliveryCheckToken)) return json(response, 422, { valid: false, errors: [{ code: "delivery_check_required", message: "Validate the delivery address first." }] });
     const paymentMethod = input.paymentMethod === "cash" ? "cash" : "card";
     if (quote.service === "delivery" && paymentMethod === "cash") return json(response, 422, { valid: false, errors: [{ code: "cash_not_available_for_delivery", field: "paymentMethod", message: "Cash is not available for delivery orders." }] });
-    const payment = paymentMethod === "cash" ? null : verifyTestPayment({ token: input.paymentToken, quoteId: quote.quoteId, amount: quote.totals.total.cents });
+    const payment = paymentMethod === "cash" ? null : verifyPayment({ token: input.paymentToken, quoteId: quote.quoteId, amount: quote.totals.total.cents });
     if (payment && !payment.valid) return json(response, 402, { error: { code: payment.code, message: "The safe test payment could not be verified." } });
 
     const createdAt = new Date().toISOString();
@@ -247,14 +361,15 @@ async function api(request, response, url) {
         : { method: "card", provider: payment.intent.provider, status: "captured_test", tokenLast8: payment.intent.token.slice(-8) },
       mode: config.meta.mode,
       trackingToken: randomBytes(24).toString("base64url"),
-      createdAt
+      createdAt,
+      estimatedReadyAt: schedule.estimatedReadyAt
     };
     if (signedIn) order.accountId = signedIn.account.id;
-    order.pos = sendToTestPos(order);
+    order.pos = sendToPos(order);
     if (signedIn && order.rewardGrantId) consumeRewardGrant(signedIn.account, order.rewardGrantId, order.id, createdAt);
     orders.set(id, order);
     if (signedIn) attachOrder(signedIn.account, order);
-    if (paymentMethod === "card") consumeTestPayment(input.paymentToken);
+    if (paymentMethod === "card") consumePayment(input.paymentToken);
     idempotency.set(key, { orderId: id, expiresAt: Date.now() + config.orders.idempotencyMinutes * 60_000 });
     return json(response, 201, { idempotentReplay: false, order: publicOrder(order), trackingToken: order.trackingToken });
   }
@@ -272,11 +387,7 @@ async function api(request, response, url) {
     if (!order) return json(response, 404, { error: { code: "order_not_found", message: "Order not found." } });
     const flow = order.service === "delivery" ? ["received", "confirmed", "in_preparation", "out_for_delivery", "complete"] : ["received", "confirmed", "in_preparation", "ready_for_pickup", "complete"];
     const next = flow[Math.min(flow.length - 1, flow.indexOf(order.status) + 1)];
-    if (next !== order.status) {
-      order.status = next;
-      order.statusHistory.push({ status: next, at: new Date().toISOString() });
-      if (next === "complete") order.rewards = creditCompletedOrder(order);
-    }
+    if (next !== order.status) adminSetOrderStatus(order.id, next);
     return json(response, 200, { order: publicOrder(order) });
   }
   return json(response, 404, { error: { code: "api_not_found", message: "API route not found." } });
@@ -284,7 +395,13 @@ async function api(request, response, url) {
 
 function staticFile(request, response, url) {
   if (request.method !== "GET" && request.method !== "HEAD") return json(response, 405, { error: { code: "method_not_allowed", message: "Method not allowed." } });
-  if (url.pathname === "/") { response.writeHead(302, { Location: "/site/" }); return response.end(); }
+  const customerRoute = /^(?:\/|\/(?:menu|drops|build|boxes|catering|rewards|location|account|about|checkout|product\/[^/]+|order\/[^/]+|info\/[^/]+)\/?)$/;
+  if (customerRoute.test(url.pathname)) {
+    const path = resolve(packageRoot, "site/index.html");
+    response.writeHead(200, { ...headers("text/html; charset=utf-8"), ...(response.stjRequestId ? { "X-Request-Id": response.stjRequestId } : {}), "Cache-Control": "no-cache, max-age=0" });
+    if (request.method === "HEAD") return response.end();
+    return createReadStream(path).pipe(response);
+  }
   const requested = decodeURIComponent(url.pathname).replace(/^\/+/, "");
   let path = resolve(packageRoot, requested);
   if (path !== packageRoot && !path.startsWith(`${packageRoot}${sep}`)) return json(response, 403, { error: { code: "forbidden", message: "Forbidden path." } });
@@ -292,7 +409,7 @@ function staticFile(request, response, url) {
   if (!isPublicPath) return json(response, 403, { error: { code: "forbidden", message: "Forbidden path." } });
   if (existsSync(path) && statSync(path).isDirectory()) path = resolve(path, "index.html");
   if (!existsSync(path) || !statSync(path).isFile()) return json(response, 404, { error: { code: "file_not_found", message: "File not found." } });
-  response.writeHead(200, { ...headers(mime[extname(path)] || "application/octet-stream"), "Cache-Control": "public, max-age=60" });
+  response.writeHead(200, { ...headers(mime[extname(path)] || "application/octet-stream"), ...(response.stjRequestId ? { "X-Request-Id": response.stjRequestId } : {}), "Cache-Control": "public, max-age=60" });
   if (request.method === "HEAD") return response.end();
   createReadStream(path).pipe(response);
 }
@@ -302,12 +419,24 @@ export function createOrderingServer() {
 }
 
 export async function handleNodeRequest(request, response) {
+  response.stjRequestId = `req_${randomUUID()}`;
+  let url;
   try {
-    const url = new URL(request.url || "/", "http://localhost");
+    url = new URL(request.url || "/", "http://localhost");
     if (url.pathname.startsWith("/api/")) await api(request, response, url);
     else staticFile(request, response, url);
   } catch (error) {
-    json(response, error.status || 500, { error: { code: error.code || "server_error", message: error.status ? error.message : "The safe test server could not complete the request." } });
+    const status = error.status || 500;
+    const code = error.code || "server_error";
+    console.error(JSON.stringify({
+      level: "error",
+      requestId: response.stjRequestId,
+      method: request.method || "GET",
+      path: url?.pathname || "/",
+      status,
+      code
+    }));
+    json(response, status, { error: { code, message: error.status ? error.message : "The ordering service could not complete the request.", requestId: response.stjRequestId } });
   }
 }
 

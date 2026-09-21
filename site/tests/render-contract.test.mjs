@@ -39,7 +39,7 @@ const state = {
   orderLoading: false
 };
 
-const routes = ["/", "/menu", "/product/pistachio-saint", "/build", "/drops", "/boxes", "/gift-cards", "/catering", "/rewards", "/location", "/account", "/about", "/states", "/checkout", "/info/privacy", "/info/terms", "/info/refunds", "/info/cookies", "/info/accessibility", "/info/allergens", "/info/contact", "/missing"];
+const routes = ["/", "/menu", "/product/pistachio-saint", "/build", "/drops", "/boxes", "/catering", "/rewards", "/location", "/account", "/about", "/checkout", "/info/privacy", "/info/terms", "/info/refunds", "/info/cookies", "/info/accessibility", "/info/allergens", "/info/contact", "/missing"];
 for (const path of routes) {
   const html = renderPage({ path, params: new URLSearchParams() }, { data, state });
   assert.ok(html.length > 250, `${path} must render meaningful markup`);
@@ -149,6 +149,7 @@ assert.ok(renderCart(data, state).includes("$19.90"), "Cart must calculate line 
 
 state.checkout.quote = {
   promo: null,
+  fulfillment: { requiredLeadMinutes: 240 },
   items: [{ name: "Pistachio Saint", sizeLabel: "16 oz", quantity: 2, allergens: ["milk", "tree_nut"], lineTotal: { amount: 19.9 } }],
   totals: { subtotal: { amount: 19.9 }, discount: { amount: 0 }, tax: { amount: 0 }, deliveryFee: { amount: 0 }, serviceFee: { amount: 0 }, tip: { amount: 0, percent: 0 }, total: { amount: 19.9 } }
 };
@@ -160,6 +161,15 @@ assert.ok(!checkout.includes("SAFE TEST"));
 assert.ok(checkout.includes("Order for now."));
 assert.ok(!checkout.includes("Service date"));
 assert.ok(!checkout.includes("Available time"));
+
+state.runtimeConfig = { mode: "production", payments: { live: true } };
+const liveCheckout = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
+assert.ok(liveCheckout.includes("CHECKOUT"));
+assert.ok(!liveCheckout.includes("ORDERING PREVIEW"));
+assert.ok(!liveCheckout.includes("No live card charge will occur yet."));
+state.runtimeConfig = null;
+assert.ok(checkout.includes("Minimum prep:"));
+assert.ok(checkout.includes("4 hr"));
 
 state.checkout.quote.discountBreakdown = {
   promo: { amount: 0 },
@@ -186,10 +196,18 @@ assert.ok(deliveryPayment.includes("Cash is not available for delivery"));
 assert.ok(!deliveryPayment.includes("Cash at pickup"));
 state.service = "pickup";
 
-state.order = { id: "order_test", orderNumber: "STJ-0001", status: "received", service: "pickup", schedule: "2026-08-17T08:00:00", customer: { name: "Test Guest", email: "t***@example.com", phone: "***0100" }, items: state.checkout.quote.items, totals: state.checkout.quote.totals, pos: { reference: "test_pos_123", adapter: "test_pos_receipt", status: "accepted_test" } };
+state.order = { id: "order_test", orderNumber: "STJ-0001", status: "received", service: "pickup", schedule: "asap", estimatedReadyAt: "2026-08-17T08:30:00", customer: { name: "Test Guest", email: "t***@example.com", phone: "***0100" }, items: state.checkout.quote.items, totals: state.checkout.quote.totals, pos: { reference: "test_pos_123", adapter: "test_pos_receipt", status: "accepted_test" } };
 const order = renderPage({ path: "/order/order_test", params: new URLSearchParams() }, { data, state });
 assert.ok(order.includes("STJ-0001"));
 assert.ok(order.includes("Refresh status"));
+assert.ok(order.includes("Estimated ready"));
+assert.ok(order.includes("2026-08-17 · 08:30"));
 assert.ok(!order.includes("Advance test status"));
 
-console.log(JSON.stringify({ status: "valid", routesRendered: routes.length + 1, builderStepsRendered: data.builder.steps.length, fullMenuCards: 54, accountModesRendered: 4, checkoutRendered: true, orderRendered: true }, null, 2));
+state.order.mode = "production";
+const liveOrder = renderPage({ path: "/order/order_test", params: new URLSearchParams() }, { data, state });
+assert.ok(liveOrder.includes("ORDER STATUS"));
+assert.ok(!liveOrder.includes("Preview receipt"));
+assert.ok(!liveOrder.includes("No live card charge occurred."));
+
+console.log(JSON.stringify({ status: "valid", routesRendered: routes.length + 1, builderStepsRendered: data.builder.steps.length, fullMenuCards: 54, accountModesRendered: 4, checkoutRendered: true, liveCheckoutCopyValidated: true, orderRendered: true, liveOrderCopyValidated: true }, null, 2));

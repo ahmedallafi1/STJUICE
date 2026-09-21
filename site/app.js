@@ -1,5 +1,5 @@
 import { escapeHtml, hydrateIcons, loadProjectData, productImage, routeInfo, titleCase } from "./lib/core.js";
-import { accountApi, orderingApi } from "./lib/api.js";
+import { accountApi, cateringApi, orderingApi } from "./lib/api.js";
 import { loadAccount } from "./lib/account.js";
 import {
   builderAllergens,
@@ -89,12 +89,14 @@ const state = {
   },
   cateringSuccess: false,
   cateringEmail: "",
+  cateringReference: "",
   checkout: freshCheckout(),
   order: null,
   orderLoading: false,
   orderRequestedId: "",
   orderTrackingTokens: readSession("stjuice-order-tracking", {}),
-  accountIntent: "regular"
+  accountIntent: "regular",
+  runtimeConfig: null
 };
 state.account = { ...loadAccount(), signedIn: false, points: 0, csrfToken: "" };
 
@@ -122,6 +124,14 @@ const elements = {
 
 function currentContext() {
   return { data, state };
+}
+
+function navigate(path, { replace = false } = {}) {
+  const target = new URL(path, window.location.origin);
+  const href = `${target.pathname}${target.search}${target.hash}`;
+  if (replace) window.history.replaceState({}, "", href);
+  else window.history.pushState({}, "", href);
+  render();
 }
 
 function applyAccountSession(payload) {
@@ -216,16 +226,67 @@ function routeTitle(path) {
     "/build": "Build Your Mood",
     "/drops": "New Drops",
     "/boxes": "Party Boxes",
-    "/gift-cards": "Gift Cards",
     "/catering": "Catering",
     "/rewards": "Rewards",
     "/location": "Vandeventer Location",
     "/account": "Account Experience",
     "/about": "Our Story",
     "/checkout": "Checkout",
-    "/states": "Interface States"
   };
   return `${labels[path] || titleCase(path.split("/").pop() || "Page")} — ST. JUICE`;
+}
+
+function routeDescription(route) {
+  if (route.path.startsWith("/product/")) {
+    const product = data.productById.get(decodeURIComponent(route.path.split("/")[2] || ""));
+    if (product?.description) return product.description;
+  }
+  const descriptions = {
+    "/": data.copy.global.shortDescription,
+    "/menu": data.copy.menu.intro,
+    "/drops": data.copy.drops.intro,
+    "/boxes": data.copy.boxes.intro,
+    "/catering": data.copy.catering.intro,
+    "/rewards": data.copy.rewards.intro,
+    "/about": data.copy.about.body,
+    "/location": data.copy.home.location.body || data.copy.home.location.service
+  };
+  return descriptions[route.path] || data.copy.global.shortDescription;
+}
+
+function updateRouteMeta(route) {
+  const title = routeTitle(route.path);
+  const description = routeDescription(route);
+  document.title = title;
+
+  const descriptionMeta = document.querySelector('meta[name="description"]');
+  if (descriptionMeta) descriptionMeta.setAttribute("content", description);
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute("content", title);
+  const ogDescription = document.querySelector('meta[property="og:description"]');
+  if (ogDescription) ogDescription.setAttribute("content", description);
+
+  const robots = document.querySelector('meta[name="robots"]')?.getAttribute("content") || "";
+  if (!robots.toLowerCase().includes("index") || robots.toLowerCase().includes("noindex")) return;
+
+  const canonicalPath = route.path === "/" ? "/" : route.path;
+  const canonicalUrl = new URL(canonicalPath, window.location.origin).href;
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.setAttribute("rel", "canonical");
+    canonical.setAttribute("data-stj-canonical", "");
+    document.head.append(canonical);
+  }
+  canonical.setAttribute("href", canonicalUrl);
+
+  let ogUrl = document.querySelector('meta[property="og:url"]');
+  if (!ogUrl) {
+    ogUrl = document.createElement("meta");
+    ogUrl.setAttribute("property", "og:url");
+    document.head.append(ogUrl);
+  }
+  ogUrl.setAttribute("content", canonicalUrl);
 }
 
 function updateNavigation(path) {
@@ -266,7 +327,7 @@ function render(options = {}) {
   hydrateIcons(elements.app);
   updateShell();
   updateNavigation(route.path);
-  document.title = routeTitle(route.path);
+  updateRouteMeta(route);
 
   if (route.path === "/checkout" && !state.checkout.preparing && !state.checkout.autoPrepared) {
     queueMicrotask(() => prepareCheckout());
@@ -494,7 +555,7 @@ document.addEventListener("click", async (event) => {
   if (action === "toggle-favorite") {
     if (!state.account.signedIn) {
       state.accountIntent = "regular";
-      window.location.hash = "/account";
+      navigate("/account");
       toast("Sign in to save favorites");
       return;
     }
@@ -511,7 +572,7 @@ document.addEventListener("click", async (event) => {
   if (action === "save-builder-mix") {
     if (!state.account.signedIn) {
       state.accountIntent = "regular";
-      window.location.hash = "/account";
+      navigate("/account");
       toast("Sign in to save your mix");
       return;
     }
@@ -605,7 +666,7 @@ document.addEventListener("click", async (event) => {
     closeDialog(actionElement.closest("dialog"));
   } else if (action === "menu-search") {
     event.preventDefault();
-    window.location.hash = "/menu";
+    navigate("/menu");
     requestAnimationFrame(() => document.querySelector("#menu-search")?.focus());
   } else if (action === "set-mode") {
     const mode = actionElement.dataset.mode;
@@ -624,7 +685,7 @@ document.addEventListener("click", async (event) => {
     }
     state.accountIntent = mode;
     closeDialog(elements.accountDialog);
-    window.location.hash = "/account";
+    navigate("/account");
     toast("Sign in required", `Sign in or create a ${modes[mode].label.toLowerCase()} account to use this experience.`);
   } else if (action === "set-service") {
     const service = actionElement.dataset.service;
@@ -673,7 +734,7 @@ document.addEventListener("click", async (event) => {
     persistCart();
   } else if (action === "checkout-preview") {
     closeDialog(elements.cartDialog);
-    window.location.hash = "/checkout";
+    navigate("/checkout");
   } else if (action === "checkout-service") {
     state.service = actionElement.dataset.service;
     writeStorage(storageKeys.service, state.service);
@@ -741,7 +802,7 @@ document.addEventListener("click", async (event) => {
       state.cart = [];
       writeStorage(storageKeys.cart, []);
       state.checkout = freshCheckout();
-      window.location.hash = `/order/${result.order.id}`;
+      navigate(`/order/${result.order.id}`);
       toast("Order preview created", result.order.orderNumber);
     } catch (error) {
       state.checkout.busy = false;
@@ -993,7 +1054,30 @@ document.addEventListener("submit", async (event) => {
     return;
   }
   state.cateringSuccess = false;
-  toast("Online catering requests are not live yet", "No request was sent. We will only show a confirmation once the request is actually saved.");
+  const values = new FormData(event.target);
+  try {
+    const result = await cateringApi.createRequest({
+      contactName: String(values.get("contactName") || ""),
+      organization: String(values.get("organization") || ""),
+      email: String(values.get("email") || ""),
+      phone: String(values.get("phone") || ""),
+      eventDate: String(values.get("eventDate") || ""),
+      serviceTime: String(values.get("serviceTime") || ""),
+      guestCount: Number(values.get("guestCount") || 0),
+      serviceMode: String(values.get("serviceMode") || ""),
+      packageInterest: String(values.get("packageInterest") || ""),
+      notes: String(values.get("notes") || ""),
+      contactConsent: values.get("contactConsent") === "on"
+    });
+    state.cateringSuccess = true;
+    state.cateringEmail = String(values.get("email") || "");
+    state.cateringReference = result.request?.reference || "";
+    render({ preserveScroll: true });
+    toast("Catering request saved", state.cateringReference || "The team can now review your request.");
+  } catch (error) {
+    state.cateringSuccess = false;
+    toast("Catering request did not save", errorMessage(error));
+  }
 });
 
 for (const dialog of document.querySelectorAll("dialog")) {
@@ -1003,12 +1087,28 @@ for (const dialog of document.querySelectorAll("dialog")) {
 }
 
 window.addEventListener("hashchange", () => render());
+window.addEventListener("popstate", () => render());
+
+document.addEventListener("click", (event) => {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target.closest('a[href^="/"]');
+  if (!link || link.dataset.action || link.target === "_blank" || link.hasAttribute("download")) return;
+  const target = new URL(link.href, window.location.origin);
+  if (target.origin !== window.location.origin) return;
+  event.preventDefault();
+  navigate(`${target.pathname}${target.search}${target.hash}`);
+});
 window.addEventListener("scroll", () => elements.header.classList.toggle("is-scrolled", window.scrollY > 12), { passive: true });
 
 hydrateIcons(document);
 
 try {
-  data = await loadProjectData();
+  const [loadedData, runtimeConfig] = await Promise.all([
+    loadProjectData(),
+    orderingApi.config().catch(() => null)
+  ]);
+  data = loadedData;
+  state.runtimeConfig = runtimeConfig;
   migrateStage05Cart();
   await refreshAccountSession();
   render();
@@ -1017,5 +1117,5 @@ try {
   elements.loader.hidden = true;
   elements.app.hidden = false;
   elements.app.innerHTML = `
-    <section class="section"><div class="container"><div class="empty-state"><span class="empty-state__icon">!</span><h1 style="font-size:3rem">The catalog did not load.</h1><p>Start the included server with <code>npm start</code> from the project root. No order or payment was attempted.</p></div></div></section>`;
+    <section class="section"><div class="container"><div class="empty-state"><span class="empty-state__icon">!</span><h1 style="font-size:3rem">The menu did not load.</h1><p>Please refresh the page. If the problem continues, try again shortly.</p></div></div></section>`;
 }
