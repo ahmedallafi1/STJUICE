@@ -395,8 +395,7 @@ async function api(request, response, url) {
 
 function staticFile(request, response, url) {
   if (request.method !== "GET" && request.method !== "HEAD") return json(response, 405, { error: { code: "method_not_allowed", message: "Method not allowed." } });
-  if (url.pathname === "/") { response.writeHead(302, { Location: "/site/" }); return response.end(); }
-  const customerRoute = /^\/(?:menu|drops|build|boxes|gift-cards|catering|rewards|location|account|about|checkout|product\/[^/]+|order\/[^/]+|info\/[^/]+)\/?$/;
+  const customerRoute = /^(?:\/|\/(?:menu|drops|build|boxes|gift-cards|catering|rewards|location|account|about|checkout|product\/[^/]+|order\/[^/]+|info\/[^/]+)\/?)$/;
   if (customerRoute.test(url.pathname)) {
     const path = resolve(packageRoot, "site/index.html");
     response.writeHead(200, { ...headers("text/html; charset=utf-8"), ...(response.stjRequestId ? { "X-Request-Id": response.stjRequestId } : {}), "Cache-Control": "no-cache, max-age=0" });
