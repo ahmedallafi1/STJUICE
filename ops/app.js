@@ -119,11 +119,36 @@ async function renderCatering() {
 }
 
 async function renderCatalog() {
-  const [{ products, storage, editableAtRuntime }, rewards] = await Promise.all([api("catalog"), api("rewards")]);
+  const [{ products, storage, editableAtRuntime }, rewards, commercial] = await Promise.all([api("catalog"), api("rewards"), api("commercial")]);
+  const productState = new Map(commercial.products.map((row) => [row.productId, row]));
   els.panel.innerHTML = `
-    <div class="section-title"><div><p class="eyebrow">CATALOG & REWARDS</p><h2>Commercial configuration.</h2><p class="muted">Runtime editing: ${editableAtRuntime ? "enabled" : "not yet"} · ${esc(storage)}</p></div></div>
+    <div class="section-title"><div><p class="eyebrow">CATALOG & REWARDS</p><h2>Commercial controls.</h2><p class="muted">Runtime editing: ${editableAtRuntime ? "enabled" : "not yet"} · ${esc(storage)} · changes reset with preview-memory restarts.</p></div></div>
     <div class="metrics">${metric("Products", products.length)}${metric("Loyalty", rewards.config.loyalty.enabled ? "Active" : "Disabled")}${metric("Student benefit", rewards.config.accountDiscounts.student.enabled ? "Active" : "Disabled")}${metric("Business benefit", rewards.config.accountDiscounts.business.enabled ? "Active" : "Disabled")}${metric("Birthday", rewards.config.birthday.enabled ? "Active" : "Disabled")}</div>
-    <div class="table-wrap" style="margin-top:1rem"><table><thead><tr><th>Product</th><th>Category</th><th>Type</th><th>Sizes</th></tr></thead><tbody>${products.map((p) => `<tr><td><strong>${esc(p.name)}</strong><br><span class="muted">${esc(p.id)}</span></td><td>${esc(p.categoryId)}</td><td>${esc(p.productType)}</td><td>${p.sizes.map((s) => `${esc(s.label)} ${money(s.price)}`).join("<br>")}</td></tr>`).join("")}</tbody></table></div>`;
+
+    <div class="section-title"><div><p class="eyebrow">PRODUCT AVAILABILITY</p><h2>Pause or sell out items instantly.</h2></div></div>
+    <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Sizes</th><th>Status</th></tr></thead><tbody>
+      ${products.map((p) => {
+        const current = productState.get(p.id)?.status || "available";
+        return `<tr><td><strong>${esc(p.name)}</strong><br><span class="muted">${esc(p.id)}</span></td><td>${esc(p.categoryId)}</td><td>${p.sizes.map((s) => `${esc(s.label)} ${money(s.price)}`).join("<br>")}</td><td><form class="inline-form" data-product-state-form="${esc(p.id)}"><select name="status">${["available","paused","sold_out"].map((v) => `<option value="${v}" ${current === v ? "selected" : ""}>${v.replaceAll("_"," ")}</option>`).join("")}</select><span>${status(current)}</span><button class="button button--small" type="submit">Save</button></form></td></tr>`;
+      }).join("")}
+    </tbody></table></div>
+
+    <div class="section-title"><div><p class="eyebrow">NEW DROPS</p><h2>Publish, pause, sell out or archive drops.</h2></div></div>
+    <div class="grid">
+      ${commercial.drops.map((drop) => {
+        const product = products.find((p) => p.id === drop.productId);
+        return `<article class="panel-card"><p class="eyebrow">${esc(product?.name || drop.productId)}</p><h3>${status(drop.status)}</h3><form data-drop-state-form="${esc(drop.productId)}"><label>Status<select name="status">${["active","sold_out","archived","scheduled"].map((v) => `<option value="${v}" ${drop.status === v ? "selected" : ""}>${v.replaceAll("_"," ")}</option>`).join("")}</select></label><button class="button button--small" type="submit" style="margin-top:.7rem">Save drop</button></form></article>`;
+      }).join("") || '<div class="empty">No drops configured.</div>'}
+    </div>
+
+    <div class="section-title"><div><p class="eyebrow">PARTY BOXES</p><h2>Availability & minimum prep.</h2></div></div>
+    <div class="grid">
+      ${commercial.boxes.map((box) => {
+        const product = products.find((p) => p.id === box.productId);
+        const scheduled = box.leadTime?.type === "scheduled";
+        return `<article class="panel-card"><p class="eyebrow">${esc(product?.name || box.productId)}</p><form data-box-state-form="${esc(box.productId)}"><label>Status<select name="status">${["available","paused","sold_out"].map((v) => `<option value="${v}" ${box.status === v ? "selected" : ""}>${v.replaceAll("_"," ")}</option>`).join("")}</select></label><label style="margin-top:.7rem">Prep minutes<input name="leadMinutes" type="number" min="1" value="${scheduled ? Number(box.leadTime.minimumHours || 1) * 60 : Number(box.leadTime?.minimumMinutes || 30)}"></label><button class="button button--small" type="submit" style="margin-top:.7rem">Save box</button></form></article>`;
+      }).join("")}
+    </div>`;
 }
 
 async function renderLaunch() {
@@ -211,14 +236,17 @@ els.panel.addEventListener("click", async (event) => {
 els.panel.addEventListener("submit", async (event) => {
   const orderForm = event.target.closest("[data-order-form]");
   const cateringForm = event.target.closest("[data-catering-form]");
-  if (!orderForm && !cateringForm) return;
+  const productStateForm = event.target.closest("[data-product-state-form]");
+  const dropStateForm = event.target.closest("[data-drop-state-form]");
+  const boxStateForm = event.target.closest("[data-box-state-form]");
+  if (!orderForm && !cateringForm && !productStateForm && !dropStateForm && !boxStateForm) return;
   event.preventDefault();
   try {
     if (orderForm) {
       const data = new FormData(orderForm);
       await api(`orders/${encodeURIComponent(orderForm.dataset.orderForm)}/status`, { method: "PATCH", body: JSON.stringify({ status: data.get("status") }) });
       flash("Order status updated."); await renderTab();
-    } else {
+    } else if (cateringForm) {
       const data = new FormData(cateringForm);
       const amount = String(data.get("amount") || "").trim();
       await api(`catering/${encodeURIComponent(cateringForm.dataset.cateringForm)}`, {
@@ -229,6 +257,20 @@ els.panel.addEventListener("submit", async (event) => {
         })
       });
       flash("Catering request updated."); await renderTab();
+    } else if (productStateForm) {
+      const data = new FormData(productStateForm);
+      await api(`commercial/products/${encodeURIComponent(productStateForm.dataset.productStateForm)}`, { method: "PATCH", body: JSON.stringify({ status: data.get("status") }) });
+      flash("Product availability updated."); await renderTab();
+    } else if (dropStateForm) {
+      const data = new FormData(dropStateForm);
+      await api(`commercial/drops/${encodeURIComponent(dropStateForm.dataset.dropStateForm)}`, { method: "PATCH", body: JSON.stringify({ status: data.get("status") }) });
+      flash("Drop status updated."); await renderTab();
+    } else if (boxStateForm) {
+      const data = new FormData(boxStateForm);
+      const minutes = Math.max(1, Number(data.get("leadMinutes") || 30));
+      const leadTime = minutes >= 60 && minutes % 60 === 0 ? { type: "scheduled", minimumHours: minutes / 60 } : { type: "capacity_based", minimumMinutes: minutes };
+      await api(`commercial/boxes/${encodeURIComponent(boxStateForm.dataset.boxStateForm)}`, { method: "PATCH", body: JSON.stringify({ status: data.get("status"), leadTime }) });
+      flash("Party box controls updated."); await renderTab();
     }
   } catch (error) { flash(error.message, "error"); }
 });
