@@ -9,6 +9,13 @@ const fail = (message, code, status = 400, field) => {
 
 const clean = (value, max = 240) => String(value || "").trim().slice(0, max);
 
+function validDateText(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+  if (!match) return false;
+  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12));
+  return date.toISOString().slice(0, 10) === value;
+}
+
 function localDate(now = new Date()) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Chicago",
@@ -54,7 +61,7 @@ export function createReservationRequest(account, input = {}, now = new Date()) 
   if (!benefitsConfig.reservations.purposes.includes(purpose)) fail("Choose a valid reservation purpose.", "reservation_purpose_invalid", 422, "purpose");
 
   const date = clean(input.date, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) fail("Choose a valid reservation date.", "reservation_date_invalid", 422, "date");
+  if (!validDateText(date)) fail("Choose a valid reservation date.", "reservation_date_invalid", 422, "date");
   if (date < localDate(now)) fail("Reservation date cannot be in the past.", "reservation_date_past", 422, "date");
 
   const startTime = clean(input.startTime, 5);
