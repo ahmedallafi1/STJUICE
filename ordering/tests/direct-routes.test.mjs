@@ -26,8 +26,12 @@ try {
   assert.ok(ops.text.includes("noindex,nofollow,noarchive"));
 
   const root = await textResponse("/");
-  assert.equal(root.response.status, 302);
-  assert.equal(root.response.headers.get("location"), "/site/");
+  assert.equal(root.response.status, 200);
+  assert.ok(root.text.includes('<base href="/site/" />'));
+  assert.ok(root.text.includes("ST. JUICE"));
+
+  const hiddenGiftCards = await textResponse("/gift-cards");
+  assert.equal(hiddenGiftCards.response.status, 403);
 
   const forbidden = await textResponse("/database/schema.sql");
   assert.equal(forbidden.response.status, 403);
@@ -35,6 +39,8 @@ try {
   console.log(JSON.stringify({
     status: "valid",
     customerDirectRoutes: true,
+    cleanRootRoute: true,
+    giftCardsUnpublished: true,
     operationsRoute: true,
     privateRepositoryFilesBlocked: true
   }, null, 2));
