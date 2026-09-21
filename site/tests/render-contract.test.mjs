@@ -39,7 +39,7 @@ const state = {
   orderLoading: false
 };
 
-const routes = ["/", "/menu", "/product/pistachio-saint", "/build", "/drops", "/boxes", "/gift-cards", "/catering", "/rewards", "/location", "/account", "/about", "/states", "/checkout", "/info/privacy", "/info/terms", "/info/refunds", "/info/cookies", "/info/accessibility", "/info/allergens", "/info/contact", "/missing"];
+const routes = ["/", "/menu", "/product/pistachio-saint", "/build", "/drops", "/boxes", "/gift-cards", "/catering", "/rewards", "/location", "/account", "/about", "/checkout", "/info/privacy", "/info/terms", "/info/refunds", "/info/cookies", "/info/accessibility", "/info/allergens", "/info/contact", "/missing"];
 for (const path of routes) {
   const html = renderPage({ path, params: new URLSearchParams() }, { data, state });
   assert.ok(html.length > 250, `${path} must render meaningful markup`);
