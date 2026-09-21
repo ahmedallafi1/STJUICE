@@ -1093,5 +1093,5 @@ try {
   elements.loader.hidden = true;
   elements.app.hidden = false;
   elements.app.innerHTML = `
-    <section class="section"><div class="container"><div class="empty-state"><span class="empty-state__icon">!</span><h1 style="font-size:3rem">The catalog did not load.</h1><p>Start the included server with <code>npm start</code> from the project root. No order or payment was attempted.</p></div></div></section>`;
+    <section class="section"><div class="container"><div class="empty-state"><span class="empty-state__icon">!</span><h1 style="font-size:3rem">The menu did not load.</h1><p>Please refresh the page. If the problem continues, try again shortly.</p></div></div></section>`;
 }
