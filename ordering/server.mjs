@@ -72,10 +72,21 @@ function publicConfig() {
     currency: config.meta.currency,
     timezone: config.meta.timezone,
     location: config.location,
-    fulfillment: config.fulfillment,
-    pricing: config.pricing,
-    payments: { adapter: config.payments.adapter, acceptsRawCardData: false, testButtonLabel: config.payments.testButtonLabel },
-    orders: { storage: config.orders.storage, statuses: config.orders.statuses }
+    fulfillment: {
+      supported: config.fulfillment.supported,
+      hours: config.fulfillment.hours,
+      leadMinutes: config.fulfillment.leadMinutes,
+      schedulingDays: config.fulfillment.schedulingDays,
+      delivery: { mode: config.fulfillment.delivery.mode }
+    },
+    pricing: {
+      tax: { status: config.pricing.tax.status },
+      deliveryFee: { status: config.pricing.deliveryFee.status },
+      serviceFee: { status: config.pricing.serviceFee.status },
+      tips: { allowedPercentages: config.pricing.tips.allowedPercentages }
+    },
+    payments: { acceptsRawCardData: false, live: config.payments.adapter !== "safe_test_token" },
+    orders: { statuses: config.orders.statuses }
   };
 }
 
