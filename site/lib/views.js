@@ -441,6 +441,8 @@ function renderProduct(productId, { data, state }) {
   const prep = product.prepTimeMinutes?.min && product.prepTimeMinutes?.max
     ? `${product.prepTimeMinutes.min}–${product.prepTimeMinutes.max} min`
     : "Made to order";
+  const operationalStatus = product.runtimeStatus || "available";
+  const unavailable = operationalStatus !== "available";
 
   return `
     <section class="product-page">
@@ -463,6 +465,7 @@ function renderProduct(productId, { data, state }) {
             <h1>${escapeHtml(product.name)}</h1>
             <p class="product-detail__description">${escapeHtml(product.description)}</p>
             <div class="product-detail__price">${money(total)}</div>
+            ${unavailable ? `<div class="launch-notice" role="status"><strong>${operationalStatus === "sold_out" ? "Sold out today" : "Temporarily unavailable"}</strong><span>This item cannot be added until the store makes it available again.</span></div>` : ""}
 
             <fieldset class="choice-group">
               <legend>Choose your size <span class="choice-group__hint">Required</span></legend>
@@ -495,7 +498,7 @@ function renderProduct(productId, { data, state }) {
             <div class="product-order-bar">
               <div class="product-order-bar__total"><small>Your item</small><strong>${money(total)}</strong></div>
               <button class="button button--outline" type="button" data-action="toggle-favorite" data-product-id="${escapeHtml(product.id)}">${state.account.favorites.includes(product.id) ? "Saved" : "Save"}</button>
-              <button class="button" type="button" data-action="add-product" data-product-id="${escapeHtml(product.id)}">${escapeHtml(data.copy.product.primaryCta)}</button>
+              <button class="button" type="button" data-action="add-product" data-product-id="${escapeHtml(product.id)}" ${unavailable ? "disabled" : ""}>${unavailable ? (operationalStatus === "sold_out" ? "Sold out" : "Unavailable") : escapeHtml(data.copy.product.primaryCta)}</button>
             </div>
           </div>
         </div>
@@ -682,7 +685,11 @@ function renderBuilder({ data, state }) {
 }
 
 function renderDrops({ data }) {
-  const active = data.copy.drops.activeProductIds.map((id) => data.productById.get(id)).filter(Boolean);
+  const runtimeDrops = Array.isArray(data.runtimeCommercial?.drops) ? data.runtimeCommercial.drops : [];
+  const activeIds = runtimeDrops.length
+    ? runtimeDrops.filter((row) => ["active", "sold_out"].includes(row.status)).sort((a, b) => Number(a.position || 0) - Number(b.position || 0)).map((row) => row.productId)
+    : data.copy.drops.activeProductIds;
+  const active = activeIds.map((id) => data.productById.get(id)).filter(Boolean);
   const [lead, ...rest] = active;
   return `
     ${pageHero("NEW DROPS", data.copy.drops.title, "Limited releases, seasonal ideas and the newest reasons to come back.")}
@@ -695,8 +702,8 @@ function renderDrops({ data }) {
               <p class="eyebrow">FEATURED DROP</p>
               <h2>${escapeHtml(lead.name)}</h2>
               <p class="lede">${escapeHtml(lead.description)}</p>
-              <div class="drop-hero__meta"><span>Limited release</span><span>Available while offered</span></div>
-              <a class="button" href="#/product/${escapeHtml(lead.id)}">Order the drop</a>
+              <div class="drop-hero__meta"><span>Limited release</span><span>${lead.runtimeStatus === "sold_out" ? "Sold out today" : "Available while offered"}</span></div>
+              <a class="button ${lead.runtimeStatus === "sold_out" ? "is-disabled" : ""}" ${lead.runtimeStatus === "sold_out" ? 'aria-disabled="true" tabindex="-1"' : `href="#/product/${escapeHtml(lead.id)}"`}>${lead.runtimeStatus === "sold_out" ? "Sold out" : "Order the drop"}</a>
             </div>
           </article>` : ""}
         ${rest.length ? `
@@ -717,12 +724,16 @@ function renderDrops({ data }) {
 }
 
 function renderBoxes({ data }) {
-  const cards = data.bundles.orderNowBoxes.map((box) => ({ ...box, product: data.productById.get(box.productId) }));
+  const cards = data.bundles.orderNowBoxes.map((box) => ({
+    ...box,
+    product: data.productById.get(box.productId),
+    runtime: data.runtimeCommercial?.boxes?.[box.productId] || null
+  }));
   return `
     ${pageHero("PARTY BOXES", data.copy.boxes.title, "Built for study nights, birthdays, office tables and the moments that need more than one order.", `<a class="button" href="#/catering">Planning something bigger?</a>`)}
     <section class="section section--surface">
       <div class="container box-showcase">
-        ${cards.map(({ product, ...box }) => `
+        ${cards.map(({ product, runtime, ...box }) => `
           <article class="party-box-card">
             <a class="party-box-card__media" href="#/product/${escapeHtml(box.productId)}">
               <img src="${productImage(product || { id: box.productId, categoryId: "flights-liters-boxes" })}" alt="${escapeHtml(product?.name || box.productId)}" loading="lazy" width="720" height="620" />
@@ -730,8 +741,8 @@ function renderBoxes({ data }) {
             <div class="party-box-card__body">
               <div class="party-box-card__heading"><div><p class="eyebrow">SERVES ${box.serves.min}–${box.serves.max}</p><h3>${escapeHtml(product?.name || box.productId)}</h3></div><strong>${box.startingAt ? "From " : ""}${money(box.basePrice)}</strong></div>
               <ul class="compact-list">${box.includes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-              <div class="party-box-card__meta"><span>${box.leadTime.type === "scheduled" ? `${box.leadTime.minimumHours} hr minimum prep` : `${box.leadTime.minimumMinutes} min minimum prep`}</span><span>Customize before checkout</span></div>
-              <a class="button" href="#/product/${escapeHtml(box.productId)}">Customize box</a>
+              <div class="party-box-card__meta"><span>${(runtime?.leadTime || box.leadTime).type === "scheduled" ? `${(runtime?.leadTime || box.leadTime).minimumHours} hr minimum prep` : `${(runtime?.leadTime || box.leadTime).minimumMinutes} min minimum prep`}</span><span>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Temporarily unavailable" : "Customize before checkout"}</span></div>
+              <a class="button ${runtime?.status && runtime.status !== "available" ? "is-disabled" : ""}" ${runtime?.status && runtime.status !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="#/product/${escapeHtml(box.productId)}"`}>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Unavailable" : "Customize box"}</a>
             </div>
           </article>`).join("")}
       </div>
