@@ -245,10 +245,12 @@ export function quoteCart(request = {}, pricingContext = {}) {
   const serviceFee = cents(config.pricing.serviceFee.safeTestAmount);
   const tip = Math.round(taxable * tipPercent / 100);
   const total = taxable + tax + deliveryFee + serviceFee + tip;
-  warnings.push(
-    { code: "tax_not_configured", message: "Tax must be configured before live ordering." },
-    { code: "fees_not_configured", message: "Delivery and service fees must be configured before live ordering." }
-  );
+  if (config.meta.mode !== "production") {
+    warnings.push(
+      { code: "tax_not_configured", message: "Tax must be configured before live ordering." },
+      { code: "fees_not_configured", message: "Delivery and service fees must be configured before live ordering." }
+    );
+  }
   const requiredLeadMinutes = requiredLeadMinutesForItems(items, service);
   return {
     valid: errors.length === 0,
