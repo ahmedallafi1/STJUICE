@@ -22,6 +22,8 @@ const requirements = [
   ["authentication", () => config.customerData.authentication !== "prototype_only"],
   ["privacy", () => config.customerData.privacyPolicyApproved === true && config.customerData.retentionApproved === true],
   ["cookies", () => config.customerData.cookiePlanApproved === true],
+  ["staff_auth", () => config.operations?.staffAuthentication === "production_sessions" && config.operations?.roleBasedAccess === true],
+  ["operations_audit", () => config.operations?.auditPersistence !== "memory_only_test"],
   ["transactional_email", () => config.communications.transactionalEmail !== "not_configured"],
   ["transactional_sms", () => config.communications.transactionalSms !== "not_configured"],
   ["approved_content", () => config.content.pricesApproved && config.content.recipesApproved && config.content.allergenControlsApproved],
