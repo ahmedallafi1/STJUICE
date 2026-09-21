@@ -110,11 +110,33 @@ async function renderOrders() {
 
 async function renderCatering() {
   const { requests } = await api("catering");
-  const statuses = ["requested","reviewing","quoted","accepted","declined","canceled"];
+  const statuses = ["requested","needs_clarification","quoted","accepted","payment_required","confirmed","in_preparation","ready_or_out_for_delivery","completed","declined","canceled"];
   els.panel.innerHTML = `
-    <div class="section-title"><div><p class="eyebrow">CATERING</p><h2>Requests & quotes.</h2></div></div>
+    <div class="section-title"><div><p class="eyebrow">CATERING</p><h2>Requests, quotes & event lifecycle.</h2><p class="muted">Requests stay separate from reservations and are not confirmed until the event reaches Confirmed.</p></div></div>
     <div class="grid">
-      ${requests.map((r) => `<article class="panel-card"><p class="eyebrow">${esc(r.reference)}</p><h3>${esc(r.organization || r.contactName)}</h3><p>${esc(r.contactName)} · ${esc(r.email)} · ${esc(r.phone)}</p><p class="muted">${esc(r.eventDate)} · ${esc(r.serviceTime)} · ${r.guestCount} guests · ${esc(r.serviceMode)}</p><p>${esc(r.notes || "No notes")}</p><form data-catering-form="${esc(r.id)}"><div class="inline-form"><label>Status<select name="status">${statuses.map((v) => `<option ${r.status === v ? "selected" : ""} value="${v}">${v}</option>`).join("")}</select></label><label>Quote amount<input name="amount" type="number" min="0" step=".01" value="${r.quote?.amount ?? ""}" placeholder="Optional"></label><button class="button button--small" type="submit">Save</button></div></form>${r.quote ? `<p class="muted">Quote v${r.quote.version}: ${money(r.quote.amount)}</p>` : ""}</article>`).join("") || '<div class="empty">No catering requests.</div>'}
+      ${requests.map((r) => {
+        const venue = r.venueAddress?.full || [r.venueAddress?.street,r.venueAddress?.city,r.venueAddress?.state,r.venueAddress?.postalCode].filter(Boolean).join(", ");
+        return `<article class="panel-card">
+          <p class="eyebrow">${esc(r.reference)}</p>
+          <h3>${esc(r.organization || r.contactName)}</h3>
+          <p>${esc(r.contactName)} · ${esc(r.email)} · ${esc(r.phone)}</p>
+          <p class="muted">${esc(r.eventDate)} · ${esc(r.serviceTime)} · ${r.guestCount} guests · ${esc(r.serviceMode)}</p>
+          ${venue ? `<p><strong>Venue:</strong> ${esc(venue)}</p>` : ""}
+          ${r.packageInterest?.length ? `<p><strong>Packages:</strong> ${r.packageInterest.map(esc).join(", ")}</p>` : ""}
+          ${r.budgetRange ? `<p><strong>Budget:</strong> ${esc(r.budgetRange)}</p>` : ""}
+          ${r.dietaryAllergenNotes ? `<p><strong>Dietary/allergen:</strong> ${esc(r.dietaryAllergenNotes)}</p>` : ""}
+          <p>${esc(r.notes || "No additional notes")}</p>
+          <p class="muted">Required notice: ${esc(r.requiredLeadTime?.label || "store capacity")} · Tax exempt: ${r.taxExemptRequest ? "Yes" : "No"} · Custom branding: ${r.customBrandingRequest ? "Yes" : "No"}</p>
+          <form data-catering-form="${esc(r.id)}">
+            <div class="inline-form">
+              <label>Status<select name="status">${statuses.map((v) => `<option ${r.status === v ? "selected" : ""} value="${v}">${v.replaceAll("_"," ")}</option>`).join("")}</select></label>
+              <label>Quote amount<input name="amount" type="number" min=".01" step=".01" value="${r.quote?.amount ?? ""}" placeholder="Optional"></label>
+              <button class="button button--small" type="submit">Save</button>
+            </div>
+          </form>
+          ${r.quote ? `<p class="muted">Quote v${r.quote.version}: ${money(r.quote.amount)}</p>` : ""}
+        </article>`;
+      }).join("") || '<div class="empty">No catering requests.</div>'}
     </div>`;
 }
 
