@@ -15,7 +15,7 @@ const files = [
   "menu/data/catalog.json", "menu/data/modifiers.json", "menu/data/build-your-mood.json", "menu/data/bundles-catering.json",
   "media/manifests/media-manifest.json", "media/motion/st-juice-hero-loop.svg", "media/motion/st-juice-hero-loop-fallback.svg"
 ];
-const directories = ["site/lib", "brand/assets", "media/optimized"];
+const directories = ["site/lib", "brand/assets", "media/optimized", "ops"];
 
 for (const source of files) {
   const target = resolve(output, source);
