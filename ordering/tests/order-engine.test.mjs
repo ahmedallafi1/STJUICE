@@ -75,6 +75,25 @@ const office = quoteCart({ service: "pickup", items: [{ kind: "catalog", product
 assert.equal(office.valid, true);
 assert.equal(office.items[0].unitPrice.cents, 8745, "Duplicate product-reference choices and each-after-included pricing must be preserved");
 
+const studyBox = quoteCart({
+  service: "pickup",
+  items: [{
+    kind: "catalog",
+    productId: "study-night-box",
+    sizeId: "serves-2-3",
+    quantity: 1,
+    modifierSelections: {
+      "study-box-drinks": ["lemon-mint", "blue-rush"],
+      "box-sauces": ["milk-chocolate"],
+      "box-toppings": ["cookie-crumb"]
+    }
+  }]
+});
+assert.equal(studyBox.valid, true);
+for (const allergen of ["milk", "egg", "wheat"]) {
+  assert.ok(studyBox.items[0].allergens.includes(allergen), `Study Night Box must include fixed ${allergen} allergen`);
+}
+
 const builder = quoteCart({
   service: "delivery",
   items: [{
