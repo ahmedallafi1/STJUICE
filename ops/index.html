@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>ST. JUICE Operations</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="ops-header">
+    <div>
+      <p class="eyebrow">ST. JUICE</p>
+      <h1>Operations</h1>
+    </div>
+    <div class="header-actions">
+      <span id="connection-state" class="status-pill">Locked</span>
+      <button id="lock-button" class="button button--quiet" type="button" hidden>Lock console</button>
+    </div>
+  </header>
+
+  <main class="ops-shell">
+    <section id="login-panel" class="login-card">
+      <p class="eyebrow">STAFF ACCESS</p>
+      <h2>Open the operations console.</h2>
+      <p>This preview console uses the server-side operations token. The token is kept only in this browser session.</p>
+      <form id="login-form">
+        <label>Operations access code
+          <input id="admin-token" type="password" autocomplete="off" required />
+        </label>
+        <button class="button" type="submit">Open console</button>
+      </form>
+      <p class="note">Production staff identity and role-based access remain a launch requirement.</p>
+    </section>
+
+    <section id="console" hidden>
+      <nav class="tabs" aria-label="Operations sections">
+        <button data-tab="overview" class="is-active">Overview</button>
+        <button data-tab="approvals">Approvals</button>
+        <button data-tab="reservations">Reservations</button>
+        <button data-tab="orders">Orders</button>
+        <button data-tab="catering">Catering</button>
+        <button data-tab="catalog">Catalog</button>
+        <button data-tab="launch">Launch</button>
+      </nav>
+      <div id="flash" class="flash" hidden></div>
+      <div id="panel" class="panel" aria-live="polite"></div>
+    </section>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
