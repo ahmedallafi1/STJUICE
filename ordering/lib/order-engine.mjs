@@ -1,6 +1,7 @@
 import { builder, builderOptions, builderStepById, config, modifierById, productById } from "./catalog-store.mjs";
 import { combineCheckoutDiscounts } from "./promotion-engine.mjs";
 import { productOperationalStatus, requiredLeadMinutesForItems } from "../../operations/lib/commercial-control.mjs";
+import { validateDeliveryWithProvider } from "../adapters/delivery-adapter.mjs";
 
 const cents = (value) => Math.round(Number(value || 0) * 100);
 const dollars = (value) => Number((Number(value || 0) / 100).toFixed(2));
@@ -318,15 +319,5 @@ export function generateSlots(service, dateText, now = new Date(), leadOverrideM
 }
 
 export function validateDeliveryAddress(address = {}) {
-  const required = ["street", "city", "state", "postalCode"];
-  const missing = required.filter((key) => !cleanText(address[key], 100));
-  if (missing.length) return { valid: false, eligible: false, errors: missing.map((field) => ({ code: "address_required", field, message: `${field} is required.` })) };
-  return {
-    valid: true,
-    eligible: true,
-    mode: config.fulfillment.delivery.mode,
-    address: Object.fromEntries(required.map((key) => [key, cleanText(address[key], 100)])),
-    warning: config.fulfillment.delivery.testBehavior,
-    realEligibilityConfirmed: false
-  };
+  return validateDeliveryWithProvider(address);
 }
