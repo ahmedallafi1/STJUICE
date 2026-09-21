@@ -12,6 +12,7 @@ import {
   creditOrderRewards,
   publicBenefitSnapshot,
   redeemConfiguredReward,
+  reverseOrderRewards,
   rewardLedger
 } from "../lib/benefits-engine.mjs";
 import {
@@ -138,6 +139,13 @@ assert.equal(rewardLedger(rewardMember).points, 90);
 const redeemedReward = redeemConfiguredReward(rewardMember, "reward-test", now);
 assert.equal(redeemedReward.rewards.points, 40);
 assert.equal(redeemedReward.grant.status, "available");
+const reversed = reverseOrderRewards(rewardMember, rewardOrder, "Refunded test order");
+assert.equal(reversed.reversed, true);
+assert.equal(rewardLedger(rewardMember).points, -50, "Refund clawback must remain auditable even after earned points were partially spent");
+const reversedAgain = reverseOrderRewards(rewardMember, rewardOrder, "Duplicate refund webhook");
+assert.equal(reversedAgain.reversed, false);
+assert.equal(reversedAgain.reason, "already_reversed");
+assert.equal(rewardLedger(rewardMember).points, -50, "Refund reversal must be idempotent");
 Object.assign(benefitsConfig.loyalty, previousLoyalty);
 
 const birthdayMember = registerAccount({
