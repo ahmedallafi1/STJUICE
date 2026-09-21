@@ -226,7 +226,6 @@ function routeTitle(path) {
     "/build": "Build Your Mood",
     "/drops": "New Drops",
     "/boxes": "Party Boxes",
-    "/gift-cards": "Gift Cards",
     "/catering": "Catering",
     "/rewards": "Rewards",
     "/location": "Vandeventer Location",
