@@ -8,13 +8,6 @@
       "maxDuration": 10
     }
   },
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/site/",
-      "permanent": false
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -97,9 +90,22 @@
           "value": "public, max-age=86400, stale-while-revalidate=604800"
         }
       ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, max-age=0"
+        }
+      ]
     }
   ],
   "rewrites": [
+    {
+      "source": "/",
+      "destination": "/site/index.html"
+    },
     {
       "source": "/menu",
       "destination": "/site/index.html"
@@ -114,10 +120,6 @@
     },
     {
       "source": "/boxes",
-      "destination": "/site/index.html"
-    },
-    {
-      "source": "/gift-cards",
       "destination": "/site/index.html"
     },
     {
