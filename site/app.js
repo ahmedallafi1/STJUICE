@@ -897,8 +897,9 @@ document.addEventListener("click", async (event) => {
   } else if (action === "refresh-order") {
     await loadOrder(actionElement.dataset.orderId);
   } else if (action === "prefill-catering") {
-    const select = document.querySelector("#package-interest");
-    if (select) select.value = actionElement.dataset.package || "";
+    const packageId = actionElement.dataset.package || "";
+    const checkbox = [...document.querySelectorAll('input[name="packageInterest"]')].find((input) => input.value === packageId);
+    if (checkbox) checkbox.checked = true;
     document.querySelector("#catering-form")?.scrollIntoView({ behavior: "smooth" });
   }
 });
