@@ -12,9 +12,10 @@ export async function loadProjectData() {
         const boxStatus = data.runtimeCommercial.boxes?.[product.id]?.status;
         if (runtimeStatus === "available" && boxStatus && boxStatus !== "available") runtimeStatus = boxStatus;
         const dropStatus = dropByProduct.get(product.id)?.status;
+        product.dropRuntimeStatus = dropStatus || null;
         if (runtimeStatus === "available" && dropStatus) {
           if (dropStatus === "sold_out") runtimeStatus = "sold_out";
-          else if (dropStatus !== "active") runtimeStatus = "paused";
+          else if (!["active", "low_availability"].includes(dropStatus)) runtimeStatus = "paused";
         }
         product.runtimeStatus = runtimeStatus;
       }
