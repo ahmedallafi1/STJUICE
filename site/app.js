@@ -462,6 +462,53 @@ function addCartItem(item) {
   toast(`${item.name} added`, `${item.sizeLabel || "Custom build"} · Bag saved on this device`);
 }
 
+function cartItemFromReorder(item) {
+  if (item.kind === "builder") {
+    const selections = structuredClone(item.builderSelections || {});
+    const customName = String(item.customName || "My Mood");
+    const base = builderOptions("base").find((option) => option.id === selections.base);
+    const tempState = { builder: { selections, name: customName } };
+    return {
+      kind: "builder",
+      key: `builder:${JSON.stringify(selections)}:${customName}`,
+      productId: "build-your-mood",
+      name: customName,
+      image: "../media/optimized/webp/products/pistachio-saint-concept-v1.webp",
+      sizeLabel: base?.name || "Custom build",
+      builderSelections: selections,
+      customName,
+      modifiers: [],
+      unitPrice: calculateBuilderTotal(data, tempState),
+      quantity: Math.max(1, Number(item.quantity || 1)),
+      allergens: builderAllergens(data, tempState)
+    };
+  }
+
+  const product = data.productById.get(item.productId);
+  if (!product || product.runtimeStatus && product.runtimeStatus !== "available") return null;
+  const size = product.sizes.find((candidate) => candidate.id === item.sizeId);
+  if (!size) return null;
+  const draft = {
+    sizeId: size.id,
+    modifiers: structuredClone(item.modifierSelections || {}),
+    instructions: String(item.instructions || "")
+  };
+  return {
+    kind: "catalog",
+    key: JSON.stringify([product.id, size.id, Object.entries(draft.modifiers).sort()]),
+    productId: product.id,
+    name: product.name,
+    image: productImage(product),
+    sizeLabel: size.label,
+    sizeId: size.id,
+    modifierSelections: draft.modifiers,
+    modifiers: modifierNames(product, draft),
+    instructions: draft.instructions,
+    unitPrice: calculateProductPrice(product, draft, data),
+    quantity: Math.max(1, Number(item.quantity || 1))
+  };
+}
+
 function addProduct(productId) {
   const product = data.productById.get(productId);
   if (!product) return;
@@ -648,8 +695,24 @@ document.addEventListener("click", async (event) => {
     return;
   }
   if (action === "reorder-history") {
-    const order = state.account.orderHistory.find((item) => item.id === actionElement.dataset.orderId);
-    if (order) { toast("Reorder needs catalog mapping", "The saved receipt is preserved; live reorder activation follows POS setup."); }
+    const orderId = actionElement.dataset.orderId || "";
+    try {
+      const result = await accountApi.reorder(orderId);
+      const rebuilt = (result.items || []).map(cartItemFromReorder).filter(Boolean);
+      if (!rebuilt.length) throw new Error("None of the items from that order are currently available.");
+      for (const item of rebuilt) {
+        const existing = state.cart.find((cartItem) => cartItem.key === item.key);
+        if (existing) existing.quantity += item.quantity;
+        else state.cart.push(item);
+      }
+      if (["pickup", "delivery", "dine_in"].includes(result.service)) state.service = result.service;
+      writeStorage(storageKeys.service, state.service);
+      persistCart();
+      toast("Order added to your bag", "Current menu prices and availability will be revalidated at checkout.");
+      navigate("/checkout");
+    } catch (error) {
+      toast("Reorder could not be added", errorMessage(error));
+    }
     return;
   }
 
