@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 import { randomBytes, randomUUID } from "node:crypto";
 import { config } from "./lib/catalog-store.mjs";
 import { generateSlots, quoteCart, validateDeliveryAddress } from "./lib/order-engine.mjs";
-import { consumeTestPayment, createTestPaymentIntent, verifyTestPayment } from "./adapters/test-payment-adapter.mjs";
-import { sendToTestPos } from "./adapters/test-pos-adapter.mjs";
+import { consumePayment, createPaymentIntent, verifyPayment } from "./adapters/payment-adapter.mjs";
+import { sendToPos } from "./adapters/pos-adapter.mjs";
 import { attachOrder, handleAccountApi } from "../accounts/account-api.mjs";
 import { creditCompletedOrder, sessionForRequest } from "../accounts/lib/account-store.mjs";
 import { availableRewardGrant, benefitSnapshot, benefitsConfig, consumeRewardGrant } from "../accounts/lib/benefits-engine.mjs";
@@ -285,7 +285,7 @@ async function api(request, response, url) {
     if (hasCardData(input)) return json(response, 400, { error: { code: "raw_card_data_rejected", message: "Raw card details are never accepted by this server." } });
     const resolved = activeQuote(input.quoteId);
     if (resolved.error) return json(response, 409, resolved);
-    return json(response, 201, createTestPaymentIntent({ quoteId: resolved.quote.quoteId, amount: resolved.quote.totals.total.cents, currency: config.meta.currency }));
+    return json(response, 201, createPaymentIntent({ quoteId: resolved.quote.quoteId, amount: resolved.quote.totals.total.cents, currency: config.meta.currency }));
   }
   if (request.method === "POST" && url.pathname === "/api/orders") {
     const input = await bodyJson(request);
@@ -318,7 +318,7 @@ async function api(request, response, url) {
     if (quote.service === "delivery" && !deliveryChecks.has(input.deliveryCheckToken)) return json(response, 422, { valid: false, errors: [{ code: "delivery_check_required", message: "Validate the delivery address first." }] });
     const paymentMethod = input.paymentMethod === "cash" ? "cash" : "card";
     if (quote.service === "delivery" && paymentMethod === "cash") return json(response, 422, { valid: false, errors: [{ code: "cash_not_available_for_delivery", field: "paymentMethod", message: "Cash is not available for delivery orders." }] });
-    const payment = paymentMethod === "cash" ? null : verifyTestPayment({ token: input.paymentToken, quoteId: quote.quoteId, amount: quote.totals.total.cents });
+    const payment = paymentMethod === "cash" ? null : verifyPayment({ token: input.paymentToken, quoteId: quote.quoteId, amount: quote.totals.total.cents });
     if (payment && !payment.valid) return json(response, 402, { error: { code: payment.code, message: "The safe test payment could not be verified." } });
 
     const createdAt = new Date().toISOString();
@@ -345,11 +345,11 @@ async function api(request, response, url) {
       estimatedReadyAt: schedule.estimatedReadyAt
     };
     if (signedIn) order.accountId = signedIn.account.id;
-    order.pos = sendToTestPos(order);
+    order.pos = sendToPos(order);
     if (signedIn && order.rewardGrantId) consumeRewardGrant(signedIn.account, order.rewardGrantId, order.id, createdAt);
     orders.set(id, order);
     if (signedIn) attachOrder(signedIn.account, order);
-    if (paymentMethod === "card") consumeTestPayment(input.paymentToken);
+    if (paymentMethod === "card") consumePayment(input.paymentToken);
     idempotency.set(key, { orderId: id, expiresAt: Date.now() + config.orders.idempotencyMinutes * 60_000 });
     return json(response, 201, { idempotentReplay: false, order: publicOrder(order), trackingToken: order.trackingToken });
   }
