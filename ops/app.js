@@ -137,7 +137,7 @@ async function renderCatalog() {
     <div class="grid">
       ${commercial.drops.map((drop) => {
         const product = products.find((p) => p.id === drop.productId);
-        return `<article class="panel-card"><p class="eyebrow">${esc(product?.name || drop.productId)}</p><h3>${status(drop.status)}</h3><form data-drop-state-form="${esc(drop.productId)}"><label>Status<select name="status">${["active","sold_out","archived","scheduled"].map((v) => `<option value="${v}" ${drop.status === v ? "selected" : ""}>${v.replaceAll("_"," ")}</option>`).join("")}</select></label><button class="button button--small" type="submit" style="margin-top:.7rem">Save drop</button></form></article>`;
+        return `<article class="panel-card"><p class="eyebrow">${esc(product?.name || drop.productId)}</p><h3>${status(drop.effectiveStatus || drop.status)}</h3><form data-drop-state-form="${esc(drop.productId)}"><label>Status<select name="status">${["active","sold_out","archived","scheduled"].map((v) => `<option value="${v}" ${drop.status === v ? "selected" : ""}>${v.replaceAll("_"," ")}</option>`).join("")}</select></label><label style="margin-top:.7rem">Start date<input name="startsAt" type="date" value="${esc(drop.startsAt || "")}"></label><label style="margin-top:.7rem">End date<input name="endsAt" type="date" value="${esc(drop.endsAt || "")}"></label><button class="button button--small" type="submit" style="margin-top:.7rem">Save drop</button></form></article>`;
       }).join("") || '<div class="empty">No drops configured.</div>'}
     </div>
 
@@ -263,8 +263,15 @@ els.panel.addEventListener("submit", async (event) => {
       flash("Product availability updated."); await renderTab();
     } else if (dropStateForm) {
       const data = new FormData(dropStateForm);
-      await api(`commercial/drops/${encodeURIComponent(dropStateForm.dataset.dropStateForm)}`, { method: "PATCH", body: JSON.stringify({ status: data.get("status") }) });
-      flash("Drop status updated."); await renderTab();
+      await api(`commercial/drops/${encodeURIComponent(dropStateForm.dataset.dropStateForm)}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          status: data.get("status"),
+          startsAt: String(data.get("startsAt") || ""),
+          endsAt: String(data.get("endsAt") || "")
+        })
+      });
+      flash("Drop campaign updated."); await renderTab();
     } else if (boxStateForm) {
       const data = new FormData(boxStateForm);
       const minutes = Math.max(1, Number(data.get("leadMinutes") || 30));
