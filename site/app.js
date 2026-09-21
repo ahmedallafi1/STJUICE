@@ -1,5 +1,5 @@
 import { escapeHtml, hydrateIcons, loadProjectData, productImage, routeInfo, titleCase } from "./lib/core.js";
-import { accountApi, orderingApi } from "./lib/api.js";
+import { accountApi, cateringApi, orderingApi } from "./lib/api.js";
 import { loadAccount } from "./lib/account.js";
 import {
   builderAllergens,
@@ -89,6 +89,7 @@ const state = {
   },
   cateringSuccess: false,
   cateringEmail: "",
+  cateringReference: "",
   checkout: freshCheckout(),
   order: null,
   orderLoading: false,
@@ -993,7 +994,30 @@ document.addEventListener("submit", async (event) => {
     return;
   }
   state.cateringSuccess = false;
-  toast("Online catering requests are not live yet", "No request was sent. We will only show a confirmation once the request is actually saved.");
+  const values = new FormData(event.target);
+  try {
+    const result = await cateringApi.createRequest({
+      contactName: String(values.get("contactName") || ""),
+      organization: String(values.get("organization") || ""),
+      email: String(values.get("email") || ""),
+      phone: String(values.get("phone") || ""),
+      eventDate: String(values.get("eventDate") || ""),
+      serviceTime: String(values.get("serviceTime") || ""),
+      guestCount: Number(values.get("guestCount") || 0),
+      serviceMode: String(values.get("serviceMode") || ""),
+      packageInterest: String(values.get("packageInterest") || ""),
+      notes: String(values.get("notes") || ""),
+      contactConsent: values.get("contactConsent") === "on"
+    });
+    state.cateringSuccess = true;
+    state.cateringEmail = String(values.get("email") || "");
+    state.cateringReference = result.request?.reference || "";
+    render({ preserveScroll: true });
+    toast("Catering request saved", state.cateringReference || "The team can now review your request.");
+  } catch (error) {
+    state.cateringSuccess = false;
+    toast("Catering request did not save", errorMessage(error));
+  }
 });
 
 for (const dialog of document.querySelectorAll("dialog")) {
