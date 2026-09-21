@@ -96,7 +96,10 @@ function modeRibbon(state) {
 
 function renderHome({ data, state }) {
   const copy = data.copy;
-  const drops = copy.drops.activeProductIds.map((id) => data.productById.get(id)).filter(Boolean);
+  const homeDropIds = Array.isArray(data.runtimeCommercial?.drops)
+    ? data.runtimeCommercial.drops.filter((row) => ["active", "sold_out"].includes(row.status)).sort((a, b) => Number(a.position || 0) - Number(b.position || 0)).map((row) => row.productId)
+    : copy.drops.activeProductIds;
+  const drops = homeDropIds.map((id) => data.productById.get(id)).filter(Boolean);
   const featured = [...data.catalog.products]
     .filter((product) => product.catalogRole === "primary" && Number.isFinite(product.featuredRank))
     .sort((a, b) => a.featuredRank - b.featuredRank)
@@ -164,7 +167,7 @@ function renderHome({ data, state }) {
                 <p class="eyebrow">NEW DROP</p>
                 <h3>${escapeHtml(product.name)}</h3>
                 <p>${escapeHtml(product.description)}</p>
-                <a class="button button--light button--small" href="#/product/${escapeHtml(product.id)}">View drop</a>
+                <a class="button button--light button--small ${product.runtimeStatus && product.runtimeStatus !== "available" ? "is-disabled" : ""}" ${product.runtimeStatus && product.runtimeStatus !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="#/product/${escapeHtml(product.id)}"`}>${product.runtimeStatus === "sold_out" ? "Sold out" : product.runtimeStatus === "paused" ? "Unavailable" : "View drop"}</a>
               </div>
             </article>`).join("")}
           <article class="feature-card">
