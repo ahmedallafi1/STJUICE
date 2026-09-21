@@ -84,15 +84,33 @@ export function benefitSnapshot(account, nowInput = new Date()) {
   const discountConfig = benefitsConfig.accountDiscounts[type];
   const verificationStatus = accountTypeStatus(account);
   const verificationSatisfied = !discountConfig.requiresVerification || verificationStatus === discountConfig.requiredStatus;
-  const activePercentOff = discountConfig.enabled && verificationSatisfied ? Number(discountConfig.percentOff || discountConfig.proposalPercentOff || 0) : 0;
+  const activePercentOff = discountConfig.enabled && verificationSatisfied
+    ? Number(discountConfig.percentOff || 0)
+    : 0;
 
+  const activeBirthdayRules = benefitsConfig.birthday.enabled ? benefitsConfig.birthday : null;
   const birthdayProposal = benefitsConfig.birthday.proposal;
   const birthdayDistance = birthdayDistanceDays(account?.birthday, now);
-  const birthdayInWindow = birthdayDistance != null
+  const activeBirthdayInWindow = activeBirthdayRules && birthdayDistance != null
+    ? birthdayDistance >= -Number(activeBirthdayRules.windowBeforeDays || 0)
+      && birthdayDistance <= Number(activeBirthdayRules.windowAfterDays || 0)
+    : false;
+  const activeBirthdayAgeSatisfied = activeBirthdayRules
+    ? accountAgeDays(account, now) >= Number(activeBirthdayRules.minimumAccountAgeDays || 0)
+    : false;
+  const birthdayEligible = Boolean(
+    activeBirthdayRules
+    && activeBirthdayRules.reward
+    && account?.birthday
+    && activeBirthdayInWindow
+    && activeBirthdayAgeSatisfied
+  );
+
+  const proposalInWindow = birthdayDistance != null
     && birthdayDistance >= -Number(birthdayProposal.windowBeforeDays || 0)
     && birthdayDistance <= Number(birthdayProposal.windowAfterDays || 0);
-  const birthdayAgeSatisfied = accountAgeDays(account, now) >= Number(birthdayProposal.minimumAccountAgeDays || 0);
-  const birthdayEligibleByProposal = Boolean(account?.birthday && birthdayInWindow && birthdayAgeSatisfied);
+  const proposalAgeSatisfied = accountAgeDays(account, now) >= Number(birthdayProposal.minimumAccountAgeDays || 0);
+  const proposalEligible = Boolean(account?.birthday && proposalInWindow && proposalAgeSatisfied);
 
   const rewards = rewardLedger(account || {});
   return {
@@ -103,7 +121,7 @@ export function benefitSnapshot(account, nowInput = new Date()) {
       verificationStatus,
       verificationSatisfied,
       activePercentOff,
-      proposalPercentOff: Number(discountConfig.proposalPercentOff || discountConfig.percentOff || 0)
+      proposalPercentOff: Number(discountConfig.proposalPercentOff || 0)
     },
     loyalty: {
       enabled: Boolean(benefitsConfig.loyalty.enabled),
@@ -114,11 +132,129 @@ export function benefitSnapshot(account, nowInput = new Date()) {
     birthday: {
       enabled: Boolean(benefitsConfig.birthday.enabled),
       hasBirthday: Boolean(account?.birthday),
-      inWindow: birthdayInWindow,
-      accountAgeSatisfied: birthdayAgeSatisfied,
-      eligible: Boolean(benefitsConfig.birthday.enabled && birthdayEligibleByProposal),
-      proposalEligible: birthdayEligibleByProposal,
+      inWindow: activeBirthdayInWindow,
+      accountAgeSatisfied: activeBirthdayAgeSatisfied,
+      eligible: birthdayEligible,
+      proposalEligible,
       proposal: structuredClone(birthdayProposal)
     }
   };
 }
+
+export function publicBenefitSnapshot(account, nowInput = new Date()) {
+  const snapshot = benefitSnapshot(account, nowInput);
+  return {
+    accountType: snapshot.accountType,
+    discount: {
+      enabled: snapshot.discount.enabled,
+      verificationRequired: snapshot.discount.verificationRequired,
+      verificationStatus: snapshot.discount.verificationStatus,
+      verificationSatisfied: snapshot.discount.verificationSatisfied,
+      activePercentOff: snapshot.discount.activePercentOff
+    },
+    loyalty: {
+      enabled: snapshot.loyalty.enabled,
+      enrolled: snapshot.loyalty.enrolled,
+      points: snapshot.loyalty.points,
+      lifetimeEarned: snapshot.loyalty.lifetimeEarned,
+      lifetimeRedeemed: snapshot.loyalty.lifetimeRedeemed
+    },
+    birthday: {
+      enabled: snapshot.birthday.enabled,
+      hasBirthday: snapshot.birthday.hasBirthday,
+      inWindow: snapshot.birthday.inWindow,
+      accountAgeSatisfied: snapshot.birthday.accountAgeSatisfied,
+      eligible: snapshot.birthday.eligible
+    }
+  };
+}
+
+export function creditOrderRewards(account, order) {
+  if (!benefitsConfig.loyalty.enabled || !account?.rewards?.enrolled) {
+    return { credited: false, reason: "loyalty_inactive", summary: rewardLedger(account || {}) };
+  }
+  const pointsPerDollar = Number(benefitsConfig.loyalty.pointsPerDollar || 0);
+  if (!(pointsPerDollar > 0)) {
+    return { credited: false, reason: "earning_rate_unconfigured", summary: rewardLedger(account) };
+  }
+  const subtotalCents = Number(order?.totals?.subtotal?.cents || 0);
+  const discountCents = Number(order?.totals?.discount?.cents || 0);
+  const eligibleCents = Math.max(0, subtotalCents - discountCents);
+  const points = Math.floor(eligibleCents * pointsPerDollar / 100);
+  if (points <= 0) return { credited: false, reason: "no_eligible_spend", summary: rewardLedger(account) };
+  const result = appendRewardTransaction(account, {
+    type: "earn",
+    points,
+    sourceId: order.id,
+    reason: `Eligible purchase ${order.orderNumber || order.id}`,
+    createdAt: order.createdAt
+  });
+  return { credited: !result.idempotentReplay, ...result };
+}
+
+function ensureGrantStore(account) {
+  if (!account?.rewards) fail("Rewards account is unavailable.", "rewards_unavailable", 422);
+  account.rewards.grants ||= [];
+  return account.rewards.grants;
+}
+
+export function redeemConfiguredReward(account, rewardId, nowInput = new Date()) {
+  if (!benefitsConfig.loyalty.enabled) fail("Rewards are not active yet.", "rewards_inactive", 409);
+  if (!account?.rewards?.enrolled) fail("Rewards enrollment is required.", "rewards_enrollment_required", 422);
+  const reward = (benefitsConfig.loyalty.redemptions || []).find((item) => item.id === rewardId);
+  if (!reward) fail("That reward is not available.", "reward_not_available", 404);
+  const points = Math.trunc(Number(reward.points || 0));
+  if (!(points > 0)) fail("Reward points are not configured.", "reward_not_configured", 500);
+  const now = asDate(nowInput) || new Date();
+  const transaction = appendRewardTransaction(account, {
+    type: "redeem",
+    points: -points,
+    reason: `Redeemed ${reward.id}`,
+    createdAt: now
+  });
+  const grant = {
+    id: `grant_${randomUUID()}`,
+    kind: "loyalty_redemption",
+    rewardId: reward.id,
+    rewardType: reward.type,
+    value: reward.value ?? null,
+    status: "available",
+    issuedAt: now.toISOString(),
+    redeemedAt: null
+  };
+  ensureGrantStore(account).unshift(grant);
+  return { grant: structuredClone(grant), rewards: transaction.summary };
+}
+
+export function claimBirthdayReward(account, nowInput = new Date()) {
+  const now = asDate(nowInput) || new Date();
+  const snapshot = benefitSnapshot(account, now);
+  if (!snapshot.birthday.enabled) fail("Birthday benefits are not active yet.", "birthday_inactive", 409);
+  if (!snapshot.birthday.eligible) fail("This account is not currently eligible for a birthday benefit.", "birthday_not_eligible", 422);
+  const grants = ensureGrantStore(account);
+  const year = now.getUTCFullYear();
+  const sourceId = `birthday:${year}`;
+  const existing = grants.find((grant) => grant.sourceId === sourceId);
+  if (existing) return { grant: structuredClone(existing), idempotentReplay: true };
+  const reward = benefitsConfig.birthday.reward;
+  const grant = {
+    id: `grant_${randomUUID()}`,
+    sourceId,
+    kind: "birthday",
+    rewardType: reward.type,
+    value: reward.value ?? null,
+    status: "available",
+    issuedAt: now.toISOString(),
+    redeemedAt: null
+  };
+  grants.unshift(grant);
+  return { grant: structuredClone(grant), idempotentReplay: false };
+}
+
+export function rewardWallet(account) {
+  return {
+    ...rewardLedger(account),
+    grants: structuredClone(account?.rewards?.grants || [])
+  };
+}
+
