@@ -28,6 +28,7 @@ import {
 } from "./lib/account-store.mjs";
 import { benefitsConfig, claimBirthdayReward, publicBenefitSnapshot, redeemConfiguredReward, rewardWallet } from "./lib/benefits-engine.mjs";
 import { cancelReservation, createReservationRequest, listReservations } from "./lib/reservation-store.mjs";
+import { acceptCateringQuoteForAccount, cateringRequestsForAccount } from "../operations/lib/operations-store.mjs";
 
 function publicBenefitsConfig() {
   return {
@@ -155,7 +156,15 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
 
     if (request.method === "GET" && url.pathname === "/api/account/dashboard") {
       const { account } = requireAccount(request);
-      json(response, 200, { account: publicAccount(account), ...accountCollections(account), orders: accountOrders(account, getOrder, publicOrder), benefits: publicBenefitSnapshot(account), rewardsWallet: rewardWallet(account), config: publicConfig() });
+      json(response, 200, {
+        account: publicAccount(account),
+        ...accountCollections(account),
+        orders: accountOrders(account, getOrder, publicOrder),
+        cateringRequests: cateringRequestsForAccount(account.id),
+        benefits: publicBenefitSnapshot(account),
+        rewardsWallet: rewardWallet(account),
+        config: publicConfig()
+      });
       return true;
     }
 
@@ -268,6 +277,13 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
     if (request.method === "DELETE" && reservationMatch) {
       const { account } = requireAccount(request, { csrf: true });
       json(response, 200, { reservation: cancelReservation(account, decodeURIComponent(reservationMatch[1])) });
+      return true;
+    }
+
+    const cateringAcceptMatch = url.pathname.match(/^\/api\/account\/catering\/([^/]+)\/accept$/);
+    if (request.method === "POST" && cateringAcceptMatch) {
+      const { account } = requireAccount(request, { csrf: true });
+      json(response, 200, { request: acceptCateringQuoteForAccount(decodeURIComponent(cateringAcceptMatch[1]), account.id) });
       return true;
     }
 
