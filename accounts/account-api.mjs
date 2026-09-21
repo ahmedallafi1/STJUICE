@@ -26,6 +26,26 @@ import {
   updateBusiness,
   updateProfile
 } from "./lib/account-store.mjs";
+import { benefitSnapshot, benefitsConfig, rewardLedger } from "./lib/benefits-engine.mjs";
+import { cancelReservation, createReservationRequest, listReservations } from "./lib/reservation-store.mjs";
+
+function publicBenefitsConfig() {
+  return {
+    status: benefitsConfig.meta.status,
+    loyalty: { enabled: benefitsConfig.loyalty.enabled },
+    accountDiscounts: Object.fromEntries(Object.entries(benefitsConfig.accountDiscounts).map(([key, value]) => [key, {
+      enabled: value.enabled,
+      requiresVerification: value.requiresVerification
+    }])),
+    birthday: { enabled: benefitsConfig.birthday.enabled },
+    reservations: {
+      enabled: benefitsConfig.reservations.enabled,
+      partySize: benefitsConfig.reservations.partySize,
+      durationMinutes: benefitsConfig.reservations.durationMinutes,
+      purposes: benefitsConfig.reservations.purposes
+    }
+  };
+}
 
 function publicConfig() {
   return {
@@ -33,6 +53,7 @@ function publicConfig() {
     storage: accountConfig.meta.storage,
     accountTypes: accountConfig.accountTypes,
     rewards: accountConfig.rewards,
+    benefits: publicBenefitsConfig(),
     studentVerification: {
       mode: accountConfig.studentVerification.mode,
       methods: accountConfig.studentVerification.methods,
@@ -66,7 +87,7 @@ function clearCookie(request) {
 }
 
 function errorResponse(error) {
-  return { status: error.status || 500, payload: { error: { code: error.code || "account_error", message: error.status ? error.message : "The test account service could not complete the request.", ...(error.field ? { field: error.field } : {}), ...(error.details ? { details: error.details } : {}) } } };
+  return { status: error.status || 500, payload: { error: { code: error.code || "account_error", message: error.status ? error.message : "The account service could not complete the request.", ...(error.field ? { field: error.field } : {}), ...(error.details ? { details: error.details } : {}) } } };
 }
 
 function accountOrders(account, getOrder, publicOrder) {
@@ -122,7 +143,7 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
 
     if (request.method === "GET" && url.pathname === "/api/account/dashboard") {
       const { account } = requireAccount(request);
-      json(response, 200, { account: publicAccount(account), ...accountCollections(account), orders: accountOrders(account, getOrder, publicOrder), config: publicConfig() });
+      json(response, 200, { account: publicAccount(account), ...accountCollections(account), orders: accountOrders(account, getOrder, publicOrder), benefits: benefitSnapshot(account), config: publicConfig() });
       return true;
     }
 
@@ -191,6 +212,37 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
       const { account } = requireAccount(request, { csrf: true });
       const input = await bodyJson(request);
       json(response, 200, { rewards: enrollRewards(account, input.consent), config: publicConfig().rewards });
+      return true;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/account/benefits") {
+      const { account } = requireAccount(request);
+      json(response, 200, { benefits: benefitSnapshot(account), config: publicBenefitsConfig() });
+      return true;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/account/rewards/ledger") {
+      const { account } = requireAccount(request);
+      json(response, 200, { rewards: rewardLedger(account), config: publicBenefitsConfig().loyalty });
+      return true;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/account/reservations") {
+      const { account } = requireAccount(request);
+      json(response, 200, { reservations: listReservations(account), config: publicBenefitsConfig().reservations });
+      return true;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/account/reservations") {
+      const { account } = requireAccount(request, { csrf: true });
+      json(response, 201, { reservation: createReservationRequest(account, await bodyJson(request)) });
+      return true;
+    }
+
+    const reservationMatch = url.pathname.match(/^\/api\/account\/reservations\/([^/]+)$/);
+    if (request.method === "DELETE" && reservationMatch) {
+      const { account } = requireAccount(request, { csrf: true });
+      json(response, 200, { reservation: cancelReservation(account, decodeURIComponent(reservationMatch[1])) });
       return true;
     }
 
