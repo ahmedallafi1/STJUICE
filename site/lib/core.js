@@ -68,7 +68,13 @@ export function productImage(product) {
     "dubai-strawberry-cup": "../media/optimized/webp/products/dubai-strawberry-cup-concept-v1.webp",
     "st-crepe": "../media/optimized/webp/products/st-crepe-concept-v1.webp",
     "dragon-cloud-cup": "../media/optimized/webp/products/dragon-cloud-cup-concept-v1.webp",
-    "birthday-box": "../media/optimized/webp/packaging/birthday-box-concept-v1.webp"
+    "birthday-box": "../media/optimized/webp/packaging/birthday-box-concept-v1.webp",
+    "study-night-box": "../media/illustrations/party-boxes/study-night-box.svg",
+    "date-night-box": "../media/illustrations/party-boxes/date-night-box.svg",
+    "game-day-box": "../media/illustrations/party-boxes/game-day-box.svg",
+    "build-your-party-box": "../media/illustrations/party-boxes/build-your-party-box.svg",
+    "office-box": "../media/illustrations/party-boxes/office-box.svg",
+    "midnight-crunch-cookie": "../media/illustrations/drops/midnight-crunch-cookie.svg"
   };
   return direct[product.id] || categoryImage(product.categoryId);
 }
