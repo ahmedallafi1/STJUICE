@@ -42,7 +42,7 @@ for (const slug of ["privacy", "terms", "refunds", "cookies", "accessibility", "
   assert.ok((html.match(/<h2/g) || []).length >= 3, `${slug} must contain substantive sections`);
 }
 const footer = renderFooter(data);
-for (const route of ["allergens", "privacy", "terms", "refunds", "cookies", "accessibility", "contact"]) assert.ok(footer.includes(`#/info/${route}`), `Footer must link ${route}`);
+for (const route of ["allergens", "privacy", "terms", "refunds", "cookies", "accessibility", "contact"]) assert.ok(footer.includes(`/info/${route}`), `Footer must link ${route}`);
 
 const localRefs = [...index.matchAll(/(?:src|href)="([^"#][^"]*)"/g)].map((match) => match[1]).filter((value) => !/^(?:https?:|mailto:|tel:|data:)/.test(value));
 for (const ref of localRefs) {
