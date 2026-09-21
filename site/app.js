@@ -145,6 +145,8 @@ function applyAccountSession(payload) {
     state.account.points = 0;
     state.account.benefits = null;
     state.account.reservations = [];
+    state.account.addresses = [];
+    state.account.cateringRequests = [];
     state.account.reservationConfig = null;
     state.account.rewardsWallet = { points: 0, lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
     state.account.rewardsConfig = null;
@@ -188,6 +190,8 @@ function applyAccountDashboard(payload) {
       }))
     : [];
   state.account.reservations = Array.isArray(payload?.reservations) ? payload.reservations : [];
+  state.account.addresses = Array.isArray(payload?.addresses) ? payload.addresses : [];
+  state.account.cateringRequests = Array.isArray(payload?.cateringRequests) ? payload.cateringRequests : [];
   state.account.benefits = payload?.benefits || null;
   state.account.reservationConfig = payload?.config?.benefits?.reservations || null;
   state.account.rewardsWallet = payload?.rewardsWallet || { points: 0, lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
@@ -676,6 +680,24 @@ document.addEventListener("click", async (event) => {
     } catch (error) { toast("Birthday benefit unavailable", errorMessage(error)); }
     return;
   }
+  if (action === "accept-catering-quote") {
+    try {
+      await accountApi.acceptCateringQuote(actionElement.dataset.cateringId || "", state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Catering quote accepted", "Your request is now ready for the next confirmation/payment step.");
+    } catch (error) { toast("Quote could not be accepted", errorMessage(error)); }
+    return;
+  }
+  if (action === "remove-saved-address") {
+    try {
+      await accountApi.removeAddress(actionElement.dataset.addressId || "", state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Saved address removed");
+    } catch (error) { toast("Address could not be removed", errorMessage(error)); }
+    return;
+  }
   if (action === "cancel-reservation") {
     try {
       await accountApi.cancelReservation(actionElement.dataset.reservationId, state.account.csrfToken);
@@ -1087,6 +1109,46 @@ document.addEventListener("submit", async (event) => {
     return;
   }
 
+  const profileForm = event.target.closest("[data-profile-form]");
+  if (profileForm) {
+    event.preventDefault();
+    if (!profileForm.checkValidity()) { profileForm.reportValidity(); return; }
+    const values = new FormData(profileForm);
+    try {
+      const result = await accountApi.updateProfile({
+        name: String(values.get("name") || ""),
+        phone: String(values.get("phone") || ""),
+        birthday: String(values.get("birthday") || "")
+      }, state.account.csrfToken);
+      applyAccountSession({ authenticated: true, account: result.account, csrfToken: state.account.csrfToken });
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Profile updated");
+    } catch (error) { toast("Profile did not update", errorMessage(error)); }
+    return;
+  }
+
+  const addressForm = event.target.closest("[data-address-form]");
+  if (addressForm) {
+    event.preventDefault();
+    if (!addressForm.checkValidity()) { addressForm.reportValidity(); return; }
+    const values = new FormData(addressForm);
+    try {
+      await accountApi.saveAddress({
+        label: String(values.get("label") || ""),
+        street: String(values.get("street") || ""),
+        city: String(values.get("city") || ""),
+        state: String(values.get("state") || ""),
+        postalCode: String(values.get("postalCode") || "")
+      }, state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      addressForm.reset();
+      render({ preserveScroll: true });
+      toast("Address saved");
+    } catch (error) { toast("Address did not save", errorMessage(error)); }
+    return;
+  }
+
   const reservationForm = event.target.closest("[data-reservation-form]");
   if (reservationForm) {
     event.preventDefault();
@@ -1128,13 +1190,26 @@ document.addEventListener("submit", async (event) => {
       serviceTime: String(values.get("serviceTime") || ""),
       guestCount: Number(values.get("guestCount") || 0),
       serviceMode: String(values.get("serviceMode") || ""),
-      packageInterest: String(values.get("packageInterest") || ""),
+      venueAddress: {
+        street: String(values.get("venueStreet") || ""),
+        city: String(values.get("venueCity") || ""),
+        state: String(values.get("venueState") || ""),
+        postalCode: String(values.get("venuePostalCode") || "")
+      },
+      packageInterest: values.getAll("packageInterest").map(String),
+      budgetRange: String(values.get("budgetRange") || ""),
+      dietaryAllergenNotes: String(values.get("dietaryAllergenNotes") || ""),
+      taxExemptRequest: values.get("taxExemptRequest") === "on",
+      customBrandingRequest: values.get("customBrandingRequest") === "on",
       notes: String(values.get("notes") || ""),
       contactConsent: values.get("contactConsent") === "on"
     });
     state.cateringSuccess = true;
     state.cateringEmail = String(values.get("email") || "");
     state.cateringReference = result.request?.reference || "";
+    if (state.account.signedIn) {
+      try { applyAccountDashboard(await accountApi.dashboard()); } catch { /* Request is saved even if dashboard refresh fails. */ }
+    }
     render({ preserveScroll: true });
     toast("Catering request saved", state.cateringReference || "The team can now review your request.");
   } catch (error) {
