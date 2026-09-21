@@ -20,6 +20,16 @@ export const orderingApi = {
   validateCart: (cart) => request("../api/cart/validate", { method: "POST", body: JSON.stringify(cart) }),
   createPaymentIntent: (quoteId) => request("../api/payment/intents", { method: "POST", body: JSON.stringify({ quoteId }) }),
   createOrder: (order, idempotencyKey) => request("../api/orders", { method: "POST", headers: { "Idempotency-Key": idempotencyKey }, body: JSON.stringify(order) }),
-  getOrder: (id) => request(`../api/orders/${encodeURIComponent(id)}`),
-  advanceOrder: (id) => request(`../api/orders/${encodeURIComponent(id)}/advance`, { method: "POST", body: "{}" })
+  getOrder: (id, trackingToken = "") => request(`../api/orders/${encodeURIComponent(id)}${trackingToken ? `?token=${encodeURIComponent(trackingToken)}` : ""}`)
+};
+
+
+export const accountApi = {
+  session: () => request("../api/account/session"),
+  register: (input) => request("../api/account/register", { method: "POST", body: JSON.stringify(input) }),
+  login: (input) => request("../api/account/login", { method: "POST", body: JSON.stringify(input) }),
+  logout: (csrfToken) => request("../api/account/logout", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: "{}" }),
+  dashboard: () => request("../api/account/dashboard"),
+  setFavorite: (productId, active, csrfToken) => request("../api/account/favorites", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify({ productId, active }) }),
+  saveMix: (mix, csrfToken) => request("../api/account/mixes", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(mix) })
 };

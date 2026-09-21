@@ -2,7 +2,7 @@ import { createReadStream, existsSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { randomUUID } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import { config } from "./lib/catalog-store.mjs";
 import { generateSlots, quoteCart, validateDeliveryAddress } from "./lib/order-engine.mjs";
 import { consumeTestPayment, createTestPaymentIntent, verifyTestPayment } from "./adapters/test-payment-adapter.mjs";
@@ -12,6 +12,7 @@ import { sessionForRequest } from "../accounts/lib/account-store.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
 
 const packageRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
+const publicRoots = ["site", "brand", "media"].map((name) => resolve(packageRoot, name));
 const quotes = new Map();
 const orders = new Map();
 const idempotency = new Map();
@@ -137,6 +138,18 @@ function scheduleValid(service, schedule) {
   return result.valid && result.slots.some((slot) => slot.value === value);
 }
 
+function canReadOrder(request, url, order) {
+  const signedIn = sessionForRequest(request);
+  if (order.accountId) return signedIn?.account.id === order.accountId;
+  const suppliedToken = String(request.headers["x-order-tracking-token"] || url.searchParams.get("token") || "");
+  return Boolean(order.trackingToken && suppliedToken && suppliedToken === order.trackingToken);
+}
+
+function testAdminAuthorized(request) {
+  const expected = process.env.STJ_TEST_ADMIN_TOKEN;
+  return Boolean(expected && request.headers["x-stj-admin-token"] === expected);
+}
+
 async function api(request, response, url) {
   if (await handleAccountApi({ request, response, url, json, bodyJson, getOrder: (id) => orders.get(id), publicOrder })) return;
   if (request.method === "GET" && url.pathname === "/api/health") return json(response, 200, { ok: true, mode: config.meta.mode, payment: "token_only_test", storage: config.orders.storage, accounts: "memory_only_test" });
@@ -173,7 +186,10 @@ async function api(request, response, url) {
     const key = String(request.headers["idempotency-key"] || input.idempotencyKey || "").trim();
     if (!key || key.length > 200) return json(response, 400, { error: { code: "idempotency_required", message: "A valid idempotency key is required." } });
     const existing = idempotency.get(key);
-    if (existing && existing.expiresAt > Date.now()) return json(response, 200, { idempotentReplay: true, order: publicOrder(orders.get(existing.orderId)) });
+    if (existing && existing.expiresAt > Date.now()) {
+      const existingOrder = orders.get(existing.orderId);
+      return json(response, 200, { idempotentReplay: true, order: publicOrder(existingOrder), trackingToken: existingOrder.trackingToken });
+    }
     const resolved = activeQuote(input.quoteId);
     if (resolved.error) return json(response, 409, resolved);
     const quote = resolved.quote;
@@ -205,26 +221,30 @@ async function api(request, response, url) {
         ? { method: "cash", provider: "pay_at_handoff", status: "due_at_handoff" }
         : { method: "card", provider: payment.intent.provider, status: "captured_test", tokenLast8: payment.intent.token.slice(-8) },
       mode: config.meta.mode,
+      trackingToken: randomBytes(24).toString("base64url"),
       createdAt
     };
     const signedIn = sessionForRequest(request);
     if (signedIn) order.accountId = signedIn.account.id;
     order.pos = sendToTestPos(order);
     orders.set(id, order);
-    if (order.accountId) attachOrder(order.accountId, id);
+    if (signedIn) attachOrder(signedIn.account, order);
     if (paymentMethod === "card") consumeTestPayment(input.paymentToken);
     idempotency.set(key, { orderId: id, expiresAt: Date.now() + config.orders.idempotencyMinutes * 60_000 });
-    return json(response, 201, { idempotentReplay: false, order: publicOrder(order) });
+    return json(response, 201, { idempotentReplay: false, order: publicOrder(order), trackingToken: order.trackingToken });
   }
 
   const match = url.pathname.match(/^\/api\/orders\/([^/]+)(?:\/(advance))?$/);
   if (match && request.method === "GET" && !match[2]) {
     const order = orders.get(decodeURIComponent(match[1]));
-    return order ? json(response, 200, { order: publicOrder(order) }) : json(response, 404, { error: { code: "order_not_found", message: "Test order not found." } });
+    if (!order) return json(response, 404, { error: { code: "order_not_found", message: "Order not found." } });
+    if (!canReadOrder(request, url, order)) return json(response, 403, { error: { code: "order_access_denied", message: "This order cannot be viewed from this session." } });
+    return json(response, 200, { order: publicOrder(order) });
   }
   if (match && request.method === "POST" && match[2] === "advance") {
+    if (!testAdminAuthorized(request)) return json(response, 404, { error: { code: "api_not_found", message: "API route not found." } });
     const order = orders.get(decodeURIComponent(match[1]));
-    if (!order) return json(response, 404, { error: { code: "order_not_found", message: "Test order not found." } });
+    if (!order) return json(response, 404, { error: { code: "order_not_found", message: "Order not found." } });
     const flow = order.service === "delivery" ? ["received", "confirmed", "in_preparation", "out_for_delivery", "complete"] : ["received", "confirmed", "in_preparation", "ready_for_pickup", "complete"];
     const next = flow[Math.min(flow.length - 1, flow.indexOf(order.status) + 1)];
     if (next !== order.status) {
@@ -242,6 +262,8 @@ function staticFile(request, response, url) {
   const requested = decodeURIComponent(url.pathname).replace(/^\/+/, "");
   let path = resolve(packageRoot, requested);
   if (path !== packageRoot && !path.startsWith(`${packageRoot}${sep}`)) return json(response, 403, { error: { code: "forbidden", message: "Forbidden path." } });
+  const isPublicPath = publicRoots.some((root) => path === root || path.startsWith(`${root}${sep}`));
+  if (!isPublicPath) return json(response, 403, { error: { code: "forbidden", message: "Forbidden path." } });
   if (existsSync(path) && statSync(path).isDirectory()) path = resolve(path, "index.html");
   if (!existsSync(path) || !statSync(path).isFile()) return json(response, 404, { error: { code: "file_not_found", message: "File not found." } });
   response.writeHead(200, { ...headers(mime[extname(path)] || "application/octet-stream"), "Cache-Control": "public, max-age=60" });

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { once } from "node:events";
 import { startOrderingServer } from "../server.mjs";
 
+process.env.STJ_TEST_ADMIN_TOKEN = "phase1-api-test-admin";
 const server = await startOrderingServer({ port: 0 });
 const { port } = server.address();
 const base = `http://127.0.0.1:${port}`;
@@ -52,10 +53,35 @@ try {
   assert.equal(replay.payload.idempotentReplay, true);
   assert.equal(replay.payload.order.id, order.payload.order.id);
 
-  const fetched = await json(`/api/orders/${order.payload.order.id}`);
+  const deniedFetch = await json(`/api/orders/${order.payload.order.id}`);
+  assert.equal(deniedFetch.response.status, 403);
+  const fetched = await json(`/api/orders/${order.payload.order.id}?token=${encodeURIComponent(order.payload.trackingToken)}`);
   assert.equal(fetched.response.status, 200);
-  const advanced = await json(`/api/orders/${order.payload.order.id}/advance`, { method: "POST", body: "{}" });
+  const deniedAdvance = await json(`/api/orders/${order.payload.order.id}/advance`, { method: "POST", body: "{}" });
+  assert.equal(deniedAdvance.response.status, 404);
+  const advanced = await json(`/api/orders/${order.payload.order.id}/advance`, { method: "POST", headers: { "X-STJ-Admin-Token": process.env.STJ_TEST_ADMIN_TOKEN }, body: "{}" });
   assert.equal(advanced.payload.order.status, "confirmed");
+
+  const memberEmail = `phase1-${Date.now()}@example.com`;
+  const memberRegistration = await json("/api/account/register", {
+    method: "POST",
+    body: JSON.stringify({ name: "Phase One Member", email: memberEmail, password: "PhaseOneTest!123", type: "regular" })
+  });
+  assert.equal(memberRegistration.response.status, 201);
+  const memberCookie = memberRegistration.response.headers.get("set-cookie")?.split(";")[0];
+  assert.ok(memberCookie?.startsWith("stj_session="), "Registration must create the configured secure account session cookie");
+
+  const memberQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, promoCode: "" }) });
+  const memberPayment = await json("/api/payment/intents", { method: "POST", body: JSON.stringify({ quoteId: memberQuote.payload.quoteId }) });
+  const memberOrder = await json("/api/orders", {
+    method: "POST",
+    headers: { "Idempotency-Key": `${key}-member`, Cookie: memberCookie },
+    body: JSON.stringify({ ...orderBody, quoteId: memberQuote.payload.quoteId, paymentToken: memberPayment.payload.token, schedule: "asap" })
+  });
+  assert.equal(memberOrder.response.status, 201, JSON.stringify(memberOrder.payload));
+  const memberDashboard = await json("/api/account/dashboard", { headers: { Cookie: memberCookie } });
+  assert.equal(memberDashboard.response.status, 200);
+  assert.ok(memberDashboard.payload.orders.some((row) => row.id === memberOrder.payload.order.id), "Signed-in order must attach to the member account exactly once");
 
   const dineQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, service: "dine_in" }) });
   const cashOrder = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": `${key}-cash` }, body: JSON.stringify({ ...orderBody, quoteId: dineQuote.payload.quoteId, paymentMethod: "cash", paymentToken: undefined, schedule: "asap" }) });
@@ -78,10 +104,10 @@ try {
   const deliveryOrder = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": `${key}-delivery` }, body: JSON.stringify({ ...orderBody, quoteId: deliveryQuote.payload.quoteId, paymentToken: deliveryPayment.payload.token, schedule: deliverySlots.payload.slots[0].value, deliveryCheckToken: deliveryCheck.payload.deliveryCheckToken }) });
   assert.equal(deliveryOrder.response.status, 201);
   let deliveryStatus = deliveryOrder.payload.order;
-  for (let index = 0; index < 3; index += 1) deliveryStatus = (await json(`/api/orders/${deliveryStatus.id}/advance`, { method: "POST", body: "{}" })).payload.order;
+  for (let index = 0; index < 3; index += 1) deliveryStatus = (await json(`/api/orders/${deliveryStatus.id}/advance`, { method: "POST", headers: { "X-STJ-Admin-Token": process.env.STJ_TEST_ADMIN_TOKEN }, body: "{}" })).payload.order;
   assert.equal(deliveryStatus.status, "out_for_delivery");
 
-  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true }, null, 2));
+  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true, unauthorizedOrderReadBlocked: true, unauthorizedAdvanceBlocked: true, signedInOrderAttached: true }, null, 2));
 } finally {
   server.close();
   await once(server, "close");

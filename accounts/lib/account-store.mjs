@@ -3,10 +3,10 @@ import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from "node:crypt
 export const accountConfig = {
   meta: { mode: "safe_test", storage: "memory_only_test" },
   accountTypes: ["regular", "student", "business"],
-  rewards: { status: "working_pending_owner_approval", pointsPerDollar: 10, pointsPerDollarReward: 100 },
+  rewards: { status: "terms_pending", pointsPerDollar: null, pointsPerDollarReward: null },
   studentVerification: { mode: "manual_review_test", methods: ["school_email"], affiliationDisclaimer: "No university sponsorship or affiliation is implied." },
   privacy: { persistence: "Server memory resets on restart", exportAvailable: true, deletionAvailable: true },
-  authentication: { cookieName: "stj_test_session", sessionHours: 8, passwordMinimumCharacters: 10, emailVerification: "not_configured" }
+  authentication: { cookieName: "stj_session", sessionHours: 8, passwordMinimumCharacters: 12, loginWindowMinutes: 15, loginMaximumAttempts: 8, emailVerification: "not_connected_test" }
 };
 
 const accounts = new Map(), byEmail = new Map(), sessions = new Map(), attempts = new Map();
@@ -16,7 +16,7 @@ const hashPassword = (password, salt = randomBytes(16).toString("hex")) => ({ sa
 const validEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export function parseCookies(header = "") { return Object.fromEntries(String(header).split(";").map((part) => part.trim().split("=")).filter(([key]) => key)); }
-export function authRateLimit(key) { const now = Date.now(), row = attempts.get(key) || { count: 0, reset: now + 300000 }; if (row.reset < now) Object.assign(row, { count: 0, reset: now + 300000 }); if (++row.count > 10) fail("Too many sign-in attempts. Try again later.", "rate_limited", 429); attempts.set(key, row); }
+export function authRateLimit(key) { const now = Date.now(), windowMs = accountConfig.authentication.loginWindowMinutes * 60_000, row = attempts.get(key) || { count: 0, reset: now + windowMs }; if (row.reset < now) Object.assign(row, { count: 0, reset: now + windowMs }); if (++row.count > accountConfig.authentication.loginMaximumAttempts) fail("Too many sign-in attempts. Try again later.", "rate_limited", 429); attempts.set(key, row); }
 export function clearAuthAttempts(key) { attempts.delete(key); }
 
 export function registerAccount(input = {}) {
@@ -47,6 +47,6 @@ export function updateBusiness(account, input = {}) { account.business = { ...ac
 export function saveEvent(account, input = {}) { const event = { id: `evt_${randomUUID()}`, name: clean(input.name, 100), date: clean(input.date, 10), guests: Math.max(0, Number(input.guests || 0)), status: "draft_requires_quote" }; account.events.push(event); return event; }
 export function removeEvent(account, id) { const before = account.events.length; account.events = account.events.filter((row) => row.id !== id); return before !== account.events.length; }
 export function enrollRewards(account, consent) { if (consent !== true) fail("Rewards consent is required.", "rewards_consent_required", 422); account.rewards.enrolled = true; account.rewards.consentAt = new Date().toISOString(); return account.rewards; }
-export function attachOrder(account, order) { if (!account || !order) return; account.orderIds = [...new Set([order.id, ...account.orderIds])]; if (account.rewards.enrolled) account.rewards.points += Math.floor(Number(order.totals.total.amount || 0) * accountConfig.rewards.pointsPerDollar); }
+export function attachOrder(account, order) { if (!account || !order) return; account.orderIds = [...new Set([order.id, ...account.orderIds])]; }
 export function exportAccount(account, orders) { return { exportedAt: new Date().toISOString(), account: publicAccount(account), ...accountCollections(account), orders }; }
 export function deleteAccount(account, password) { authenticate(account.email, password); accounts.delete(account.id); byEmail.delete(account.email); for (const [token, session] of sessions) if (session.accountId === account.id) sessions.delete(token); }

@@ -121,19 +121,17 @@ export function buildProductCard(product, data, options = {}) {
   return `
     <article class="product-card">
       <a class="product-card__media" href="#/product/${escapeHtml(product.id)}" aria-label="View ${escapeHtml(product.name)}">
-        ${mediaBadge()}
-        <img src="${productImage(product)}" alt="Concept visual for ${escapeHtml(product.name)}" loading="${loading}" width="720" height="900" />
+        <img src="${productImage(product)}" alt="${escapeHtml(product.name)}" loading="${loading}" width="720" height="900" />
       </a>
       <div class="product-card__body">
         <div class="product-card__meta">
           <span class="product-card__category">${escapeHtml(category?.name || "ST. JUICE")}</span>
-          <span class="working-badge">Working price</span>
         </div>
         <h3><a href="#/product/${escapeHtml(product.id)}">${escapeHtml(product.name)}</a></h3>
         <p class="product-card__description">${escapeHtml(product.description)}</p>
         <div class="price-row">
           <span class="product-card__price">From ${money(productStartingPrice(product))}</span>
-          <span class="working-badge">${escapeHtml(product.productType)}</span>
+          <span class="product-card__type">${escapeHtml(titleCase(product.productType))}</span>
         </div>
         <div class="product-card__actions">
           <a class="button button--small" ${action}>${actionText}</a>

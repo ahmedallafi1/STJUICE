@@ -71,7 +71,7 @@ assert.ok(officeProduct.includes("data-product-reference"), "Repeatable group fo
 for (const mode of ["guest", "regular", "student", "business"]) {
   state.mode = mode;
   const accountHtml = renderAccountDialog(state);
-  assert.ok(accountHtml.includes("Current mode"), `${mode} selector must expose current state`);
+  assert.ok(accountHtml.includes("Current experience"), `${mode} selector must expose current state`);
 }
 
 assert.ok(renderServiceDialog(state).includes("Pickup"), "Service dialog must include pickup");
@@ -88,7 +88,9 @@ state.checkout.quote = {
 };
 const checkout = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
 assert.ok(checkout.includes("Checkout without surprises"));
-assert.ok(checkout.includes("SAFE TEST"));
+assert.ok(checkout.includes("ORDERING PREVIEW"));
+assert.ok(checkout.includes("No live card charge will occur yet."));
+assert.ok(!checkout.includes("SAFE TEST"));
 assert.ok(checkout.includes("Order for now."));
 assert.ok(!checkout.includes("Service date"));
 assert.ok(!checkout.includes("Available time"));
@@ -109,6 +111,7 @@ state.service = "pickup";
 state.order = { id: "order_test", orderNumber: "STJ-0001", status: "received", service: "pickup", schedule: "2026-08-17T08:00:00", customer: { name: "Test Guest", email: "t***@example.com", phone: "***0100" }, items: state.checkout.quote.items, totals: state.checkout.quote.totals, pos: { reference: "test_pos_123", adapter: "test_pos_receipt", status: "accepted_test" } };
 const order = renderPage({ path: "/order/order_test", params: new URLSearchParams() }, { data, state });
 assert.ok(order.includes("STJ-0001"));
-assert.ok(order.includes("Advance test status"));
+assert.ok(order.includes("Refresh status"));
+assert.ok(!order.includes("Advance test status"));
 
 console.log(JSON.stringify({ status: "valid", routesRendered: routes.length + 1, builderStepsRendered: data.builder.steps.length, fullMenuCards: 54, accountModesRendered: 4, checkoutRendered: true, orderRendered: true }, null, 2));

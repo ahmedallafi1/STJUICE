@@ -1,6 +1,6 @@
 import { escapeHtml, hydrateIcons, loadProjectData, productImage, routeInfo, titleCase } from "./lib/core.js";
-import { orderingApi } from "./lib/api.js";
-import { loadAccount, saveAccount, saveMix, toggleFavorite, rememberOrder } from "./lib/account.js";
+import { accountApi, orderingApi } from "./lib/api.js";
+import { loadAccount } from "./lib/account.js";
 import {
   builderAllergens,
   calculateBuilderTotal,
@@ -33,8 +33,22 @@ function writeStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // The prototype still works when storage is unavailable.
+    // Non-essential browser storage can be unavailable without blocking checkout.
   }
+}
+
+function readSession(key, fallback) {
+  try {
+    const value = sessionStorage.getItem(key);
+    return value === null ? fallback : JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
+function writeSession(key, value) {
+  try { sessionStorage.setItem(key, JSON.stringify(value)); }
+  catch { /* Order tracking can still be recovered from a signed-in account session. */ }
 }
 
 const savedMode = readStorage(storageKeys.mode, readStorage("stjuice-stage05-mode", "guest"));
@@ -62,7 +76,7 @@ function freshCheckout() {
 }
 
 const state = {
-  mode: modes[savedMode] ? savedMode : "guest",
+  mode: "guest",
   service: ["pickup", "delivery", "dine_in"].includes(savedService) ? savedService : "pickup",
   cart: savedCart,
   menuFilters: { query: "", category: "all", mood: "all", occasion: "all", channel: "all" },
@@ -77,9 +91,11 @@ const state = {
   checkout: freshCheckout(),
   order: null,
   orderLoading: false,
-  orderRequestedId: ""
+  orderRequestedId: "",
+  orderTrackingTokens: readSession("stjuice-order-tracking", {}),
+  accountIntent: "regular"
 };
-state.account = loadAccount();
+state.account = { ...loadAccount(), signedIn: false, points: 0, csrfToken: "" };
 
 let data;
 let searchTimer;
@@ -105,6 +121,62 @@ const elements = {
 
 function currentContext() {
   return { data, state };
+}
+
+function applyAccountSession(payload) {
+  state.account.signedIn = Boolean(payload?.authenticated);
+  state.account.csrfToken = payload?.csrfToken || "";
+  if (!payload?.authenticated || !payload.account) {
+    state.mode = "guest";
+    state.account.profile = { ...state.account.profile, name: "", email: "", phone: "", birthday: "", mode: "regular" };
+    state.account.student = { status: "not_submitted", schoolEmail: "", institution: "", expiresAt: "" };
+    state.account.business = {};
+    state.account.points = 0;
+    return;
+  }
+  const account = payload.account;
+  state.account.profile = {
+    ...state.account.profile,
+    name: account.name || "",
+    email: account.email || "",
+    phone: account.phone || "",
+    birthday: account.birthday || "",
+    mode: account.type || "regular"
+  };
+  state.account.student = account.student || { status: "not_submitted" };
+  state.account.business = account.business || {};
+  state.account.points = Number(account.rewards?.points || 0);
+  state.mode = modes[account.type] ? account.type : "regular";
+}
+
+function applyAccountDashboard(payload) {
+  state.account.favorites = Array.isArray(payload?.favorites) ? payload.favorites : [];
+  state.account.savedMixes = Array.isArray(payload?.mixes)
+    ? payload.mixes.map((mix) => ({ ...mix, savedAt: mix.createdAt || mix.savedAt || new Date().toISOString() }))
+    : [];
+  state.account.orderHistory = Array.isArray(payload?.orders)
+    ? payload.orders.map((order) => ({
+        id: order.id,
+        orderNumber: order.orderNumber,
+        service: order.service,
+        status: order.status,
+        total: order.totals?.total?.amount || 0,
+        items: order.items || [],
+        createdAt: order.createdAt
+      }))
+    : [];
+}
+
+async function refreshAccountSession() {
+  try {
+    const session = await accountApi.session();
+    applyAccountSession(session);
+    if (session.authenticated) applyAccountDashboard(await accountApi.dashboard());
+    else applyAccountDashboard({});
+  } catch {
+    applyAccountSession({ authenticated: false, account: null, csrfToken: null });
+    applyAccountDashboard({});
+  }
 }
 
 function syncFiltersFromRoute(route) {
@@ -243,9 +315,14 @@ async function prepareCheckout() {
 async function loadOrder(orderId) {
   state.orderRequestedId = orderId;
   state.orderLoading = true;
-  try { state.order = (await orderingApi.getOrder(orderId)).order; if (state.account.signedIn && state.order) rememberOrder(state.account, state.order); }
+  try {
+    state.order = (await orderingApi.getOrder(orderId, state.orderTrackingTokens[orderId] || "")).order;
+    if (state.account.signedIn) {
+      try { applyAccountDashboard(await accountApi.dashboard()); } catch { /* Keep the order view available even if dashboard refresh fails. */ }
+    }
+  }
   catch (error) {
-    state.order = { id: orderId, orderNumber: "Test order unavailable", status: "canceled", statusHistory: [], service: "pickup", schedule: "—", customer: { name: "Guest", email: "—", phone: "—" }, items: [], totals: { subtotal: { amount: 0 }, discount: { amount: 0 }, tax: { amount: 0 }, deliveryFee: { amount: 0 }, serviceFee: { amount: 0 }, tip: { amount: 0, percent: 0 }, total: { amount: 0 } }, pos: { reference: "—", adapter: "—", status: errorMessage(error) } };
+    state.order = { id: orderId, orderNumber: "Order preview unavailable", status: "canceled", statusHistory: [], service: "pickup", schedule: "—", customer: { name: "Guest", email: "—", phone: "—" }, items: [], totals: { subtotal: { amount: 0 }, discount: { amount: 0 }, tax: { amount: 0 }, deliveryFee: { amount: 0 }, serviceFee: { amount: 0 }, tip: { amount: 0, percent: 0 }, total: { amount: 0 } }, pos: { reference: "—", adapter: "—", status: errorMessage(error) } };
   } finally { state.orderLoading = false; render({ preserveScroll: true }); }
 }
 
@@ -396,13 +473,45 @@ document.addEventListener("click", async (event) => {
   if (!actionElement) return;
   const action = actionElement.dataset.action;
   if (action === "toggle-favorite") {
-    toggleFavorite(state.account, actionElement.dataset.productId); render({ preserveScroll: true }); toast("Favorites updated"); return;
+    if (!state.account.signedIn) {
+      state.accountIntent = "regular";
+      window.location.hash = "/account";
+      toast("Sign in to save favorites");
+      return;
+    }
+    const productId = actionElement.dataset.productId;
+    const active = !state.account.favorites.includes(productId);
+    try {
+      const result = await accountApi.setFavorite(productId, active, state.account.csrfToken);
+      state.account.favorites = result.productIds || [];
+      render({ preserveScroll: true });
+      toast(active ? "Added to favorites" : "Removed from favorites");
+    } catch (error) { toast("Favorites did not update", errorMessage(error)); }
+    return;
   }
   if (action === "save-builder-mix") {
-    saveMix(state.account, { name: state.builder.name || "My Mood", selections: structuredClone(state.builder.selections) }); render({ preserveScroll: true }); toast("Mix saved", "Available in your account dashboard."); return;
+    if (!state.account.signedIn) {
+      state.accountIntent = "regular";
+      window.location.hash = "/account";
+      toast("Sign in to save your mix");
+      return;
+    }
+    try {
+      const result = await accountApi.saveMix({ name: state.builder.name || "My Mood", selections: structuredClone(state.builder.selections) }, state.account.csrfToken);
+      state.account.savedMixes = [{ ...result.mix, savedAt: result.mix.createdAt }, ...state.account.savedMixes];
+      render({ preserveScroll: true });
+      toast("Mix saved", "Available in your account dashboard.");
+    } catch (error) { toast("Mix did not save", errorMessage(error)); }
+    return;
   }
-  if (action === "prototype-signout") {
-    state.account.signedIn = false; saveAccount(state.account); state.mode = "guest"; writeStorage(storageKeys.mode, state.mode); render(); toast("Signed out of prototype"); return;
+  if (action === "account-signout") {
+    try { await accountApi.logout(state.account.csrfToken); }
+    catch { /* Clear the local view even if the expired session is already gone. */ }
+    applyAccountSession({ authenticated: false, account: null, csrfToken: null });
+    applyAccountDashboard({});
+    render();
+    toast("Signed out");
+    return;
   }
   if (action === "reorder-history") {
     const order = state.account.orderHistory.find((item) => item.id === actionElement.dataset.orderId);
@@ -428,11 +537,22 @@ document.addEventListener("click", async (event) => {
   } else if (action === "set-mode") {
     const mode = actionElement.dataset.mode;
     if (!modes[mode]) return;
-    state.mode = mode;
-    writeStorage(storageKeys.mode, mode);
+    if (mode === "guest") {
+      state.mode = "guest";
+      closeDialog(elements.accountDialog);
+      render({ preserveScroll: true });
+      return;
+    }
+    if (state.account.signedIn && state.account.profile.mode === mode) {
+      state.mode = mode;
+      closeDialog(elements.accountDialog);
+      render({ preserveScroll: true });
+      return;
+    }
+    state.accountIntent = mode;
     closeDialog(elements.accountDialog);
-    render({ preserveScroll: true });
-    toast(`${modes[mode].label} mode is on`, modes[mode].detail);
+    window.location.hash = "/account";
+    toast("Sign in required", `Sign in or create a ${modes[mode].label.toLowerCase()} account to use this experience.`);
   } else if (action === "set-service") {
     const service = actionElement.dataset.service;
     if (!["pickup", "delivery", "dine_in"].includes(service)) return;
@@ -494,12 +614,12 @@ document.addEventListener("click", async (event) => {
     state.checkout.error = "";
     try {
       state.checkout.deliveryCheck = await orderingApi.validateDelivery(state.checkout.address);
-      toast("Address accepted for manual review", "This is not a real delivery-radius approval.");
+      toast("Address reviewed", "Final delivery availability and fees will be confirmed when live ordering launches.");
       render({ preserveScroll: true });
     } catch (error) { state.checkout.error = errorMessage(error); render({ preserveScroll: true }); }
   } else if (action === "refresh-quote") {
     state.checkout.error = "";
-    try { await refreshQuote(); toast("Server totals refreshed", "Every line was priced from the canonical catalog."); }
+    try { await refreshQuote(); toast("Order total refreshed", "Your items were recalculated from the current menu."); }
     catch (error) { state.checkout.error = errorMessage(error); }
     render({ preserveScroll: true });
   } else if (action === "checkout-back") {
@@ -541,11 +661,15 @@ document.addEventListener("click", async (event) => {
       }, state.checkout.idempotencyKey);
       state.order = result.order;
       state.orderRequestedId = result.order.id;
+      if (result.trackingToken) {
+        state.orderTrackingTokens[result.order.id] = result.trackingToken;
+        writeSession("stjuice-order-tracking", state.orderTrackingTokens);
+      }
       state.cart = [];
       writeStorage(storageKeys.cart, []);
       state.checkout = freshCheckout();
       window.location.hash = `/order/${result.order.id}`;
-      toast("Safe test order received", result.order.orderNumber);
+      toast("Order preview created", result.order.orderNumber);
     } catch (error) {
       state.checkout.busy = false;
       state.checkout.error = errorMessage(error);
@@ -553,9 +677,6 @@ document.addEventListener("click", async (event) => {
     }
   } else if (action === "refresh-order") {
     await loadOrder(actionElement.dataset.orderId);
-  } else if (action === "advance-order") {
-    try { state.order = (await orderingApi.advanceOrder(actionElement.dataset.orderId)).order; render({ preserveScroll: true }); }
-    catch (error) { toast("Status did not update", errorMessage(error)); }
   } else if (action === "prefill-catering") {
     const select = document.querySelector("#package-interest");
     if (select) select.value = actionElement.dataset.package || "";
@@ -693,15 +814,43 @@ document.addEventListener("input", (event) => {
   }
 });
 
-document.addEventListener("submit", (event) => {
-  const accountForm = event.target.closest("[data-account-form]");
-  if (accountForm) {
-    event.preventDefault(); const values = new FormData(accountForm); const type = accountForm.dataset.accountForm;
-    state.account.signedIn = true;
-    state.account.profile = { ...state.account.profile, name: String(values.get("name") || ""), email: String(values.get("email") || ""), phone: String(values.get("phone") || ""), birthday: String(values.get("birthday") || ""), mode: type };
-    if (type === "student") state.account.student = { status: "pending_manual_review", schoolEmail: String(values.get("schoolEmail") || ""), institution: String(values.get("institution") || ""), expiresAt: "" };
-    if (type === "business") state.account.business = { company: String(values.get("company") || ""), contactRole: String(values.get("contactRole") || ""), recurringCadence: String(values.get("recurringCadence") || ""), savedEvent: String(values.get("savedEvent") || "") };
-    state.mode = type; saveAccount(state.account); writeStorage(storageKeys.mode, type); render(); toast("Prototype profile saved", "Stored on this device only."); return;
+document.addEventListener("submit", async (event) => {
+  const loginForm = event.target.closest("[data-login-form]");
+  if (loginForm) {
+    event.preventDefault();
+    const values = new FormData(loginForm);
+    try {
+      const payload = await accountApi.login({ email: String(values.get("email") || ""), password: String(values.get("password") || "") });
+      applyAccountSession(payload);
+      applyAccountDashboard(await accountApi.dashboard());
+      render();
+      toast("Welcome back", state.account.profile.name || "Your account is ready.");
+    } catch (error) {
+      toast("Sign in failed", errorMessage(error));
+    }
+    return;
+  }
+
+  const registerForm = event.target.closest("[data-register-form]");
+  if (registerForm) {
+    event.preventDefault();
+    const values = new FormData(registerForm);
+    const type = String(values.get("type") || state.accountIntent || "regular");
+    try {
+      const payload = await accountApi.register({
+        name: String(values.get("name") || ""),
+        email: String(values.get("email") || ""),
+        password: String(values.get("password") || ""),
+        type
+      });
+      applyAccountSession(payload);
+      applyAccountDashboard(await accountApi.dashboard());
+      render();
+      toast("Account created", `${modes[state.mode].label} experience is ready.`);
+    } catch (error) {
+      toast("Account could not be created", errorMessage(error));
+    }
+    return;
   }
   if (!(event.target instanceof HTMLFormElement) || event.target.id !== "catering-request") return;
   event.preventDefault();
@@ -709,11 +858,8 @@ document.addEventListener("submit", (event) => {
     event.target.reportValidity();
     return;
   }
-  const formData = new FormData(event.target);
-  state.cateringEmail = String(formData.get("email") || "your email");
-  state.cateringSuccess = true;
-  render({ preserveScroll: true });
-  toast("Catering request preview complete", "This pre-launch preview did not transmit personal data.");
+  state.cateringSuccess = false;
+  toast("Online catering requests are not live yet", "No request was sent. We will only show a confirmation once the request is actually saved.");
 });
 
 for (const dialog of document.querySelectorAll("dialog")) {
@@ -730,6 +876,7 @@ hydrateIcons(document);
 try {
   data = await loadProjectData();
   migrateStage05Cart();
+  await refreshAccountSession();
   render();
 } catch (error) {
   console.error(error);
