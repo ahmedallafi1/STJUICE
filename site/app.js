@@ -95,7 +95,8 @@ const state = {
   orderLoading: false,
   orderRequestedId: "",
   orderTrackingTokens: readSession("stjuice-order-tracking", {}),
-  accountIntent: "regular"
+  accountIntent: "regular",
+  runtimeConfig: null
 };
 state.account = { ...loadAccount(), signedIn: false, points: 0, csrfToken: "" };
 
@@ -123,6 +124,14 @@ const elements = {
 
 function currentContext() {
   return { data, state };
+}
+
+function navigate(path, { replace = false } = {}) {
+  const target = new URL(path, window.location.origin);
+  const href = `${target.pathname}${target.search}${target.hash}`;
+  if (replace) window.history.replaceState({}, "", href);
+  else window.history.pushState({}, "", href);
+  render();
 }
 
 function applyAccountSession(payload) {
@@ -547,7 +556,7 @@ document.addEventListener("click", async (event) => {
   if (action === "toggle-favorite") {
     if (!state.account.signedIn) {
       state.accountIntent = "regular";
-      window.location.hash = "/account";
+      navigate("/account");
       toast("Sign in to save favorites");
       return;
     }
@@ -564,7 +573,7 @@ document.addEventListener("click", async (event) => {
   if (action === "save-builder-mix") {
     if (!state.account.signedIn) {
       state.accountIntent = "regular";
-      window.location.hash = "/account";
+      navigate("/account");
       toast("Sign in to save your mix");
       return;
     }
@@ -658,7 +667,7 @@ document.addEventListener("click", async (event) => {
     closeDialog(actionElement.closest("dialog"));
   } else if (action === "menu-search") {
     event.preventDefault();
-    window.location.hash = "/menu";
+    navigate("/menu");
     requestAnimationFrame(() => document.querySelector("#menu-search")?.focus());
   } else if (action === "set-mode") {
     const mode = actionElement.dataset.mode;
@@ -677,7 +686,7 @@ document.addEventListener("click", async (event) => {
     }
     state.accountIntent = mode;
     closeDialog(elements.accountDialog);
-    window.location.hash = "/account";
+    navigate("/account");
     toast("Sign in required", `Sign in or create a ${modes[mode].label.toLowerCase()} account to use this experience.`);
   } else if (action === "set-service") {
     const service = actionElement.dataset.service;
@@ -726,7 +735,7 @@ document.addEventListener("click", async (event) => {
     persistCart();
   } else if (action === "checkout-preview") {
     closeDialog(elements.cartDialog);
-    window.location.hash = "/checkout";
+    navigate("/checkout");
   } else if (action === "checkout-service") {
     state.service = actionElement.dataset.service;
     writeStorage(storageKeys.service, state.service);
@@ -794,7 +803,7 @@ document.addEventListener("click", async (event) => {
       state.cart = [];
       writeStorage(storageKeys.cart, []);
       state.checkout = freshCheckout();
-      window.location.hash = `/order/${result.order.id}`;
+      navigate(`/order/${result.order.id}`);
       toast("Order preview created", result.order.orderNumber);
     } catch (error) {
       state.checkout.busy = false;
@@ -1079,12 +1088,28 @@ for (const dialog of document.querySelectorAll("dialog")) {
 }
 
 window.addEventListener("hashchange", () => render());
+window.addEventListener("popstate", () => render());
+
+document.addEventListener("click", (event) => {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target.closest('a[href^="/"]');
+  if (!link || link.dataset.action || link.target === "_blank" || link.hasAttribute("download")) return;
+  const target = new URL(link.href, window.location.origin);
+  if (target.origin !== window.location.origin) return;
+  event.preventDefault();
+  navigate(`${target.pathname}${target.search}${target.hash}`);
+});
 window.addEventListener("scroll", () => elements.header.classList.toggle("is-scrolled", window.scrollY > 12), { passive: true });
 
 hydrateIcons(document);
 
 try {
-  data = await loadProjectData();
+  const [loadedData, runtimeConfig] = await Promise.all([
+    loadProjectData(),
+    orderingApi.config().catch(() => null)
+  ]);
+  data = loadedData;
+  state.runtimeConfig = runtimeConfig;
   migrateStage05Cart();
   await refreshAccountSession();
   render();
