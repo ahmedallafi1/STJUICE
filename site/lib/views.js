@@ -917,7 +917,7 @@ function renderAccount({ data, state }) {
             ${birthday.enabled && birthday.eligible ? `<button class="button button--outline" type="button" data-action="claim-birthday">Add birthday benefit</button>` : ""}
           </article>
         </div>
-        ${availableGrants.length ? `<div class="wallet-grants"><p class="eyebrow">READY TO USE</p>${availableGrants.map((grant) => `<article><strong>${escapeHtml(titleCase(grant.rewardType || grant.kind))}</strong><small>${escapeHtml(grant.kind === "birthday" ? "Birthday benefit" : "Reward redemption")} · Available</small></article>`).join("")}</div>` : ""}
+        ${availableGrants.length ? `<div class="wallet-grants"><p class="eyebrow">READY TO USE</p>${availableGrants.map((grant) => `<article><div><strong>${escapeHtml(titleCase(grant.rewardType || grant.kind))}</strong><small>${escapeHtml(grant.kind === "birthday" ? "Birthday benefit" : "Reward redemption")} · Available</small></div><button class="button button--outline button--small" type="button" data-action="apply-reward-grant" data-grant-id="${escapeHtml(grant.id)}">${state.checkout.rewardGrantId === grant.id ? "Selected" : "Use reward"}</button></article>`).join("")}${state.checkout.rewardGrantId ? `<button class="text-button" type="button" data-action="remove-reward-grant">Remove selected reward</button>` : ""}</div>` : ""}
       </div>
 
       ${state.mode === "student" ? `
@@ -1126,7 +1126,12 @@ function renderNotFound() {
 function quoteTotals(quote) {
   if (!quote) return `<div class="info-panel"><h3>Order total</h3><p>Your items will be recalculated before the order preview is created.</p></div>`;
   const rows = [["Subtotal", quote.totals.subtotal.amount]];
-  if (quote.totals.discount.amount > 0) rows.push(["Discount", -quote.totals.discount.amount]);
+  const breakdown = quote.discountBreakdown || {};
+  const hasBreakdown = Number(breakdown.promo?.amount || 0) > 0 || Number(breakdown.account?.amount || 0) > 0 || Number(breakdown.reward?.amount || 0) > 0;
+  if (Number(breakdown.account?.amount || 0) > 0) rows.push(["Member benefit", -breakdown.account.amount]);
+  if (Number(breakdown.promo?.amount || 0) > 0) rows.push(["Promo", -breakdown.promo.amount]);
+  if (Number(breakdown.reward?.amount || 0) > 0) rows.push(["Reward", -breakdown.reward.amount]);
+  if (!hasBreakdown && quote.totals.discount.amount > 0) rows.push(["Discount", -quote.totals.discount.amount]);
   if (quote.totals.tip.amount > 0) rows.push([`Tip · ${quote.totals.tip.percent}%`, quote.totals.tip.amount]);
   return `<div class="quote-totals">${rows.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${value < 0 ? `−${money(Math.abs(value))}` : money(value)}</strong></div>`).join("")}<div class="quote-totals__grand"><span>Preview total</span><strong>${money(quote.totals.total.amount)}</strong></div><p class="quote-totals__note">Tax and any delivery/service fees will be finalized when online ordering goes live.</p></div>`;
 }
