@@ -4,7 +4,7 @@ import { benefitsConfig, creditOrderRewards, reverseOrderRewards } from "./benef
 export const accountConfig = {
   meta: { mode: "safe_test", storage: "memory_only_test" },
   accountTypes: ["regular", "student", "business"],
-  rewards: { status: "terms_pending", pointsPerDollar: null, pointsPerDollarReward: null },
+  rewards: { status: benefitsConfig.loyalty.enabled ? "active" : "inactive", pointsPerDollar: benefitsConfig.loyalty.pointsPerDollar },
   studentVerification: { mode: "manual_review_test", methods: ["school_email"], affiliationDisclaimer: "No university sponsorship or affiliation is implied." },
   privacy: { persistence: "Server memory resets on restart", exportAvailable: true, deletionAvailable: true },
   authentication: { cookieName: "stj_session", sessionHours: 8, passwordMinimumCharacters: 12, loginWindowMinutes: 15, loginMaximumAttempts: 8, emailVerification: "not_connected_test" }
@@ -36,7 +36,9 @@ export function registerAccount(input = {}) {
   if (name.length < 2) fail("Enter your name.", "name_required", 422, "name");
   if (password.length < accountConfig.authentication.passwordMinimumCharacters) fail("Password is too short.", "password_short", 422, "password");
   if (byEmail.has(email)) fail("An account already exists for this email.", "email_exists", 409, "email");
-  const account = { id: `acct_${randomUUID()}`, email, name, phone: clean(input.phone, 40), type, birthday: normalizeBirthday(input.birthday), password: hashPassword(password), createdAt: new Date().toISOString(), favorites: [], mixes: [], addresses: [], events: [], reservations: [], orderIds: [], rewards: { enrolled: false, points: 0, consentAt: null, ledger: [], grants: [] }, student: { status: "not_submitted" }, business: { status: "not_submitted" } };
+  const createdAt = new Date().toISOString();
+  const autoEnrollRewards = Boolean(benefitsConfig.loyalty.enabled && benefitsConfig.loyalty.autoEnrollOnAccountCreation);
+  const account = { id: `acct_${randomUUID()}`, email, name, phone: clean(input.phone, 40), type, birthday: normalizeBirthday(input.birthday), password: hashPassword(password), createdAt, favorites: [], mixes: [], addresses: [], events: [], reservations: [], orderIds: [], rewards: { enrolled: autoEnrollRewards, points: 0, consentAt: autoEnrollRewards ? createdAt : null, enrollmentSource: autoEnrollRewards ? "account_creation" : null, ledger: [], grants: [] }, student: { status: "not_submitted" }, business: { status: "not_submitted" } };
   accounts.set(account.id, account); byEmail.set(email, account.id); return account;
 }
 
@@ -51,7 +53,12 @@ export function updateProfile(account, input = {}) { if (input.name != null) acc
 export function setFavorite(account, productId, active = true) { account.favorites = active ? [...new Set([...account.favorites, productId])] : account.favorites.filter((id) => id !== productId); return [...account.favorites]; }
 export function saveMix(account, input = {}) { const mix = { id: `mix_${randomUUID()}`, name: clean(input.name, 60) || "My Mood", selections: structuredClone(input.selections || {}), createdAt: new Date().toISOString() }; account.mixes.unshift(mix); return mix; }
 export function removeMix(account, id) { const before = account.mixes.length; account.mixes = account.mixes.filter((row) => row.id !== id); return before !== account.mixes.length; }
-export function saveAddress(account, input = {}) { const address = { id: `addr_${randomUUID()}`, label: clean(input.label, 40) || "Saved address", street: clean(input.street, 100), city: clean(input.city, 80), state: clean(input.state, 30), postalCode: clean(input.postalCode, 20) }; account.addresses.push(address); return address; }
+export function saveAddress(account, input = {}) {
+  const address = { id: `addr_${randomUUID()}`, label: clean(input.label, 40) || "Saved address", street: clean(input.street, 100), city: clean(input.city, 80), state: clean(input.state, 30), postalCode: clean(input.postalCode, 20) };
+  if (!address.street || !address.city || !address.state || !address.postalCode) fail("Complete the address before saving it.", "address_incomplete", 422);
+  account.addresses.push(address);
+  return address;
+}
 export function removeAddress(account, id) { const before = account.addresses.length; account.addresses = account.addresses.filter((row) => row.id !== id); return before !== account.addresses.length; }
 export function requestStudentVerification(account, input = {}) { const schoolEmail = clean(input.schoolEmail).toLowerCase(); if (!validEmail(schoolEmail)) fail("Enter a valid school email.", "student_email_invalid", 422, "schoolEmail"); account.student = { status: "pending_manual_review", schoolEmail, institution: clean(input.institution, 120), submittedAt: new Date().toISOString(), discountActive: false }; return account.student; }
 export function updateBusiness(account, input = {}) { const company = clean(input.company, 120); const previousStatus = account.business?.status; account.business = { ...account.business, company, role: clean(input.role, 80), recurringCadence: clean(input.recurringCadence, 40), status: previousStatus === "approved" ? "approved" : company ? "pending_review" : "not_submitted" }; return account.business; }
@@ -59,7 +66,16 @@ export function saveEvent(account, input = {}) { const event = { id: `evt_${rand
 export function removeEvent(account, id) { const before = account.events.length; account.events = account.events.filter((row) => row.id !== id); return before !== account.events.length; }
 export function enrollRewards(account, consent) { if (!benefitsConfig.loyalty.enabled) fail("Rewards are not active yet.", "rewards_inactive", 409); if (consent !== true) fail("Rewards consent is required.", "rewards_consent_required", 422); account.rewards.enrolled = true; account.rewards.consentAt = new Date().toISOString(); return account.rewards; }
 export function attachOrder(account, order) { if (!account || !order) return; account.orderIds = [...new Set([order.id, ...account.orderIds])]; }
-export function creditCompletedOrder(order) { const account = order?.accountId ? accounts.get(order.accountId) : null; return account ? creditOrderRewards(account, order) : { credited: false, reason: "account_not_found" }; }
+export function creditCompletedOrder(order) {
+  const account = order?.accountId ? accounts.get(order.accountId) : null;
+  if (!account) return { credited: false, reason: "account_not_found" };
+  if (benefitsConfig.loyalty.enabled && benefitsConfig.loyalty.autoEnrollOnAccountCreation && !account.rewards.enrolled) {
+    account.rewards.enrolled = true;
+    account.rewards.consentAt ||= new Date().toISOString();
+    account.rewards.enrollmentSource ||= "automatic_policy";
+  }
+  return creditOrderRewards(account, order);
+}
 export function reverseCompletedOrderRewards(order, reason = "Order refund or reversal") { const account = order?.accountId ? accounts.get(order.accountId) : null; return account ? reverseOrderRewards(account, order, reason) : { reversed: false, reason: "account_not_found" }; }
 export function exportAccount(account, orders) { return { exportedAt: new Date().toISOString(), account: publicAccount(account), ...accountCollections(account), orders }; }
 export function deleteAccount(account, password) { authenticate(account.email, password); accounts.delete(account.id); byEmail.delete(account.email); for (const [token, session] of sessions) if (session.accountId === account.id) sessions.delete(token); }
