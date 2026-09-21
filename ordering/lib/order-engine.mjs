@@ -1,5 +1,5 @@
 import { builder, builderOptions, builderStepById, config, modifierById, productById } from "./catalog-store.mjs";
-import { combineDiscounts } from "./promotion-engine.mjs";
+import { combineCheckoutDiscounts } from "./promotion-engine.mjs";
 
 const cents = (value) => Math.round(Number(value || 0) * 100);
 const dollars = (value) => Number((Number(value || 0) / 100).toFixed(2));
@@ -213,12 +213,23 @@ export function quoteCart(request = {}, pricingContext = {}) {
     if (promoCode === promo.testCode) promoDiscount = Math.min(Math.round(subtotal * promo.percentOff / 100), cents(promo.maximumDiscount));
     else errors.push({ code: "promo_invalid", message: "That promo code is not valid in the ordering preview." });
   }
-  const discounts = combineDiscounts({
+  const requestedRewardGrantId = cleanText(request.rewardGrantId, 120);
+  if (requestedRewardGrantId && !pricingContext.rewardGrant) {
+    errors.push({ code: "reward_grant_invalid", message: "That reward is not available for this account." });
+  }
+  const discounts = combineCheckoutDiscounts({
     subtotalCents: subtotal,
+    items,
     promoDiscountCents: promoDiscount,
     benefitSnapshot: pricingContext.benefits || null,
-    stackingPolicy: pricingContext.stackingPolicy || "best_discount"
+    rewardGrant: pricingContext.rewardGrant || null,
+    accountPromoPolicy: pricingContext.accountPromoPolicy || "best_discount",
+    rewardWithAccount: pricingContext.rewardWithAccount !== false,
+    rewardWithPromo: pricingContext.rewardWithPromo === true
   });
+  if (requestedRewardGrantId && pricingContext.rewardGrant && !discounts.rewardDetails.applicable) {
+    errors.push({ code: "reward_not_applicable", message: "That reward does not apply to the items in this bag." });
+  }
   const discount = discounts.totalDiscountCents;
   const tipPercent = Number(request.tipPercent || 0);
   if (!config.pricing.tips.allowedPercentages.includes(tipPercent)) errors.push({ code: "tip_invalid", message: "Choose an available tip percentage." });
@@ -245,9 +256,16 @@ export function quoteCart(request = {}, pricingContext = {}) {
       applied: discounts.applied.includes("account"),
       percentOff: discounts.accountPercentOff
     },
+    rewardBenefit: requestedRewardGrantId ? {
+      grantId: requestedRewardGrantId,
+      applied: discounts.rewardApplied,
+      discount: moneyFields(discounts.rewardDiscountCents),
+      reason: discounts.rewardDetails.reason || null
+    } : null,
     discountBreakdown: {
       promo: moneyFields(discounts.promoDiscountCents),
       account: moneyFields(discounts.accountDiscountCents),
+      reward: moneyFields(discounts.rewardDiscountCents),
       stackingPolicy: discounts.stackingPolicy
     },
     totals: {
