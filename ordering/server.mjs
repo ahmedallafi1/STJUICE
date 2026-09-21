@@ -13,6 +13,7 @@ import { availableRewardGrant, benefitSnapshot, benefitsConfig, consumeRewardGra
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
 import { handleAdminApi } from "../operations/admin-api.mjs";
 import { createCateringRequest, publicCateringReceipt } from "../operations/lib/operations-store.mjs";
+import { publicCommercialSnapshot } from "../operations/lib/commercial-control.mjs";
 
 const packageRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const publicRoots = ["site", "brand", "media", "ops"].map((name) => resolve(packageRoot, name));
@@ -141,7 +142,10 @@ function publicOrder(order) {
     location: config.location,
     pos: order.pos,
     createdAt: order.createdAt,
-    notices: ["Safe test order only. No live payment or live POS transaction occurred.", "Orders are stored in memory and reset when the server restarts."]
+    estimatedReadyAt: order.estimatedReadyAt || null,
+    notices: config.meta.mode === "safe_test"
+      ? ["Online card payment is not live yet.", "Pre-opening order data may reset during deployments."]
+      : []
   };
 }
 
@@ -196,12 +200,33 @@ function adminSetOrderStatus(orderId, requestedStatus) {
   return adminOrderView(order);
 }
 
-function scheduleValid(service, schedule) {
-  if (schedule === "asap") return ["pickup", "delivery", "dine_in"].includes(service);
+function localDateText(now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: config.meta.timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(now);
+  const get = (type) => parts.find((part) => part.type === type)?.value;
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+function scheduleResolution(service, schedule, requiredLeadMinutes = 0, now = new Date()) {
+  if (schedule === "asap") {
+    const date = localDateText(now);
+    const result = generateSlots(service, date, now, requiredLeadMinutes);
+    return {
+      valid: result.valid && result.slots.length > 0,
+      estimatedReadyAt: result.slots[0]?.value || null
+    };
+  }
   const value = String(schedule || "");
   const date = value.slice(0, 10);
-  const result = generateSlots(service, date);
-  return result.valid && result.slots.some((slot) => slot.value === value);
+  const result = generateSlots(service, date, now, requiredLeadMinutes);
+  return {
+    valid: result.valid && result.slots.some((slot) => slot.value === value),
+    estimatedReadyAt: value || null
+  };
 }
 
 function canReadOrder(request, url, order) {
@@ -230,6 +255,7 @@ async function api(request, response, url) {
   if (request.method === "GET" && url.pathname === "/api/health") return json(response, 200, { ok: true, mode: config.meta.mode, payment: "token_only_test", storage: config.orders.storage, accounts: "memory_only_test" });
   if (request.method === "GET" && url.pathname === "/api/launch-readiness") return json(response, 200, getLaunchReadiness());
   if (request.method === "GET" && url.pathname === "/api/config") return json(response, 200, publicConfig());
+  if (request.method === "GET" && url.pathname === "/api/catalog-status") return json(response, 200, publicCommercialSnapshot());
   if (request.method === "POST" && url.pathname === "/api/catering/requests") {
     const row = createCateringRequest(await bodyJson(request));
     return json(response, 201, { request: publicCateringReceipt(row) });
@@ -286,7 +312,8 @@ async function api(request, response, url) {
     const customerResult = validCustomer(input.customer);
     if (!customerResult.valid) return json(response, 422, { valid: false, errors: customerResult.errors });
     if (input.allergenAcknowledged !== true) return json(response, 422, { valid: false, errors: [{ code: "allergen_acknowledgement_required", field: "allergenAcknowledged", message: "Review and acknowledge the allergen notice." }] });
-    if (!scheduleValid(quote.service, input.schedule)) return json(response, 422, { valid: false, errors: [{ code: "schedule_invalid", field: "schedule", message: "Choose an available service time." }] });
+    const schedule = scheduleResolution(quote.service, input.schedule, quote.fulfillment?.requiredLeadMinutes || 0);
+    if (!schedule.valid) return json(response, 422, { valid: false, errors: [{ code: "schedule_invalid", field: "schedule", message: "The store cannot complete this order within today's operating window. Try again during open hours." }] });
     if (quote.service === "delivery" && !deliveryChecks.has(input.deliveryCheckToken)) return json(response, 422, { valid: false, errors: [{ code: "delivery_check_required", message: "Validate the delivery address first." }] });
     const paymentMethod = input.paymentMethod === "cash" ? "cash" : "card";
     if (quote.service === "delivery" && paymentMethod === "cash") return json(response, 422, { valid: false, errors: [{ code: "cash_not_available_for_delivery", field: "paymentMethod", message: "Cash is not available for delivery orders." }] });
@@ -313,7 +340,8 @@ async function api(request, response, url) {
         : { method: "card", provider: payment.intent.provider, status: "captured_test", tokenLast8: payment.intent.token.slice(-8) },
       mode: config.meta.mode,
       trackingToken: randomBytes(24).toString("base64url"),
-      createdAt
+      createdAt,
+      estimatedReadyAt: schedule.estimatedReadyAt
     };
     if (signedIn) order.accountId = signedIn.account.id;
     order.pos = sendToTestPos(order);
@@ -369,7 +397,7 @@ export async function handleNodeRequest(request, response) {
     if (url.pathname.startsWith("/api/")) await api(request, response, url);
     else staticFile(request, response, url);
   } catch (error) {
-    json(response, error.status || 500, { error: { code: error.code || "server_error", message: error.status ? error.message : "The safe test server could not complete the request." } });
+    json(response, error.status || 500, { error: { code: error.code || "server_error", message: error.status ? error.message : "The ordering service could not complete the request." } });
   }
 }
 
