@@ -11,6 +11,7 @@ import { benefitsConfig } from "../accounts/lib/benefits-engine.mjs";
 import { catalog } from "../ordering/lib/catalog-store.mjs";
 import { adminCommercialSnapshot, adminUpdateBoxState, adminUpdateDropState, adminUpdateProductState } from "./lib/commercial-control.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
+import { integrationStatus } from "../integrations/provider-status.mjs";
 import {
   adminCateringSnapshot,
   adminUpdateCateringRequest,
@@ -217,6 +218,11 @@ export async function handleAdminApi({
 
     if (request.method === "GET" && url.pathname === "/api/admin/readiness") {
       json(response, 200, getLaunchReadiness());
+      return true;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/admin/integrations") {
+      json(response, 200, { integrations: integrationStatus() });
       return true;
     }
 
