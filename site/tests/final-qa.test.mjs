@@ -16,7 +16,8 @@ assert.match(styles, /\.app-loader\s*\{[^}]*display:\s*none\s*!important/s, "Loa
 for (const marker of ["<title>", 'name="description"', 'name="robots"', 'property="og:title"', 'name="twitter:card"', 'rel="manifest"']) {
   assert.ok(index.includes(marker), `index.html must include ${marker}`);
 }
-assert.ok(index.includes("noindex, nofollow"), "Pre-launch prototype must not be indexed");
+assert.ok(index.includes("noindex, nofollow"), "Pre-launch site must not be indexed");
+assert.ok(index.includes('<base href="/site/" />'), "Storefront must declare a stable base path for direct routes");
 assert.ok(existsSync(resolve(siteRoot, "robots.txt")), "robots.txt must exist");
 assert.ok(read("site/robots.txt").includes("Disallow: /"), "Pre-launch robots must block indexing");
 assert.doesNotThrow(() => json("site/site.webmanifest"), "Web manifest must be valid JSON");
