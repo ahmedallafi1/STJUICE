@@ -65,6 +65,13 @@ function chicagoParts(now = new Date()) {
   return { year: get("year"), month: get("month"), day: get("day"), hour: get("hour"), minute: get("minute") };
 }
 
+function validDateText(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+  if (!match) return false;
+  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12));
+  return date.toISOString().slice(0, 10) === value;
+}
+
 function pseudoLocalMs(dateText, timeText = "00:00") {
   const [year, month, day] = String(dateText).split("-").map(Number);
   const [hour, minute] = String(timeText).split(":").map(Number);
@@ -162,7 +169,7 @@ export function createCateringRequest(input = {}, now = new Date(), accountConte
   if (contactName.length < 2) fail("Enter the contact name.", "catering_contact_required", 422, "contactName");
   if (!validEmail(email)) fail("Enter a valid email.", "catering_email_invalid", 422, "email");
   if (phone.replace(/\D/g, "").length < 7) fail("Enter a valid phone number.", "catering_phone_invalid", 422, "phone");
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(eventDate) || Number.isNaN(pseudoLocalMs(eventDate))) fail("Choose a valid event date.", "catering_date_invalid", 422, "eventDate");
+  if (!validDateText(eventDate)) fail("Choose a valid event date.", "catering_date_invalid", 422, "eventDate");
   if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(serviceTime)) fail("Choose a valid service time.", "catering_time_invalid", 422, "serviceTime");
   if (pseudoLocalMs(eventDate, serviceTime) <= localNowPseudoMs(now)) fail("Catering date and time must be in the future.", "catering_date_past", 422, "eventDate");
   if (!Number.isInteger(guestCount) || guestCount < 1 || guestCount > 500) fail("Guest count must be between 1 and 500.", "catering_guest_count_invalid", 422, "guestCount");
