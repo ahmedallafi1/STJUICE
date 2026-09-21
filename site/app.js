@@ -406,7 +406,7 @@ async function loadOrder(orderId) {
     }
   }
   catch (error) {
-    state.order = { id: orderId, orderNumber: "Order preview unavailable", status: "canceled", statusHistory: [], service: "pickup", schedule: "—", customer: { name: "Guest", email: "—", phone: "—" }, items: [], totals: { subtotal: { amount: 0 }, discount: { amount: 0 }, tax: { amount: 0 }, deliveryFee: { amount: 0 }, serviceFee: { amount: 0 }, tip: { amount: 0, percent: 0 }, total: { amount: 0 } }, pos: { reference: "—", adapter: "—", status: errorMessage(error) } };
+    state.order = { id: orderId, orderNumber: "Order unavailable", status: "canceled", statusHistory: [], service: "pickup", schedule: "—", customer: { name: "Guest", email: "—", phone: "—" }, items: [], totals: { subtotal: { amount: 0 }, discount: { amount: 0 }, tax: { amount: 0 }, deliveryFee: { amount: 0 }, serviceFee: { amount: 0 }, tip: { amount: 0, percent: 0 }, total: { amount: 0 } }, pos: { reference: "—", adapter: "—", status: errorMessage(error) } };
   } finally { state.orderLoading = false; render({ preserveScroll: true }); }
 }
 
@@ -833,7 +833,7 @@ document.addEventListener("click", async (event) => {
     state.checkout.error = "";
     try {
       state.checkout.deliveryCheck = await orderingApi.validateDelivery(state.checkout.address);
-      toast("Address reviewed", "Final delivery availability and fees will be confirmed when live ordering launches.");
+      toast("Address reviewed", state.runtimeConfig?.mode === "production" ? "Delivery eligibility has been checked." : "Final delivery availability and fees will be confirmed before live ordering opens.");
       render({ preserveScroll: true });
     } catch (error) { state.checkout.error = errorMessage(error); render({ preserveScroll: true }); }
   } else if (action === "refresh-quote") {
@@ -888,7 +888,7 @@ document.addEventListener("click", async (event) => {
       writeStorage(storageKeys.cart, []);
       state.checkout = freshCheckout();
       navigate(`/order/${result.order.id}`);
-      toast("Order preview created", result.order.orderNumber);
+      toast(result.order.mode === "production" ? "Order placed" : "Order preview created", result.order.orderNumber);
     } catch (error) {
       state.checkout.busy = false;
       state.checkout.error = errorMessage(error);
