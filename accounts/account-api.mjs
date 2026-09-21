@@ -32,7 +32,13 @@ import { cancelReservation, createReservationRequest, listReservations } from ".
 function publicBenefitsConfig() {
   return {
     status: benefitsConfig.meta.status,
-    loyalty: { enabled: benefitsConfig.loyalty.enabled },
+    loyalty: {
+      enabled: benefitsConfig.loyalty.enabled,
+      pointsPerDollar: benefitsConfig.loyalty.enabled ? benefitsConfig.loyalty.pointsPerDollar : null,
+      redemptions: benefitsConfig.loyalty.enabled
+        ? (benefitsConfig.loyalty.redemptions || []).map(({ id, points, type, value }) => ({ id, points, type, value: value ?? null }))
+        : []
+    },
     accountDiscounts: Object.fromEntries(Object.entries(benefitsConfig.accountDiscounts).map(([key, value]) => [key, {
       enabled: value.enabled,
       requiresVerification: value.requiresVerification
@@ -143,7 +149,7 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
 
     if (request.method === "GET" && url.pathname === "/api/account/dashboard") {
       const { account } = requireAccount(request);
-      json(response, 200, { account: publicAccount(account), ...accountCollections(account), orders: accountOrders(account, getOrder, publicOrder), benefits: publicBenefitSnapshot(account), config: publicConfig() });
+      json(response, 200, { account: publicAccount(account), ...accountCollections(account), orders: accountOrders(account, getOrder, publicOrder), benefits: publicBenefitSnapshot(account), rewardsWallet: rewardWallet(account), config: publicConfig() });
       return true;
     }
 
