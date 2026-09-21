@@ -229,6 +229,59 @@ function routeTitle(path) {
   return `${labels[path] || titleCase(path.split("/").pop() || "Page")} — ST. JUICE`;
 }
 
+function routeDescription(route) {
+  if (route.path.startsWith("/product/")) {
+    const product = data.productById.get(decodeURIComponent(route.path.split("/")[2] || ""));
+    if (product?.description) return product.description;
+  }
+  const descriptions = {
+    "/": data.copy.global.shortDescription,
+    "/menu": data.copy.menu.intro,
+    "/drops": data.copy.drops.intro,
+    "/boxes": data.copy.boxes.intro,
+    "/catering": data.copy.catering.intro,
+    "/rewards": data.copy.rewards.intro,
+    "/about": data.copy.about.body,
+    "/location": data.copy.home.location.body || data.copy.home.location.service
+  };
+  return descriptions[route.path] || data.copy.global.shortDescription;
+}
+
+function updateRouteMeta(route) {
+  const title = routeTitle(route.path);
+  const description = routeDescription(route);
+  document.title = title;
+
+  const descriptionMeta = document.querySelector('meta[name="description"]');
+  if (descriptionMeta) descriptionMeta.setAttribute("content", description);
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute("content", title);
+  const ogDescription = document.querySelector('meta[property="og:description"]');
+  if (ogDescription) ogDescription.setAttribute("content", description);
+
+  const robots = document.querySelector('meta[name="robots"]')?.getAttribute("content") || "";
+  if (!robots.toLowerCase().includes("index") || robots.toLowerCase().includes("noindex")) return;
+
+  const canonicalPath = route.path === "/" ? "/" : route.path;
+  const canonicalUrl = new URL(canonicalPath, window.location.origin).href;
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.setAttribute("rel", "canonical");
+    canonical.setAttribute("data-stj-canonical", "");
+    document.head.append(canonical);
+  }
+  canonical.setAttribute("href", canonicalUrl);
+
+  let ogUrl = document.querySelector('meta[property="og:url"]');
+  if (!ogUrl) {
+    ogUrl = document.createElement("meta");
+    ogUrl.setAttribute("property", "og:url");
+    document.head.append(ogUrl);
+  }
+  ogUrl.setAttribute("content", canonicalUrl);
+}
+
 function updateNavigation(path) {
   document.querySelectorAll(".desktop-nav a, .mobile-nav a").forEach((link) => {
     const target = link.getAttribute("href")?.replace("#", "");
@@ -267,7 +320,7 @@ function render(options = {}) {
   hydrateIcons(elements.app);
   updateShell();
   updateNavigation(route.path);
-  document.title = routeTitle(route.path);
+  updateRouteMeta(route);
 
   if (route.path === "/checkout" && !state.checkout.preparing && !state.checkout.autoPrepared) {
     queueMicrotask(() => prepareCheckout());
