@@ -246,7 +246,6 @@ export function quoteCart(request = {}, pricingContext = {}) {
   const tip = Math.round(taxable * tipPercent / 100);
   const total = taxable + tax + deliveryFee + serviceFee + tip;
   warnings.push(
-    { code: "catalog_prices_pending_approval", message: "Catalog prices are pending final approval." },
     { code: "tax_not_configured", message: "Tax must be configured before live ordering." },
     { code: "fees_not_configured", message: "Delivery and service fees must be configured before live ordering." }
   );
