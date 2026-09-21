@@ -32,6 +32,32 @@ const forgedBenefit = quoteCart({
 assert.equal(forgedBenefit.totals.discount.cents, 0, "Client-supplied benefit data must never affect authoritative pricing");
 assert.equal(forgedBenefit.accountBenefit.applied, false);
 
+const rewardGrantQuote = quoteCart(
+  { service: "pickup", items: [{ ...item, quantity: 1 }], rewardGrantId: "grant_test", tipPercent: 0 },
+  {
+    benefits: { discount: { activePercentOff: 10 } },
+    rewardGrant: { id: "grant_test", status: "available", rewardType: "fixed_discount", value: 5 },
+    accountPromoPolicy: "best_discount",
+    rewardWithAccount: true,
+    rewardWithPromo: false
+  }
+);
+assert.equal(rewardGrantQuote.valid, true);
+assert.equal(rewardGrantQuote.rewardBenefit.applied, true);
+assert.equal(rewardGrantQuote.discountBreakdown.account.cents, 110);
+assert.equal(rewardGrantQuote.discountBreakdown.reward.cents, 500);
+assert.equal(rewardGrantQuote.totals.discount.cents, 610);
+assert.equal(rewardGrantQuote.totals.total.cents, 485);
+
+const forgedGrant = quoteCart({
+  service: "pickup",
+  items: [{ ...item, quantity: 1 }],
+  rewardGrantId: "client_forged_grant",
+  tipPercent: 0
+});
+assert.equal(forgedGrant.valid, false, "Client reward IDs require a server-resolved account grant");
+assert.ok(forgedGrant.errors.some((entry) => entry.code === "reward_grant_invalid"));
+
 const invalid = quoteCart({ service: "pickup", items: [{ kind: "catalog", productId: "fake", sizeId: "tiny", quantity: 1 }] });
 assert.equal(invalid.valid, false);
 assert.ok(invalid.errors.some((entry) => entry.code === "product_not_found"));
