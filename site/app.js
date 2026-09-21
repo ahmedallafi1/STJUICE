@@ -138,6 +138,12 @@ function applyAccountSession(payload) {
     state.account.reservationConfig = null;
     state.account.rewardsWallet = { points: 0, lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
     state.account.rewardsConfig = null;
+    if (state.checkout) {
+      state.checkout.rewardGrantId = "";
+      state.checkout.quote = null;
+      state.checkout.autoPrepared = false;
+      state.checkout.idempotencyKey = "";
+    }
     return;
   }
   const account = payload.account;
