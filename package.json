@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node ordering/server.mjs",
     "build": "node scripts/build-static.mjs",
-    "test": "node database/tests/schema-contract.test.mjs && node accounts/tests/phase2-benefits-reservations.test.mjs && node operations/tests/operations-api.test.mjs && node operations/tests/commercial-controls.test.mjs && node ops/tests/ops-ui-contract.test.mjs && cd site && npm test && cd .. && node launch/tests/launch-readiness.test.mjs && node launch/tests/vercel-handler.test.mjs && node launch/tests/vercel-readiness.test.mjs",
+    "test": "node database/tests/schema-contract.test.mjs && node accounts/tests/phase2-benefits-reservations.test.mjs && node operations/tests/operations-api.test.mjs && node operations/tests/commercial-controls.test.mjs && node ops/tests/ops-ui-contract.test.mjs && node ordering/tests/provider-boundaries.test.mjs && node ordering/tests/direct-routes.test.mjs && node scripts/run-site-tests.mjs && node launch/tests/launch-readiness.test.mjs && node launch/tests/vercel-handler.test.mjs && node launch/tests/vercel-readiness.test.mjs",
     "readiness": "node launch/readiness.mjs",
     "validate:vercel": "node launch/tests/vercel-readiness.test.mjs",
     "audit": "node scripts/release-audit.mjs"
