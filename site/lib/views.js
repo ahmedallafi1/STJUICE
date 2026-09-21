@@ -767,7 +767,7 @@ function renderCatering({ data, state }) {
           </div>
         </div>
         <form class="form-card" id="catering-request" novalidate>
-          ${state.cateringSuccess ? `<div class="success-panel" role="status"><h3>Request received.</h3><p>${escapeHtml(data.copy.catering.success.replace("[CUSTOMER EMAIL]", state.cateringEmail || "your email"))}</p></div>` : `
+          ${state.cateringSuccess ? `<div class="success-panel" role="status"><h3>Request received.</h3><p>${escapeHtml(data.copy.catering.success.replace("[CUSTOMER EMAIL]", state.cateringEmail || "your email"))}</p>${state.cateringReference ? `<p><strong>Reference:</strong> ${escapeHtml(state.cateringReference)}</p>` : ""}</div>` : `
             <div class="form-grid">
               <label class="form-field"><span>Contact name *</span><input class="field" name="contactName" autocomplete="name" required /></label>
               <label class="form-field"><span>Organization</span><input class="field" name="organization" autocomplete="organization" /></label>
