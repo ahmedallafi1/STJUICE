@@ -33,7 +33,12 @@ export function escapeHtml(value = "") {
 }
 
 export function routeInfo() {
-  const raw = window.location.hash.slice(1) || "/";
+  const hashRaw = window.location.hash.slice(1);
+  const raw = hashRaw || (() => {
+    const pathname = window.location.pathname || "/";
+    if (pathname === "/site" || pathname === "/site/") return "/";
+    return pathname.startsWith("/site/") ? pathname.slice(5) || "/" : pathname;
+  })();
   const [pathPart, queryPart = ""] = raw.split("?");
   const normalized = `/${pathPart}`.replace(/\/{2,}/g, "/").replace(/\/$/, "") || "/";
   return { path: normalized, params: new URLSearchParams(queryPart) };
