@@ -124,6 +124,22 @@ async function renderCatalog() {
   els.panel.innerHTML = `
     <div class="section-title"><div><p class="eyebrow">CATALOG & REWARDS</p><h2>Commercial controls.</h2><p class="muted">Runtime editing: ${editableAtRuntime ? "enabled" : "not yet"} · ${esc(storage)} · changes reset with preview-memory restarts.</p></div></div>
     <div class="metrics">${metric("Products", products.length)}${metric("Loyalty", rewards.config.loyalty.enabled ? "Active" : "Disabled")}${metric("Student benefit", rewards.config.accountDiscounts.student.enabled ? "Active" : "Disabled")}${metric("Business benefit", rewards.config.accountDiscounts.business.enabled ? "Active" : "Disabled")}${metric("Birthday", rewards.config.birthday.enabled ? "Active" : "Disabled")}</div>
+    <div class="section-title"><div><p class="eyebrow">MEMBER PROGRAM</p><h2>Rewards & account benefits.</h2><p class="muted">One policy controls earning, Student/Business discounts and birthday eligibility across the whole site.</p></div></div>
+    <article class="panel-card">
+      <form data-benefits-policy-form>
+        <div class="grid">
+          <label>Loyalty status<select name="loyaltyEnabled"><option value="true" ${rewards.config.loyalty.enabled ? "selected" : ""}>Active</option><option value="false" ${!rewards.config.loyalty.enabled ? "selected" : ""}>Paused</option></select></label>
+          <label>Points per $1<input name="pointsPerDollar" type="number" min="0" max="100" step="1" value="${Number(rewards.config.loyalty.pointsPerDollar || 0)}"></label>
+          <label>Student discount %<input name="studentPercentOff" type="number" min="0" max="50" step=".5" value="${Number(rewards.config.accountDiscounts.student.percentOff || 0)}"></label>
+          <label>Business discount %<input name="businessPercentOff" type="number" min="0" max="50" step=".5" value="${Number(rewards.config.accountDiscounts.business.percentOff || 0)}"></label>
+          <label>Birthday status<select name="birthdayEnabled"><option value="true" ${rewards.config.birthday.enabled ? "selected" : ""}>Active</option><option value="false" ${!rewards.config.birthday.enabled ? "selected" : ""}>Paused</option></select></label>
+          <label>Birthday window before<input name="windowBeforeDays" type="number" min="0" max="365" value="${Number(rewards.config.birthday.windowBeforeDays || 0)}"></label>
+          <label>Birthday window after<input name="windowAfterDays" type="number" min="0" max="365" value="${Number(rewards.config.birthday.windowAfterDays || 0)}"></label>
+          <label>Minimum account age<input name="minimumAccountAgeDays" type="number" min="0" max="365" value="${Number(rewards.config.birthday.minimumAccountAgeDays || 0)}"></label>
+        </div>
+        <button class="button" type="submit" style="margin-top:1rem">Save member policy</button>
+      </form>
+    </article>
 
     <div class="section-title"><div><p class="eyebrow">PRODUCT AVAILABILITY</p><h2>Pause or sell out items instantly.</h2></div></div>
     <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Sizes</th><th>Status</th></tr></thead><tbody>
@@ -242,7 +258,8 @@ els.panel.addEventListener("submit", async (event) => {
   const productStateForm = event.target.closest("[data-product-state-form]");
   const dropStateForm = event.target.closest("[data-drop-state-form]");
   const boxStateForm = event.target.closest("[data-box-state-form]");
-  if (!orderForm && !cateringForm && !productStateForm && !dropStateForm && !boxStateForm) return;
+  const benefitsPolicyForm = event.target.closest("[data-benefits-policy-form]");
+  if (!orderForm && !cateringForm && !productStateForm && !dropStateForm && !boxStateForm && !benefitsPolicyForm) return;
   event.preventDefault();
   try {
     if (orderForm) {
@@ -281,6 +298,28 @@ els.panel.addEventListener("submit", async (event) => {
       const leadTime = minutes >= 60 && minutes % 60 === 0 ? { type: "scheduled", minimumHours: minutes / 60 } : { type: "capacity_based", minimumMinutes: minutes };
       await api(`commercial/boxes/${encodeURIComponent(boxStateForm.dataset.boxStateForm)}`, { method: "PATCH", body: JSON.stringify({ status: data.get("status"), leadTime }) });
       flash("Party box controls updated."); await renderTab();
+    } else if (benefitsPolicyForm) {
+      const data = new FormData(benefitsPolicyForm);
+      await api("rewards", {
+        method: "PATCH",
+        body: JSON.stringify({
+          loyalty: {
+            enabled: data.get("loyaltyEnabled") === "true",
+            pointsPerDollar: Number(data.get("pointsPerDollar"))
+          },
+          accountDiscounts: {
+            student: { enabled: true, percentOff: Number(data.get("studentPercentOff")) },
+            business: { enabled: true, percentOff: Number(data.get("businessPercentOff")) }
+          },
+          birthday: {
+            enabled: data.get("birthdayEnabled") === "true",
+            windowBeforeDays: Number(data.get("windowBeforeDays")),
+            windowAfterDays: Number(data.get("windowAfterDays")),
+            minimumAccountAgeDays: Number(data.get("minimumAccountAgeDays"))
+          }
+        })
+      });
+      flash("Member program policy updated."); await renderTab();
     }
   } catch (error) { flash(error.message, "error"); }
 });
