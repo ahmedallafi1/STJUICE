@@ -95,7 +95,7 @@ function modeRibbon(state) {
 function renderHome({ data, state }) {
   const copy = data.copy;
   const homeDropIds = Array.isArray(data.runtimeCommercial?.drops)
-    ? data.runtimeCommercial.drops.filter((row) => ["active", "sold_out"].includes(row.status)).sort((a, b) => Number(a.position || 0) - Number(b.position || 0)).map((row) => row.productId)
+    ? data.runtimeCommercial.drops.filter((row) => ["active", "low_availability", "sold_out"].includes(row.status)).sort((a, b) => Number(a.position || 0) - Number(b.position || 0)).map((row) => row.productId)
     : copy.drops.activeProductIds;
   const drops = homeDropIds.map((id) => data.productById.get(id)).filter(Boolean);
   const featured = [...data.catalog.products]
@@ -687,39 +687,64 @@ function renderBuilder({ data, state }) {
 
 function renderDrops({ data }) {
   const runtimeDrops = Array.isArray(data.runtimeCommercial?.drops) ? data.runtimeCommercial.drops : [];
-  const activeIds = runtimeDrops.length
-    ? runtimeDrops.filter((row) => ["active", "sold_out"].includes(row.status)).sort((a, b) => Number(a.position || 0) - Number(b.position || 0)).map((row) => row.productId)
-    : data.copy.drops.activeProductIds;
-  const active = activeIds.map((id) => data.productById.get(id)).filter(Boolean);
-  const [lead, ...rest] = active;
+  const ordered = [...runtimeDrops].sort((a, b) => Number(a.position || 0) - Number(b.position || 0));
+  const liveRows = ordered.filter((row) => ["active", "low_availability", "sold_out"].includes(row.status));
+  const scheduledRows = ordered.filter((row) => row.status === "scheduled");
+  const archivedRows = ordered.filter((row) => row.status === "archived");
+
+  const live = liveRows.map((row) => ({ row, product: data.productById.get(row.productId) })).filter((item) => item.product);
+  const [leadEntry, ...restEntries] = live;
+  const labelFor = (status) => status === "low_availability" ? "Low availability" : status === "sold_out" ? "Sold out" : "Live now";
+
   return `
     ${pageHero("NEW DROPS", data.copy.drops.title, "Limited releases, seasonal ideas and the newest reasons to come back.")}
     <section class="section section--cream">
       <div class="container">
-        ${lead ? `
+        ${leadEntry ? (() => {
+          const { product, row } = leadEntry;
+          const unavailable = row.status === "sold_out";
+          return `
           <article class="drop-hero">
-            <div class="drop-hero__media"><img src="${productImage(lead)}" alt="${escapeHtml(lead.name)}" width="960" height="960" /></div>
+            <div class="drop-hero__media"><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="960" height="960" /></div>
             <div class="drop-hero__copy">
               <p class="eyebrow">FEATURED DROP</p>
-              <h2>${escapeHtml(lead.name)}</h2>
-              <p class="lede">${escapeHtml(lead.description)}</p>
-              <div class="drop-hero__meta"><span>Limited release</span><span>${lead.runtimeStatus === "sold_out" ? "Sold out today" : "Available while offered"}</span></div>
-              <a class="button ${lead.runtimeStatus === "sold_out" ? "is-disabled" : ""}" ${lead.runtimeStatus === "sold_out" ? 'aria-disabled="true" tabindex="-1"' : `href="/product/${escapeHtml(lead.id)}"`}>${lead.runtimeStatus === "sold_out" ? "Sold out" : "Order the drop"}</a>
+              <h2>${escapeHtml(product.name)}</h2>
+              <p class="lede">${escapeHtml(product.description)}</p>
+              <div class="drop-hero__meta"><span>${escapeHtml(labelFor(row.status))}</span><span>${row.endsAt ? `Through ${escapeHtml(row.endsAt)}` : "Limited release"}</span></div>
+              <a class="button ${unavailable ? "is-disabled" : ""}" ${unavailable ? 'aria-disabled="true" tabindex="-1"' : `href="/product/${escapeHtml(product.id)}"`}>${unavailable ? "Sold out" : "Order the drop"}</a>
             </div>
-          </article>` : ""}
-        ${rest.length ? `
+          </article>`;
+        })() : `<div class="empty-state"><h3>No live drops right now.</h3><p>Check what is coming next below or browse the full menu.</p></div>`}
+
+        ${restEntries.length ? `
           <div class="section-heading drop-heading"><div><p class="eyebrow">MORE TO TRY</p><h2>Still fresh.</h2></div></div>
           <div class="drop-grid">
-            ${rest.map((product) => `
+            ${restEntries.map(({ product, row }) => `
               <article class="drop-card">
-                <a class="drop-card__media" href="/product/${escapeHtml(product.id)}"><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="720" /></a>
-                <div class="drop-card__body"><p class="eyebrow">CURRENT DROP</p><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><a class="text-link" href="/product/${escapeHtml(product.id)}">View drop ${icon("arrow")}</a></div>
+                <a class="drop-card__media ${row.status === "sold_out" ? "is-disabled" : ""}" ${row.status === "sold_out" ? 'aria-disabled="true" tabindex="-1"' : `href="/product/${escapeHtml(product.id)}"`}><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="720" /></a>
+                <div class="drop-card__body"><p class="eyebrow">${escapeHtml(labelFor(row.status))}</p><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p>${row.status === "sold_out" ? `<span class="status-pill">Sold out</span>` : `<a class="text-link" href="/product/${escapeHtml(product.id)}">View drop ${icon("arrow")}</a>`}</div>
               </article>`).join("")}
           </div>` : ""}
+
+        ${scheduledRows.length ? `
+          <div class="section-heading drop-heading"><div><p class="eyebrow">COMING SOON</p><h2>Next drops.</h2></div></div>
+          <div class="drop-grid">
+            ${scheduledRows.map((row) => {
+              const product = data.productById.get(row.productId);
+              if (!product) return "";
+              return `<article class="drop-card"><div class="drop-card__media"><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="720" /></div><div class="drop-card__body"><p class="eyebrow">COMING SOON</p><h3>${escapeHtml(product.name)}</h3><p>${row.startsAt ? `Starts ${escapeHtml(row.startsAt)}.` : "Release date coming soon."}</p></div></article>`;
+            }).join("")}
+          </div>` : ""}
+
         <div class="drop-archive">
-          <div><p class="eyebrow">DROP ARCHIVE</p><h2>Past favorites make room for what is next.</h2><p>When a release ends, it moves here instead of disappearing from the story.</p></div>
+          <div><p class="eyebrow">DROP ARCHIVE</p><h2>Past releases.</h2><p>Ended drops stay in the archive instead of disappearing from the story.</p></div>
           <a class="button button--outline" href="/menu?category=desserts-drops">Shop what is available</a>
         </div>
+        ${archivedRows.length ? `<div class="drop-grid">${archivedRows.map((row) => {
+          const product = data.productById.get(row.productId);
+          if (!product) return "";
+          return `<article class="drop-card"><div class="drop-card__media"><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="720" /></div><div class="drop-card__body"><p class="eyebrow">ENDED</p><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><span class="status-pill">Archive</span></div></article>`;
+        }).join("")}</div>` : `<p class="muted">No archived drops yet.</p>`}
       </div>
     </section>`;
 }
