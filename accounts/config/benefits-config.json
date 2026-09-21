@@ -46,13 +46,15 @@
       "enabled": false,
       "proposalPercentOff": 10,
       "requiresVerification": true,
-      "requiredStatus": "verified"
+      "requiredStatus": "verified",
+      "percentOff": null
     },
     "business": {
       "enabled": false,
       "proposalPercentOff": 8,
       "requiresVerification": true,
-      "requiredStatus": "approved"
+      "requiredStatus": "approved",
+      "percentOff": null
     }
   },
   "birthday": {
@@ -63,7 +65,10 @@
       "minimumAccountAgeDays": 30,
       "rewardType": "free_item_or_discount"
     },
-    "reward": null
+    "reward": null,
+    "windowBeforeDays": null,
+    "windowAfterDays": null,
+    "minimumAccountAgeDays": null
   },
   "reservations": {
     "enabled": true,
