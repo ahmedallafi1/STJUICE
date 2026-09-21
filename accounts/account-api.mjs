@@ -26,7 +26,7 @@ import {
   updateBusiness,
   updateProfile
 } from "./lib/account-store.mjs";
-import { benefitSnapshot, benefitsConfig, rewardLedger } from "./lib/benefits-engine.mjs";
+import { benefitsConfig, claimBirthdayReward, publicBenefitSnapshot, redeemConfiguredReward, rewardWallet } from "./lib/benefits-engine.mjs";
 import { cancelReservation, createReservationRequest, listReservations } from "./lib/reservation-store.mjs";
 
 function publicBenefitsConfig() {
@@ -143,7 +143,7 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
 
     if (request.method === "GET" && url.pathname === "/api/account/dashboard") {
       const { account } = requireAccount(request);
-      json(response, 200, { account: publicAccount(account), ...accountCollections(account), orders: accountOrders(account, getOrder, publicOrder), benefits: benefitSnapshot(account), config: publicConfig() });
+      json(response, 200, { account: publicAccount(account), ...accountCollections(account), orders: accountOrders(account, getOrder, publicOrder), benefits: publicBenefitSnapshot(account), config: publicConfig() });
       return true;
     }
 
@@ -217,13 +217,26 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
 
     if (request.method === "GET" && url.pathname === "/api/account/benefits") {
       const { account } = requireAccount(request);
-      json(response, 200, { benefits: benefitSnapshot(account), config: publicBenefitsConfig() });
+      json(response, 200, { benefits: publicBenefitSnapshot(account), config: publicBenefitsConfig() });
       return true;
     }
 
     if (request.method === "GET" && url.pathname === "/api/account/rewards/ledger") {
       const { account } = requireAccount(request);
-      json(response, 200, { rewards: rewardLedger(account), config: publicBenefitsConfig().loyalty });
+      json(response, 200, { rewards: rewardWallet(account), config: publicBenefitsConfig().loyalty });
+      return true;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/account/rewards/redeem") {
+      const { account } = requireAccount(request, { csrf: true });
+      const input = await bodyJson(request);
+      json(response, 201, redeemConfiguredReward(account, String(input.rewardId || "")));
+      return true;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/account/birthday/claim") {
+      const { account } = requireAccount(request, { csrf: true });
+      json(response, 201, claimBirthdayReward(account));
       return true;
     }
 
