@@ -818,26 +818,49 @@ function renderGiftCards() {
 
 function renderRewards({ state }) {
   const signedIn = Boolean(state.account?.signedIn);
+  const rewardsEnabled = Boolean(state.account?.rewardsConfig?.enabled);
+  const points = Number(state.account?.rewardsWallet?.points || 0);
+  const availableRewards = (state.account?.rewardsWallet?.grants || []).filter((grant) => grant.status === "available").length;
+
+  if (signedIn && rewardsEnabled) {
+    return `
+      ${pageHero("ST. REWARDS", "Your ST. JUICE runs should give something back.", "Track points, unlock rewards and apply available benefits from the same account you order with.")}
+      <section class="section section--cream">
+        <div class="container rewards-preview-grid">
+          <article class="account-panel account-panel--accent">
+            <p class="eyebrow">YOUR WALLET</p>
+            <h2>${points.toLocaleString()} points.</h2>
+            <p>${availableRewards ? `${availableRewards} reward${availableRewards === 1 ? "" : "s"} ready to use.` : "Keep earning on eligible completed orders and your wallet updates automatically."}</p>
+            <a class="button" href="/account">Open wallet</a>
+          </article>
+          <article class="account-panel">
+            <p class="eyebrow">HOW IT WORKS</p>
+            <h2>Earn. Unlock. Use.</h2>
+            <ul class="feature-list">
+              <li>Eligible completed purchases add points to your account</li>
+              <li>Unlocked rewards stay in your wallet until used or expired under the published terms</li>
+              <li>Account discounts and rewards are calculated by the server at checkout</li>
+              <li>Refunds reverse eligible points so the balance stays accurate</li>
+            </ul>
+          </article>
+        </div>
+      </section>`;
+  }
+
   return `
-    ${pageHero("ST. REWARDS", "The more ST. JUICE becomes your spot, the more your account should give back.", "Rewards, account offers and birthday benefits are the next system being connected to member accounts.")}
+    ${pageHero("ST. REWARDS", "Every mood should count.", "Rewards will open with published earning, redemption and eligibility terms.")}
     <section class="section section--cream">
       <div class="container rewards-preview-grid">
         <article class="account-panel account-panel--accent">
           <p class="eyebrow">${signedIn ? "YOUR ACCOUNT" : "MEMBER BENEFITS"}</p>
-          <h2>${signedIn ? "You're ready for rewards." : "Create an account once. Keep the benefits together."}</h2>
-          <p>${signedIn ? "Your signed-in account is already the home for favorites and saved mixes. Points and redeemable rewards will appear here when the loyalty ledger launches." : "Regular, Student and Business members will use the same account for rewards, offers, birthday benefits and saved activity."}</p>
+          <h2>${signedIn ? "Your account is ready for rewards." : "Create one account. Keep everything together."}</h2>
+          <p>${signedIn ? "Favorites, saved mixes and orders already live here. Points and redeemable rewards stay off until the launch rules are approved and published." : "Regular, Student and Business members use the same account for saved activity and eligible benefits as each program opens."}</p>
           <a class="button" href="/account">${signedIn ? "Open account" : "Create account"}</a>
         </article>
         <article class="account-panel">
-          <p class="eyebrow">WHAT'S COMING</p>
-          <h2>Earn. Unlock. Use it when you want.</h2>
-          <ul class="feature-list">
-            <li>Points tied to eligible purchases</li>
-            <li>Rewards that can be redeemed from your account</li>
-            <li>Birthday benefits</li>
-            <li>Account-type offers for verified members</li>
-          </ul>
-          <p class="legal-note">Exact earning rates, redemption values and eligibility rules will be published with the rewards launch.</p>
+          <p class="eyebrow">REWARDS STATUS</p>
+          <h2>Clear rules before earning begins.</h2>
+          <p>Exact point rates, redemption values, birthday benefits and eligibility rules are not advertised until they are approved for customers.</p>
         </article>
       </div>
     </section>`;
