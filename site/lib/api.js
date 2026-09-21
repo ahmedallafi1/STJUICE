@@ -30,6 +30,13 @@ export const accountApi = {
   login: (input) => request("../api/account/login", { method: "POST", body: JSON.stringify(input) }),
   logout: (csrfToken) => request("../api/account/logout", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: "{}" }),
   dashboard: () => request("../api/account/dashboard"),
+  benefits: () => request("../api/account/benefits"),
+  rewardsLedger: () => request("../api/account/rewards/ledger"),
+  reservations: () => request("../api/account/reservations"),
+  createReservation: (input, csrfToken) => request("../api/account/reservations", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(input) }),
+  cancelReservation: (id, csrfToken) => request(`../api/account/reservations/${encodeURIComponent(id)}`, { method: "DELETE", headers: { "X-CSRF-Token": csrfToken } }),
+  requestStudentVerification: (input, csrfToken) => request("../api/account/student-verification", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(input) }),
+  updateBusiness: (input, csrfToken) => request("../api/account/business", { method: "PATCH", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(input) }),
   setFavorite: (productId, active, csrfToken) => request("../api/account/favorites", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify({ productId, active }) }),
   saveMix: (mix, csrfToken) => request("../api/account/mixes", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(mix) })
 };
