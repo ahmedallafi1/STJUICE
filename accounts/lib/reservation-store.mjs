@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { benefitsConfig } from "./benefits-engine.mjs";
+import { adminAccountsSnapshot, adminFindAccount } from "./account-store.mjs";
 
 const fail = (message, code, status = 400, field) => {
   throw Object.assign(new Error(message), { code, status, field });
@@ -61,6 +62,7 @@ export function createReservationRequest(account, input = {}, now = new Date()) 
     partySize,
     organization: clean(input.organization, 120),
     notes: clean(input.notes, 600),
+    resourceId: benefitsConfig.reservations.defaultResourceId || "main-lounge",
     status: "requested",
     createdAt: now.toISOString(),
     updatedAt: now.toISOString()
@@ -77,4 +79,63 @@ export function cancelReservation(account, reservationId, now = new Date()) {
   reservation.status = "canceled";
   reservation.updatedAt = now.toISOString();
   return structuredClone(reservation);
+}
+
+function timeToMinutes(value) {
+  const [hours, minutes] = String(value || "").split(":").map(Number);
+  return hours * 60 + minutes;
+}
+
+function overlaps(a, b, bufferMinutes = 0) {
+  if (a.date !== b.date || a.resourceId !== b.resourceId) return false;
+  const aStart = timeToMinutes(a.startTime);
+  const aEnd = aStart + Number(a.durationMinutes || 0) + bufferMinutes;
+  const bStart = timeToMinutes(b.startTime);
+  const bEnd = bStart + Number(b.durationMinutes || 0) + bufferMinutes;
+  return aStart < bEnd && bStart < aEnd;
+}
+
+export function adminReservationsSnapshot() {
+  const rows = [];
+  for (const account of adminAccountsSnapshot()) {
+    const full = adminFindAccount(account.id);
+    for (const reservation of full?.reservations || []) {
+      rows.push({
+        ...structuredClone(reservation),
+        account: {
+          id: full.id,
+          name: full.name,
+          email: full.email,
+          type: full.type
+        }
+      });
+    }
+  }
+  return rows.sort((a, b) => `${a.date}T${a.startTime}`.localeCompare(`${b.date}T${b.startTime}`));
+}
+
+export function adminUpdateReservationStatus(reservationId, status, { reviewerReference = "" } = {}, now = new Date()) {
+  if (!["confirmed", "declined", "canceled", "requested"].includes(status)) fail("Invalid reservation status.", "reservation_status_invalid", 422);
+  const all = adminReservationsSnapshot();
+  const targetRow = all.find((item) => item.id === reservationId);
+  if (!targetRow) fail("Reservation request not found.", "reservation_not_found", 404);
+  const account = adminFindAccount(targetRow.account.id);
+  const target = account.reservations.find((item) => item.id === reservationId);
+
+  if (status === "confirmed") {
+    const resource = (benefitsConfig.reservations.resources || []).find((item) => item.id === target.resourceId && item.active !== false);
+    if (!resource) fail("Reservation resource is unavailable.", "reservation_resource_unavailable", 409);
+    const buffer = Number(benefitsConfig.reservations.bufferMinutes || 0);
+    const conflicting = all.filter((item) => item.id !== target.id && item.status === "confirmed" && overlaps(target, item, buffer));
+    const used = conflicting.reduce((sum, item) => sum + Number(item.partySize || 0), 0);
+    if (used + Number(target.partySize || 0) > Number(resource.capacity || 0)) {
+      fail("Confirming this reservation would exceed the available seating capacity.", "reservation_capacity_exceeded", 409);
+    }
+  }
+
+  target.status = status;
+  target.updatedAt = now.toISOString();
+  target.reviewedAt = now.toISOString();
+  target.reviewerReference = clean(reviewerReference, 120);
+  return structuredClone(target);
 }
