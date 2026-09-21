@@ -862,27 +862,107 @@ function dashboardContent(mode, data) {
 }
 
 function renderAccount({ data, state }) {
-  state.account ||= { signedIn: false, favorites: [], savedMixes: [], orderHistory: [], points: 0, profile: {}, student: {}, business: {} };
+  state.account ||= { signedIn: false, favorites: [], savedMixes: [], orderHistory: [], reservations: [], points: 0, profile: {}, student: {}, business: {}, benefits: null };
   const account = accountView(state.account);
   if (account.signedIn) {
     const favorites = account.favorites.map((id) => data.productById.get(id)).filter(Boolean);
+    const benefits = account.benefits || {};
+    const discount = benefits.discount || {};
+    const loyalty = benefits.loyalty || {};
+    const birthday = benefits.birthday || {};
+    const reservations = Array.isArray(account.reservations) ? account.reservations : [];
+    const reservationConfig = account.reservationConfig || { partySize: { min: 2, max: 40 }, durationMinutes: { min: 30, max: 240, increment: 30 }, purposes: ["study_group", "work_group", "meeting", "social", "other"] };
+    const purposeLabels = { study_group: "Study group", work_group: "Work group", meeting: "Meeting", social: "Social group", other: "Other" };
+    const reservationStatus = { requested: "Requested", confirmed: "Confirmed", declined: "Declined", canceled: "Canceled" };
+    const verificationLabel = discount.verificationRequired
+      ? titleCase(discount.verificationStatus || "not_submitted")
+      : "Not required";
+    const rewardsLabel = loyalty.enabled ? `${Number(loyalty.points || 0)} points` : "Coming soon";
+    const benefitLabel = Number(discount.activePercentOff || 0) > 0 ? `${discount.activePercentOff}% active` : discount.verificationRequired ? verificationLabel : "Member account";
+    const birthdayLabel = birthday.eligible ? "Available now" : birthday.enabled ? "Not active today" : "Coming soon";
+
     return `${pageHero("YOUR ST. JUICE", `Hey, ${account.profile.name || "friend"}.`, modes[state.mode].line, `<button class="button button--outline" type="button" data-action="account-signout">Sign out</button>`)}
     <section class="section section--cream"><div class="container account-dashboard">
-      <div class="account-stats"><article><span>Rewards</span><strong>${account.points}</strong><small>Rewards will appear here when the loyalty program launches</small></article><article><span>Favorites</span><strong>${favorites.length}</strong><small>Saved products</small></article><article><span>Saved moods</span><strong>${account.savedMixes.length}</strong><small>Custom mixes</small></article><article><span>Recent orders</span><strong>${account.orderHistory.length}</strong><small>Linked to your account as ordering is activated</small></article></div>
-      ${state.mode === "student" ? `<div class="verification-card"><p class="eyebrow">STUDENT VERIFICATION</p><h2>${account.student.status === "pending_manual_review" ? "Pending manual review" : "Not submitted"}</h2><p>No discount is activated until an approved verification provider or manual policy is connected. No university affiliation is implied.</p></div>` : ""}
-      ${state.mode === "business" ? `<div class="verification-card"><p class="eyebrow">BUSINESS PROFILE</p><h2>${escapeHtml(account.business.company || "Your business")}</h2><p>${escapeHtml(account.business.recurringCadence || "No recurring cadence saved yet.")} · Quotes and bulk pricing require confirmation.</p><a class="button button--outline" href="#/catering">Plan catering</a></div>` : ""}
+      <div class="account-stats">
+        <article><span>Rewards</span><strong>${escapeHtml(rewardsLabel)}</strong><small>Earn and redeem from your member wallet when activated</small></article>
+        <article><span>Account benefit</span><strong>${escapeHtml(benefitLabel)}</strong><small>${discount.verificationRequired ? "Verification controls eligibility" : "Your member experience"}</small></article>
+        <article><span>Birthday</span><strong>${escapeHtml(birthdayLabel)}</strong><small>Benefits appear here only when eligible and active</small></article>
+        <article><span>Reservations</span><strong>${reservations.filter((item) => ["requested", "confirmed"].includes(item.status)).length}</strong><small>Open group requests</small></article>
+      </div>
+
+      ${state.mode === "student" ? `
+        <div class="verification-card">
+          <p class="eyebrow">STUDENT VERIFICATION</p>
+          <h2>${account.student.status === "verified" ? "Verified" : account.student.status === "pending_manual_review" ? "Pending review" : "Verify your student account"}</h2>
+          <p>Student benefits never activate from account type alone. Verification is required and ST. JUICE does not imply university affiliation.</p>
+          ${account.student.status === "not_submitted" ? `
+            <form class="account-form compact-account-form" data-student-verification-form>
+              <div class="form-grid">
+                <label class="form-field"><span>School email *</span><input class="field" name="schoolEmail" type="email" autocomplete="email" required /></label>
+                <label class="form-field"><span>Institution *</span><input class="field" name="institution" required /></label>
+              </div>
+              <button class="button" type="submit">Submit for verification</button>
+            </form>` : ""}
+        </div>` : ""}
+
+      ${state.mode === "business" ? `
+        <div class="verification-card">
+          <p class="eyebrow">BUSINESS PROFILE</p>
+          <h2>${account.business.status === "approved" ? "Approved business" : account.business.status === "pending_review" ? "Pending review" : "Set up your business profile"}</h2>
+          <p>Business pricing or account benefits only activate after approval. Your profile can still be used for group planning and catering requests.</p>
+          ${account.business.status !== "approved" ? `
+            <form class="account-form compact-account-form" data-business-form>
+              <div class="form-grid">
+                <label class="form-field"><span>Company *</span><input class="field" name="company" value="${escapeHtml(account.business.company || "")}" required /></label>
+                <label class="form-field"><span>Your role</span><input class="field" name="role" value="${escapeHtml(account.business.role || "")}" /></label>
+                <label class="form-field form-field--full"><span>Typical ordering cadence</span><select class="field" name="recurringCadence"><option value="">Choose one</option>${["Weekly","Monthly","Quarterly","Occasional"].map((value) => `<option ${String(account.business.recurringCadence || "").toLowerCase() === value.toLowerCase() ? "selected" : ""}>${value}</option>`).join("")}</select></label>
+              </div>
+              <button class="button" type="submit">${account.business.status === "pending_review" ? "Update business profile" : "Submit business profile"}</button>
+            </form>` : `<a class="button button--outline" href="#/catering">Plan catering</a>`}
+        </div>` : ""}
+
+      <div class="account-section reservation-section">
+        <div class="section-heading account-section__heading">
+          <div><p class="eyebrow">GROUP RESERVATIONS</p><h2>Request space for the group.</h2><p class="lede">Study groups, work groups, meetings and social groups can request a time. A request is not confirmed until the team approves it.</p></div>
+        </div>
+        <div class="reservation-layout">
+          <form class="account-form" data-reservation-form>
+            <div class="form-grid">
+              <label class="form-field"><span>Purpose *</span><select class="field" name="purpose" required><option value="">Choose one</option>${(reservationConfig.purposes || []).map((purpose) => `<option value="${escapeHtml(purpose)}">${escapeHtml(purposeLabels[purpose] || titleCase(purpose))}</option>`).join("")}</select></label>
+              <label class="form-field"><span>Group size *</span><input class="field" name="partySize" type="number" min="${reservationConfig.partySize?.min || 2}" max="${reservationConfig.partySize?.max || 40}" required /></label>
+              <label class="form-field"><span>Date *</span><input class="field" name="date" type="date" required /></label>
+              <label class="form-field"><span>Start time *</span><input class="field" name="startTime" type="time" required /></label>
+              <label class="form-field"><span>Duration *</span><select class="field" name="durationMinutes" required><option value="">Choose duration</option>${[30,60,90,120,150,180,210,240].filter((value) => value >= Number(reservationConfig.durationMinutes?.min || 30) && value <= Number(reservationConfig.durationMinutes?.max || 240)).map((value) => `<option value="${value}">${value < 60 ? `${value} min` : value % 60 ? `${Math.floor(value/60)} hr ${value%60} min` : `${value/60} hr`}</option>`).join("")}</select></label>
+              <label class="form-field"><span>Organization</span><input class="field" name="organization" placeholder="Optional" /></label>
+              <label class="form-field form-field--full"><span>Notes</span><textarea class="field" name="notes" maxlength="600" placeholder="Seating needs, outlets, meeting notes or anything the team should know."></textarea></label>
+            </div>
+            <button class="button" type="submit">Request a table</button>
+          </form>
+          <div class="reservation-list">
+            <p class="eyebrow">YOUR REQUESTS</p>
+            ${reservations.length ? reservations.map((reservation) => `
+              <article class="reservation-card">
+                <div><strong>${escapeHtml(purposeLabels[reservation.purpose] || titleCase(reservation.purpose))}</strong><small>${escapeHtml(reservation.date)} · ${escapeHtml(reservation.startTime)} · ${reservation.partySize} people · ${reservation.durationMinutes} min</small></div>
+                <span class="status-pill status-pill--${escapeHtml(reservation.status)}">${escapeHtml(reservationStatus[reservation.status] || titleCase(reservation.status))}</span>
+                ${["requested", "confirmed"].includes(reservation.status) ? `<button class="text-button" type="button" data-action="cancel-reservation" data-reservation-id="${escapeHtml(reservation.id)}">Cancel request</button>` : ""}
+              </article>`).join("") : `<div class="empty-state empty-state--compact"><h3>No reservation requests yet.</h3><p>Your requests will appear here after you submit them.</p></div>`}
+          </div>
+        </div>
+      </div>
+
       <div class="account-section"><div><p class="eyebrow">FAVORITES</p><h2>Your repeat cravings</h2></div><div class="product-grid">${favorites.length ? favorites.map((product) => buildProductCard(product, data)).join("") : `<div class="empty-state"><span class="empty-state__icon">${icon("heart")}</span><h3>No favorites yet.</h3><p>Use the heart button on a product page.</p><a class="button" href="#/menu">Browse menu</a></div>`}</div></div>
       <div class="account-section"><div><p class="eyebrow">SAVED MIXES</p><h2>Your moods</h2></div><div class="saved-list">${account.savedMixes.length ? account.savedMixes.map((mix) => `<article><strong>${escapeHtml(mix.name)}</strong><small>${new Date(mix.savedAt).toLocaleDateString()}</small><a href="#/build">Open builder</a></article>`).join("") : `<p>No saved mixes yet. Finish a Build Your Mood recipe and save it here.</p>`}</div></div>
       <div class="account-section"><div><p class="eyebrow">ORDER HISTORY</p><h2>Your recent orders</h2></div><div class="saved-list">${account.orderHistory.length ? account.orderHistory.map((order) => `<article><strong>${escapeHtml(order.orderNumber)}</strong><small>${escapeHtml(order.status)} · ${money(order.total)}</small><button class="text-button" data-action="reorder-history" data-order-id="${escapeHtml(order.id)}">Reorder</button></article>`).join("") : `<p>Your completed orders will appear here.</p>`}</div></div>
     </div></section>`;
   }
+
   const requestedType = modes[state.accountIntent] && state.accountIntent !== "guest" ? state.accountIntent : "regular";
   return `
     ${pageHero("YOUR ACCOUNT", "Sign in to unlock your ST. JUICE experience.", "Guest checkout stays available. Regular, Student and Business experiences are tied to a real account session.")}
     <section class="section section--cream">
       <div class="container account-auth-grid">
         <form class="account-form" data-login-form>
-          <div><p class="eyebrow">WELCOME BACK</p><h2>Sign in</h2><p>Use your account to access your member experience and order history.</p></div>
+          <div><p class="eyebrow">WELCOME BACK</p><h2>Sign in</h2><p>Use your account to access your member experience, saved items and group requests.</p></div>
           <div class="form-grid">
             <label class="form-field form-field--full"><span>Email *</span><input class="field" name="email" type="email" autocomplete="email" required /></label>
             <label class="form-field form-field--full"><span>Password *</span><input class="field" name="password" type="password" autocomplete="current-password" required /></label>
