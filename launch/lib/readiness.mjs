@@ -7,6 +7,7 @@ const config = JSON.parse(readFileSync(resolve(launchRoot, "config/launch-config
 
 const requirements = [
   ["public_origin", () => Boolean(process.env.ST_JUICE_PUBLIC_ORIGIN || config.publicOrigin)],
+  ["indexing", () => process.env.ST_JUICE_ENABLE_INDEXING === "true" && Boolean(process.env.ST_JUICE_PUBLIC_ORIGIN || config.publicOrigin)],
   ["public_phone", () => Boolean(process.env.ST_JUICE_PUBLIC_PHONE || config.business.publicPhone)],
   ["public_email", () => Boolean(process.env.ST_JUICE_PUBLIC_EMAIL || config.business.publicEmail)],
   ["legal_name", () => config.business.legalNameApproved === true],
