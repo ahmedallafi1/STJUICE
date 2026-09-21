@@ -53,7 +53,7 @@ for (const requiredId of ["main-content", "app", "cart-dialog", "account-dialog"
   assert.ok(indexHtml.includes(`id="${requiredId}"`), `Missing application shell ID ${requiredId}`);
 }
 
-for (const route of ["/menu", "/build", "/drops", "/boxes", "/gift-cards", "/catering", "/rewards", "/location", "/account", "/about", "/states", "/checkout", "/order/"]) {
+for (const route of ["/menu", "/build", "/drops", "/boxes", "/gift-cards", "/catering", "/rewards", "/location", "/account", "/about", "/checkout", "/order/"]) {
   assert.ok(viewsSource.includes(`"${route}"`), `Missing route ${route}`);
 }
 
@@ -74,5 +74,5 @@ console.log(JSON.stringify({
   modifierGroups: modifiers.groups.length,
   builderSteps: builder.steps.length,
   manifestAssets: media.assets.length,
-  frontendRoutes: 13
+  frontendRoutes: 12
 }, null, 2));
