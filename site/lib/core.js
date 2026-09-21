@@ -6,8 +6,17 @@ export async function loadProjectData() {
     const response = await fetch("../api/catalog-status", { credentials: "same-origin" });
     if (response.ok) {
       data.runtimeCommercial = await response.json();
+      const dropByProduct = new Map((data.runtimeCommercial.drops || []).map((row) => [row.productId, row]));
       for (const product of data.catalog.products) {
-        product.runtimeStatus = data.runtimeCommercial.products?.[product.id]?.status || "available";
+        let runtimeStatus = data.runtimeCommercial.products?.[product.id]?.status || "available";
+        const boxStatus = data.runtimeCommercial.boxes?.[product.id]?.status;
+        if (runtimeStatus === "available" && boxStatus && boxStatus !== "available") runtimeStatus = boxStatus;
+        const dropStatus = dropByProduct.get(product.id)?.status;
+        if (runtimeStatus === "available" && dropStatus) {
+          if (dropStatus === "sold_out") runtimeStatus = "sold_out";
+          else if (dropStatus !== "active") runtimeStatus = "paused";
+        }
+        product.runtimeStatus = runtimeStatus;
       }
     }
   } catch {
