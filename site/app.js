@@ -64,6 +64,7 @@ function freshCheckout() {
     deliveryCheck: null,
     contact: { name: "", email: "", phone: "", marketingConsent: false },
     promoCode: "",
+    rewardGrantId: "",
     tipPercent: 0,
     allergenAcknowledged: false,
     quote: null,
@@ -132,6 +133,17 @@ function applyAccountSession(payload) {
     state.account.student = { status: "not_submitted", schoolEmail: "", institution: "", expiresAt: "" };
     state.account.business = {};
     state.account.points = 0;
+    state.account.benefits = null;
+    state.account.reservations = [];
+    state.account.reservationConfig = null;
+    state.account.rewardsWallet = { points: 0, lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
+    state.account.rewardsConfig = null;
+    if (state.checkout) {
+      state.checkout.rewardGrantId = "";
+      state.checkout.quote = null;
+      state.checkout.autoPrepared = false;
+      state.checkout.idempotencyKey = "";
+    }
     return;
   }
   const account = payload.account;
@@ -165,6 +177,12 @@ function applyAccountDashboard(payload) {
         createdAt: order.createdAt
       }))
     : [];
+  state.account.reservations = Array.isArray(payload?.reservations) ? payload.reservations : [];
+  state.account.benefits = payload?.benefits || null;
+  state.account.reservationConfig = payload?.config?.benefits?.reservations || null;
+  state.account.rewardsWallet = payload?.rewardsWallet || { points: 0, lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
+  state.account.rewardsConfig = payload?.config?.benefits?.loyalty || null;
+  state.account.points = Number(state.account.rewardsWallet?.points || payload?.account?.rewards?.points || 0);
 }
 
 async function refreshAccountSession() {
@@ -293,6 +311,7 @@ function cartRequest() {
       modifierSelections: item.modifierSelections || {}, instructions: item.instructions || "", quantity: item.quantity
     }),
     promoCode: state.checkout.promoCode,
+    rewardGrantId: state.checkout.rewardGrantId,
     tipPercent: state.checkout.tipPercent
   };
 }
@@ -504,6 +523,60 @@ document.addEventListener("click", async (event) => {
     } catch (error) { toast("Mix did not save", errorMessage(error)); }
     return;
   }
+  if (action === "apply-reward-grant") {
+    state.checkout.rewardGrantId = actionElement.dataset.grantId || "";
+    state.checkout.quote = null;
+    state.checkout.autoPrepared = false;
+    state.checkout.idempotencyKey = "";
+    render({ preserveScroll: true });
+    toast("Reward selected", state.cart.length ? "It will be validated against your bag at checkout." : "Add an eligible item, then the reward will be validated at checkout.");
+    return;
+  }
+  if (action === "remove-reward-grant") {
+    state.checkout.rewardGrantId = "";
+    state.checkout.quote = null;
+    state.checkout.autoPrepared = false;
+    state.checkout.idempotencyKey = "";
+    render({ preserveScroll: true });
+    toast("Reward removed from checkout");
+    return;
+  }
+  if (action === "enroll-rewards") {
+    try {
+      await accountApi.enrollRewards(state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Rewards joined", "Your wallet is ready. Points only earn after eligible completed orders.");
+    } catch (error) { toast("Rewards enrollment did not complete", errorMessage(error)); }
+    return;
+  }
+  if (action === "redeem-reward") {
+    try {
+      await accountApi.redeemReward(actionElement.dataset.rewardId || "", state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Reward unlocked", "Your available reward is now in your wallet.");
+    } catch (error) { toast("Reward could not be redeemed", errorMessage(error)); }
+    return;
+  }
+  if (action === "claim-birthday") {
+    try {
+      await accountApi.claimBirthday(state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Birthday benefit added", "Your birthday reward is now in your wallet.");
+    } catch (error) { toast("Birthday benefit unavailable", errorMessage(error)); }
+    return;
+  }
+  if (action === "cancel-reservation") {
+    try {
+      await accountApi.cancelReservation(actionElement.dataset.reservationId, state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Reservation request canceled");
+    } catch (error) { toast("Reservation could not be canceled", errorMessage(error)); }
+    return;
+  }
   if (action === "account-signout") {
     try { await accountApi.logout(state.account.csrfToken); }
     catch { /* Clear the local view even if the expired session is already gone. */ }
@@ -565,7 +638,7 @@ document.addEventListener("click", async (event) => {
     if (state.service === "delivery") state.checkout.paymentMethod = "card";
     closeDialog(elements.serviceDialog);
     render({ preserveScroll: true });
-    toast(`${titleCase(service)} selected`, service === "delivery" ? "Address eligibility uses manual review in safe test mode." : "11 S Vandeventer Ave");
+    toast(`${titleCase(service)} selected`, service === "delivery" ? "Delivery availability is reviewed at checkout." : "11 S Vandeventer Ave");
   } else if (action === "quick-add") {
     event.preventDefault();
     addProduct(actionElement.dataset.productId);
@@ -841,6 +914,7 @@ document.addEventListener("submit", async (event) => {
         name: String(values.get("name") || ""),
         email: String(values.get("email") || ""),
         password: String(values.get("password") || ""),
+        birthday: String(values.get("birthday") || ""),
         type
       });
       applyAccountSession(payload);
@@ -852,6 +926,66 @@ document.addEventListener("submit", async (event) => {
     }
     return;
   }
+  const studentForm = event.target.closest("[data-student-verification-form]");
+  if (studentForm) {
+    event.preventDefault();
+    if (!studentForm.checkValidity()) { studentForm.reportValidity(); return; }
+    const values = new FormData(studentForm);
+    try {
+      const result = await accountApi.requestStudentVerification({
+        schoolEmail: String(values.get("schoolEmail") || ""),
+        institution: String(values.get("institution") || "")
+      }, state.account.csrfToken);
+      state.account.student = result.student;
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Student verification submitted", "Your account benefits stay unchanged until verification is approved.");
+    } catch (error) { toast("Verification could not be submitted", errorMessage(error)); }
+    return;
+  }
+
+  const businessForm = event.target.closest("[data-business-form]");
+  if (businessForm) {
+    event.preventDefault();
+    if (!businessForm.checkValidity()) { businessForm.reportValidity(); return; }
+    const values = new FormData(businessForm);
+    try {
+      const result = await accountApi.updateBusiness({
+        company: String(values.get("company") || ""),
+        role: String(values.get("role") || ""),
+        recurringCadence: String(values.get("recurringCadence") || "")
+      }, state.account.csrfToken);
+      state.account.business = result.business;
+      applyAccountDashboard(await accountApi.dashboard());
+      render({ preserveScroll: true });
+      toast("Business profile submitted", "Benefits remain inactive until the business profile is approved.");
+    } catch (error) { toast("Business profile did not update", errorMessage(error)); }
+    return;
+  }
+
+  const reservationForm = event.target.closest("[data-reservation-form]");
+  if (reservationForm) {
+    event.preventDefault();
+    if (!reservationForm.checkValidity()) { reservationForm.reportValidity(); return; }
+    const values = new FormData(reservationForm);
+    try {
+      await accountApi.createReservation({
+        purpose: String(values.get("purpose") || ""),
+        date: String(values.get("date") || ""),
+        startTime: String(values.get("startTime") || ""),
+        durationMinutes: Number(values.get("durationMinutes") || 0),
+        partySize: Number(values.get("partySize") || 0),
+        organization: String(values.get("organization") || ""),
+        notes: String(values.get("notes") || "")
+      }, state.account.csrfToken);
+      applyAccountDashboard(await accountApi.dashboard());
+      reservationForm.reset();
+      render({ preserveScroll: true });
+      toast("Reservation request saved", "It is requested, not confirmed, until the team approves it.");
+    } catch (error) { toast("Reservation request did not save", errorMessage(error)); }
+    return;
+  }
+
   if (!(event.target instanceof HTMLFormElement) || event.target.id !== "catering-request") return;
   event.preventDefault();
   if (!event.target.checkValidity()) {

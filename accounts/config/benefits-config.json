@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "version": "2.0.0",
+    "status": "owner_approval_required",
+    "currency": "USD",
+    "notes": "Proposal values are retained for implementation testing but remain disabled until owner approval."
+  },
+  "loyalty": {
+    "enabled": false,
+    "proposal": {
+      "pointsPerDollar": 10,
+      "redemptions": [
+        {
+          "id": "reward-500",
+          "points": 500,
+          "type": "discount_or_addon",
+          "value": 5
+        },
+        {
+          "id": "reward-900",
+          "points": 900,
+          "type": "free_drink"
+        },
+        {
+          "id": "reward-1200",
+          "points": 1200,
+          "type": "free_dessert"
+        },
+        {
+          "id": "reward-1800",
+          "points": 1800,
+          "type": "box_reward"
+        }
+      ]
+    },
+    "pointsPerDollar": null,
+    "redemptions": []
+  },
+  "accountDiscounts": {
+    "regular": {
+      "enabled": false,
+      "percentOff": 0,
+      "requiresVerification": false
+    },
+    "student": {
+      "enabled": false,
+      "proposalPercentOff": 10,
+      "requiresVerification": true,
+      "requiredStatus": "verified",
+      "percentOff": null
+    },
+    "business": {
+      "enabled": false,
+      "proposalPercentOff": 8,
+      "requiresVerification": true,
+      "requiredStatus": "approved",
+      "percentOff": null
+    }
+  },
+  "birthday": {
+    "enabled": false,
+    "proposal": {
+      "windowBeforeDays": 3,
+      "windowAfterDays": 7,
+      "minimumAccountAgeDays": 30,
+      "rewardType": "free_item_or_discount"
+    },
+    "reward": null,
+    "windowBeforeDays": null,
+    "windowAfterDays": null,
+    "minimumAccountAgeDays": null
+  },
+  "reservations": {
+    "enabled": true,
+    "storage": "memory_only_test",
+    "partySize": {
+      "min": 2,
+      "max": 40
+    },
+    "durationMinutes": {
+      "min": 30,
+      "max": 240,
+      "increment": 30
+    },
+    "purposes": [
+      "study_group",
+      "work_group",
+      "meeting",
+      "social",
+      "other"
+    ],
+    "statusFlow": [
+      "requested",
+      "confirmed",
+      "declined",
+      "canceled"
+    ]
+  },
+  "stacking": {
+    "accountDiscountWithPromo": "best_discount",
+    "loyaltyRedemptionWithAccountDiscount": true,
+    "note": "Account-type benefits are independent from loyalty points. Promo stacking remains owner-policy controlled.",
+    "loyaltyRedemptionWithPromo": false
+  }
+}

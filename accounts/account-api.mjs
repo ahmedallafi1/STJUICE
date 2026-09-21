@@ -26,13 +26,40 @@ import {
   updateBusiness,
   updateProfile
 } from "./lib/account-store.mjs";
+import { benefitsConfig, claimBirthdayReward, publicBenefitSnapshot, redeemConfiguredReward, rewardWallet } from "./lib/benefits-engine.mjs";
+import { cancelReservation, createReservationRequest, listReservations } from "./lib/reservation-store.mjs";
+
+function publicBenefitsConfig() {
+  return {
+    status: benefitsConfig.meta.status,
+    loyalty: {
+      enabled: benefitsConfig.loyalty.enabled,
+      pointsPerDollar: benefitsConfig.loyalty.enabled ? benefitsConfig.loyalty.pointsPerDollar : null,
+      redemptions: benefitsConfig.loyalty.enabled
+        ? (benefitsConfig.loyalty.redemptions || []).map(({ id, points, type, value }) => ({ id, points, type, value: value ?? null }))
+        : []
+    },
+    accountDiscounts: Object.fromEntries(Object.entries(benefitsConfig.accountDiscounts).map(([key, value]) => [key, {
+      enabled: value.enabled,
+      requiresVerification: value.requiresVerification
+    }])),
+    birthday: { enabled: benefitsConfig.birthday.enabled },
+    reservations: {
+      enabled: benefitsConfig.reservations.enabled,
+      partySize: benefitsConfig.reservations.partySize,
+      durationMinutes: benefitsConfig.reservations.durationMinutes,
+      purposes: benefitsConfig.reservations.purposes
+    }
+  };
+}
 
 function publicConfig() {
   return {
     mode: accountConfig.meta.mode,
     storage: accountConfig.meta.storage,
     accountTypes: accountConfig.accountTypes,
-    rewards: accountConfig.rewards,
+    rewards: publicBenefitsConfig().loyalty,
+    benefits: publicBenefitsConfig(),
     studentVerification: {
       mode: accountConfig.studentVerification.mode,
       methods: accountConfig.studentVerification.methods,
@@ -66,7 +93,7 @@ function clearCookie(request) {
 }
 
 function errorResponse(error) {
-  return { status: error.status || 500, payload: { error: { code: error.code || "account_error", message: error.status ? error.message : "The test account service could not complete the request.", ...(error.field ? { field: error.field } : {}), ...(error.details ? { details: error.details } : {}) } } };
+  return { status: error.status || 500, payload: { error: { code: error.code || "account_error", message: error.status ? error.message : "The account service could not complete the request.", ...(error.field ? { field: error.field } : {}), ...(error.details ? { details: error.details } : {}) } } };
 }
 
 function accountOrders(account, getOrder, publicOrder) {
@@ -122,7 +149,7 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
 
     if (request.method === "GET" && url.pathname === "/api/account/dashboard") {
       const { account } = requireAccount(request);
-      json(response, 200, { account: publicAccount(account), ...accountCollections(account), orders: accountOrders(account, getOrder, publicOrder), config: publicConfig() });
+      json(response, 200, { account: publicAccount(account), ...accountCollections(account), orders: accountOrders(account, getOrder, publicOrder), benefits: publicBenefitSnapshot(account), rewardsWallet: rewardWallet(account), config: publicConfig() });
       return true;
     }
 
@@ -190,7 +217,51 @@ export async function handleAccountApi({ request, response, url, json, bodyJson,
     if (request.method === "POST" && url.pathname === "/api/account/rewards/enroll") {
       const { account } = requireAccount(request, { csrf: true });
       const input = await bodyJson(request);
-      json(response, 200, { rewards: enrollRewards(account, input.consent), config: publicConfig().rewards });
+      json(response, 200, { rewards: enrollRewards(account, input.consent), config: publicBenefitsConfig().loyalty });
+      return true;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/account/benefits") {
+      const { account } = requireAccount(request);
+      json(response, 200, { benefits: publicBenefitSnapshot(account), config: publicBenefitsConfig() });
+      return true;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/account/rewards/ledger") {
+      const { account } = requireAccount(request);
+      json(response, 200, { rewards: rewardWallet(account), config: publicBenefitsConfig().loyalty });
+      return true;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/account/rewards/redeem") {
+      const { account } = requireAccount(request, { csrf: true });
+      const input = await bodyJson(request);
+      json(response, 201, redeemConfiguredReward(account, String(input.rewardId || "")));
+      return true;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/account/birthday/claim") {
+      const { account } = requireAccount(request, { csrf: true });
+      json(response, 201, claimBirthdayReward(account));
+      return true;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/account/reservations") {
+      const { account } = requireAccount(request);
+      json(response, 200, { reservations: listReservations(account), config: publicBenefitsConfig().reservations });
+      return true;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/account/reservations") {
+      const { account } = requireAccount(request, { csrf: true });
+      json(response, 201, { reservation: createReservationRequest(account, await bodyJson(request)) });
+      return true;
+    }
+
+    const reservationMatch = url.pathname.match(/^\/api\/account\/reservations\/([^/]+)$/);
+    if (request.method === "DELETE" && reservationMatch) {
+      const { account } = requireAccount(request, { csrf: true });
+      json(response, 200, { reservation: cancelReservation(account, decodeURIComponent(reservationMatch[1])) });
       return true;
     }
 

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { once } from "node:events";
 import { startOrderingServer } from "../server.mjs";
+import { benefitsConfig } from "../../accounts/lib/benefits-engine.mjs";
 
 process.env.STJ_TEST_ADMIN_TOKEN = "phase1-api-test-admin";
 const server = await startOrderingServer({ port: 0 });
@@ -65,14 +66,36 @@ try {
   const memberEmail = `phase1-${Date.now()}@example.com`;
   const memberRegistration = await json("/api/account/register", {
     method: "POST",
-    body: JSON.stringify({ name: "Phase One Member", email: memberEmail, password: "PhaseOneTest!123", type: "regular" })
+    body: JSON.stringify({ name: "Phase Two Member", email: memberEmail, password: "PhaseOneTest!123", type: "regular", birthday: "1990-09-20" })
   });
   assert.equal(memberRegistration.response.status, 201);
   const memberCookie = memberRegistration.response.headers.get("set-cookie")?.split(";")[0];
   assert.ok(memberCookie?.startsWith("stj_session="), "Registration must create the configured secure account session cookie");
+  const memberCsrf = memberRegistration.payload.csrfToken;
+  const previousLoyaltyConfig = structuredClone(benefitsConfig.loyalty);
+  const previousBirthdayConfig = structuredClone(benefitsConfig.birthday);
+  benefitsConfig.loyalty.enabled = true;
+  benefitsConfig.loyalty.pointsPerDollar = 10;
+  benefitsConfig.loyalty.redemptions = [{ id: "api-reward-50", points: 50, type: "fixed_discount", value: 5 }];
+  const rewardsEnrollment = await json("/api/account/rewards/enroll", {
+    method: "POST",
+    headers: { Cookie: memberCookie, "X-CSRF-Token": memberCsrf },
+    body: JSON.stringify({ consent: true })
+  });
+  assert.equal(rewardsEnrollment.response.status, 200);
 
-  const memberQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, promoCode: "" }) });
+  const memberQuote = await json("/api/cart/validate", { method: "POST", headers: { Cookie: memberCookie }, body: JSON.stringify({ ...cartBody, promoCode: "" }) });
+  assert.equal(memberQuote.payload.accountBenefit.applied, false, "Disabled account benefit must not alter member quote");
   const memberPayment = await json("/api/payment/intents", { method: "POST", body: JSON.stringify({ quoteId: memberQuote.payload.quoteId }) });
+
+  const mismatchedMemberOrder = await json("/api/orders", {
+    method: "POST",
+    headers: { "Idempotency-Key": `${key}-member-mismatch` },
+    body: JSON.stringify({ ...orderBody, quoteId: memberQuote.payload.quoteId, paymentToken: memberPayment.payload.token, schedule: "asap" })
+  });
+  assert.equal(mismatchedMemberOrder.response.status, 409);
+  assert.equal(mismatchedMemberOrder.payload.error.code, "quote_account_mismatch");
+
   const memberOrder = await json("/api/orders", {
     method: "POST",
     headers: { "Idempotency-Key": `${key}-member`, Cookie: memberCookie },
@@ -82,6 +105,50 @@ try {
   const memberDashboard = await json("/api/account/dashboard", { headers: { Cookie: memberCookie } });
   assert.equal(memberDashboard.response.status, 200);
   assert.ok(memberDashboard.payload.orders.some((row) => row.id === memberOrder.payload.order.id), "Signed-in order must attach to the member account exactly once");
+  assert.equal(memberDashboard.payload.rewardsWallet.points, 0, "Received orders must not earn loyalty points before completion");
+
+  let completedMemberOrder = memberOrder.payload.order;
+  for (let index = 0; index < 4; index += 1) {
+    completedMemberOrder = (await json(`/api/orders/${completedMemberOrder.id}/advance`, {
+      method: "POST",
+      headers: { "X-STJ-Admin-Token": process.env.STJ_TEST_ADMIN_TOKEN },
+      body: "{}"
+    })).payload.order;
+  }
+  assert.equal(completedMemberOrder.status, "complete");
+  const completedDashboard = await json("/api/account/dashboard", { headers: { Cookie: memberCookie } });
+  assert.equal(completedDashboard.payload.rewardsWallet.points, 99, "Completed member order must earn whole points from eligible spend only");
+
+  const redeemed = await json("/api/account/rewards/redeem", {
+    method: "POST",
+    headers: { Cookie: memberCookie, "X-CSRF-Token": memberCsrf },
+    body: JSON.stringify({ rewardId: "api-reward-50" })
+  });
+  assert.equal(redeemed.response.status, 201);
+  assert.equal(redeemed.payload.rewards.points, 49);
+  const walletAfterRedeem = await json("/api/account/rewards/ledger", { headers: { Cookie: memberCookie } });
+  assert.ok(walletAfterRedeem.payload.rewards.grants.some((grant) => grant.rewardId === "api-reward-50" && grant.status === "available"));
+
+  benefitsConfig.birthday.enabled = true;
+  benefitsConfig.birthday.windowBeforeDays = 3;
+  benefitsConfig.birthday.windowAfterDays = 7;
+  benefitsConfig.birthday.minimumAccountAgeDays = 0;
+  benefitsConfig.birthday.reward = { type: "free_item", value: null };
+  const birthdayClaim = await json("/api/account/birthday/claim", {
+    method: "POST",
+    headers: { Cookie: memberCookie, "X-CSRF-Token": memberCsrf },
+    body: "{}"
+  });
+  assert.equal(birthdayClaim.response.status, 201);
+  const birthdayReplay = await json("/api/account/birthday/claim", {
+    method: "POST",
+    headers: { Cookie: memberCookie, "X-CSRF-Token": memberCsrf },
+    body: "{}"
+  });
+  assert.equal(birthdayReplay.response.status, 201);
+  assert.equal(birthdayReplay.payload.idempotentReplay, true, "Birthday benefit claim must be idempotent by calendar year");
+  Object.assign(benefitsConfig.loyalty, previousLoyaltyConfig);
+  Object.assign(benefitsConfig.birthday, previousBirthdayConfig);
 
   const dineQuote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify({ ...cartBody, service: "dine_in" }) });
   const cashOrder = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": `${key}-cash` }, body: JSON.stringify({ ...orderBody, quoteId: dineQuote.payload.quoteId, paymentMethod: "cash", paymentToken: undefined, schedule: "asap" }) });
@@ -107,7 +174,7 @@ try {
   for (let index = 0; index < 3; index += 1) deliveryStatus = (await json(`/api/orders/${deliveryStatus.id}/advance`, { method: "POST", headers: { "X-STJ-Admin-Token": process.env.STJ_TEST_ADMIN_TOKEN }, body: "{}" })).payload.order;
   assert.equal(deliveryStatus.status, "out_for_delivery");
 
-  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true, unauthorizedOrderReadBlocked: true, unauthorizedAdvanceBlocked: true, signedInOrderAttached: true }, null, 2));
+  console.log(JSON.stringify({ status: "valid", apiMode: "safe_test", pickupOrder: order.payload.order.orderNumber, cashDineInOrder: cashOrder.payload.order.orderNumber, deliveryOrder: deliveryOrder.payload.order.orderNumber, deliveryCashRejected: true, deliveryReviewOnly: true, rawCardsRejected: true, idempotencyReplay: true, statusAdvanced: true, unauthorizedOrderReadBlocked: true, unauthorizedAdvanceBlocked: true, signedInOrderAttached: true, accountQuoteBound: true, forgedAccountBenefitRejected: true, completedOrderEarnedRewards: true, rewardRedeemed: true, birthdayClaimIdempotent: true }, null, 2));
 } finally {
   server.close();
   await once(server, "close");

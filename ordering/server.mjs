@@ -8,7 +8,8 @@ import { generateSlots, quoteCart, validateDeliveryAddress } from "./lib/order-e
 import { consumeTestPayment, createTestPaymentIntent, verifyTestPayment } from "./adapters/test-payment-adapter.mjs";
 import { sendToTestPos } from "./adapters/test-pos-adapter.mjs";
 import { attachOrder, handleAccountApi } from "../accounts/account-api.mjs";
-import { sessionForRequest } from "../accounts/lib/account-store.mjs";
+import { creditCompletedOrder, sessionForRequest } from "../accounts/lib/account-store.mjs";
+import { availableRewardGrant, benefitSnapshot, benefitsConfig, consumeRewardGrant } from "../accounts/lib/benefits-engine.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
 
 const packageRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
@@ -74,8 +75,14 @@ function publicConfig() {
   };
 }
 
-function quoteRecord(request) {
-  const quote = quoteCart(request);
+function quoteRecord(request, account = null) {
+  const quote = quoteCart(request, {
+    benefits: account ? benefitSnapshot(account) : null,
+    rewardGrant: account ? availableRewardGrant(account, request.rewardGrantId) : null,
+    accountPromoPolicy: benefitsConfig.stacking?.accountDiscountWithPromo || "best_discount",
+    rewardWithAccount: benefitsConfig.stacking?.loyaltyRedemptionWithAccountDiscount !== false,
+    rewardWithPromo: benefitsConfig.stacking?.loyaltyRedemptionWithPromo === true
+  });
   const now = Date.now();
   const record = {
     ...quote,
@@ -83,6 +90,12 @@ function quoteRecord(request) {
     createdAt: new Date(now).toISOString(),
     expiresAt: new Date(now + config.orders.quoteMinutes * 60_000).toISOString()
   };
+  Object.defineProperty(record, "accountId", {
+    value: account?.id || null,
+    enumerable: false,
+    configurable: false,
+    writable: false
+  });
   if (record.valid) quotes.set(record.quoteId, record);
   return record;
 }
@@ -170,7 +183,8 @@ async function api(request, response, url) {
   }
   if (request.method === "POST" && (url.pathname === "/api/cart/validate" || url.pathname === "/api/promos/validate")) {
     const input = await bodyJson(request);
-    const quote = quoteRecord(input);
+    const signedIn = sessionForRequest(request);
+    const quote = quoteRecord(input, signedIn?.account || null);
     return json(response, quote.valid ? 200 : 422, quote);
   }
   if (request.method === "POST" && url.pathname === "/api/payment/intents") {
@@ -193,6 +207,16 @@ async function api(request, response, url) {
     const resolved = activeQuote(input.quoteId);
     if (resolved.error) return json(response, 409, resolved);
     const quote = resolved.quote;
+    const signedIn = sessionForRequest(request);
+    if (quote.accountId && signedIn?.account.id !== quote.accountId) {
+      return json(response, 409, { error: { code: "quote_account_mismatch", message: "Refresh the order total from the account that created this quote." } });
+    }
+    if (quote.rewardBenefit?.applied) {
+      const activeGrant = signedIn ? availableRewardGrant(signedIn.account, quote.rewardBenefit.grantId) : null;
+      if (!activeGrant) {
+        return json(response, 409, { error: { code: "reward_grant_stale", message: "That reward is no longer available. Refresh the order total." } });
+      }
+    }
     const customerResult = validCustomer(input.customer);
     if (!customerResult.valid) return json(response, 422, { valid: false, errors: customerResult.errors });
     if (input.allergenAcknowledged !== true) return json(response, 422, { valid: false, errors: [{ code: "allergen_acknowledgement_required", field: "allergenAcknowledged", message: "Review and acknowledge the allergen notice." }] });
@@ -217,6 +241,7 @@ async function api(request, response, url) {
       items: quote.items,
       totals: quote.totals,
       quoteId: quote.quoteId,
+      rewardGrantId: quote.rewardBenefit?.applied ? quote.rewardBenefit.grantId : null,
       payment: paymentMethod === "cash"
         ? { method: "cash", provider: "pay_at_handoff", status: "due_at_handoff" }
         : { method: "card", provider: payment.intent.provider, status: "captured_test", tokenLast8: payment.intent.token.slice(-8) },
@@ -224,9 +249,9 @@ async function api(request, response, url) {
       trackingToken: randomBytes(24).toString("base64url"),
       createdAt
     };
-    const signedIn = sessionForRequest(request);
     if (signedIn) order.accountId = signedIn.account.id;
     order.pos = sendToTestPos(order);
+    if (signedIn && order.rewardGrantId) consumeRewardGrant(signedIn.account, order.rewardGrantId, order.id, createdAt);
     orders.set(id, order);
     if (signedIn) attachOrder(signedIn.account, order);
     if (paymentMethod === "card") consumeTestPayment(input.paymentToken);
@@ -250,6 +275,7 @@ async function api(request, response, url) {
     if (next !== order.status) {
       order.status = next;
       order.statusHistory.push({ status: next, at: new Date().toISOString() });
+      if (next === "complete") order.rewards = creditCompletedOrder(order);
     }
     return json(response, 200, { order: publicOrder(order) });
   }

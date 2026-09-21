@@ -22,7 +22,10 @@
     "authentication": "prototype_only",
     "retentionApproved": false,
     "privacyPolicyApproved": false,
-    "cookiePlanApproved": false
+    "cookiePlanApproved": false,
+    "databaseTarget": "postgresql",
+    "databaseSchemaReady": true,
+    "databaseRuntimeAdapter": "not_connected"
   },
   "communications": {
     "transactionalEmail": "not_configured",

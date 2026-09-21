@@ -1,4 +1,5 @@
 import { builder, builderOptions, builderStepById, config, modifierById, productById } from "./catalog-store.mjs";
+import { combineCheckoutDiscounts } from "./promotion-engine.mjs";
 
 const cents = (value) => Math.round(Number(value || 0) * 100);
 const dollars = (value) => Number((Number(value || 0) / 100).toFixed(2));
@@ -191,7 +192,7 @@ function builderLine(input, index, errors, warnings) {
   };
 }
 
-export function quoteCart(request = {}) {
+export function quoteCart(request = {}, pricingContext = {}) {
   const errors = [];
   const warnings = [];
   const service = String(request.service || "");
@@ -205,13 +206,31 @@ export function quoteCart(request = {}) {
   }).filter(Boolean);
 
   const subtotal = items.reduce((sum, item) => sum + item.lineTotal.cents, 0);
-  let discount = 0;
+  let promoDiscount = 0;
   const promoCode = cleanText(request.promoCode, 30).toUpperCase();
   if (promoCode) {
     const promo = config.pricing.promo;
-    if (promoCode === promo.testCode) discount = Math.min(Math.round(subtotal * promo.percentOff / 100), cents(promo.maximumDiscount));
-    else errors.push({ code: "promo_invalid", message: "That promo code is not valid in safe test mode." });
+    if (promoCode === promo.testCode) promoDiscount = Math.min(Math.round(subtotal * promo.percentOff / 100), cents(promo.maximumDiscount));
+    else errors.push({ code: "promo_invalid", message: "That promo code is not valid in the ordering preview." });
   }
+  const requestedRewardGrantId = cleanText(request.rewardGrantId, 120);
+  if (requestedRewardGrantId && !pricingContext.rewardGrant) {
+    errors.push({ code: "reward_grant_invalid", message: "That reward is not available for this account." });
+  }
+  const discounts = combineCheckoutDiscounts({
+    subtotalCents: subtotal,
+    items,
+    promoDiscountCents: promoDiscount,
+    benefitSnapshot: pricingContext.benefits || null,
+    rewardGrant: pricingContext.rewardGrant || null,
+    accountPromoPolicy: pricingContext.accountPromoPolicy || "best_discount",
+    rewardWithAccount: pricingContext.rewardWithAccount !== false,
+    rewardWithPromo: pricingContext.rewardWithPromo === true
+  });
+  if (requestedRewardGrantId && pricingContext.rewardGrant && !discounts.rewardDetails.applicable) {
+    errors.push({ code: "reward_not_applicable", message: "That reward does not apply to the items in this bag." });
+  }
+  const discount = discounts.totalDiscountCents;
   const tipPercent = Number(request.tipPercent || 0);
   if (!config.pricing.tips.allowedPercentages.includes(tipPercent)) errors.push({ code: "tip_invalid", message: "Choose an available tip percentage." });
   const taxable = Math.max(0, subtotal - discount);
@@ -232,7 +251,23 @@ export function quoteCart(request = {}) {
     items,
     errors,
     warnings,
-    promo: promoCode ? { code: promoCode, status: discount ? "applied_test" : "invalid" } : null,
+    promo: promoCode ? { code: promoCode, status: discounts.applied.includes("promo") ? "applied" : promoDiscount ? "not_stacked" : "invalid" } : null,
+    accountBenefit: {
+      applied: discounts.applied.includes("account"),
+      percentOff: discounts.accountPercentOff
+    },
+    rewardBenefit: requestedRewardGrantId ? {
+      grantId: requestedRewardGrantId,
+      applied: discounts.rewardApplied,
+      discount: moneyFields(discounts.rewardDiscountCents),
+      reason: discounts.rewardDetails.reason || null
+    } : null,
+    discountBreakdown: {
+      promo: moneyFields(discounts.promoDiscountCents),
+      account: moneyFields(discounts.accountDiscountCents),
+      reward: moneyFields(discounts.rewardDiscountCents),
+      stackingPolicy: discounts.stackingPolicy
+    },
     totals: {
       subtotal: moneyFields(subtotal),
       discount: moneyFields(discount),
