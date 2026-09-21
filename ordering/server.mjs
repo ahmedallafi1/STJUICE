@@ -278,7 +278,12 @@ async function api(request, response, url) {
   if (request.method === "GET" && url.pathname === "/api/config") return json(response, 200, publicConfig());
   if (request.method === "GET" && url.pathname === "/api/catalog-status") return json(response, 200, publicCommercialSnapshot());
   if (request.method === "POST" && url.pathname === "/api/catering/requests") {
-    const row = createCateringRequest(await bodyJson(request));
+    const signedIn = sessionForRequest(request);
+    const row = createCateringRequest(
+      await bodyJson(request),
+      operationalNow(),
+      signedIn ? { accountId: signedIn.account.id, accountType: signedIn.account.type } : null
+    );
     return json(response, 201, { request: publicCateringReceipt(row) });
   }
   if (request.method === "GET" && url.pathname === "/api/slots") {
