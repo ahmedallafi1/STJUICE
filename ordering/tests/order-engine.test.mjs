@@ -14,6 +14,24 @@ assert.equal(promo.totals.discount.cents, 110);
 assert.equal(promo.totals.tip.cents, 197);
 assert.equal(promo.totals.total.cents, 1182);
 
+const accountBenefitQuote = quoteCart(
+  { service: "pickup", items: [{ ...item, quantity: 1 }], tipPercent: 0 },
+  { benefits: { discount: { activePercentOff: 10 } }, stackingPolicy: "best_discount" }
+);
+assert.equal(accountBenefitQuote.valid, true);
+assert.equal(accountBenefitQuote.totals.discount.cents, 110);
+assert.equal(accountBenefitQuote.discountBreakdown.account.cents, 110);
+assert.equal(accountBenefitQuote.accountBenefit.applied, true);
+
+const forgedBenefit = quoteCart({
+  service: "pickup",
+  items: [{ ...item, quantity: 1 }],
+  tipPercent: 0,
+  accountBenefit: { activePercentOff: 99 }
+});
+assert.equal(forgedBenefit.totals.discount.cents, 0, "Client-supplied benefit data must never affect authoritative pricing");
+assert.equal(forgedBenefit.accountBenefit.applied, false);
+
 const invalid = quoteCart({ service: "pickup", items: [{ kind: "catalog", productId: "fake", sizeId: "tiny", quantity: 1 }] });
 assert.equal(invalid.valid, false);
 assert.ok(invalid.errors.some((entry) => entry.code === "product_not_found"));
