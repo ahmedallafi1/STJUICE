@@ -10,7 +10,7 @@ import {
   titleCase,
   uniqueValues
 } from "./core.js";
-import { accountView, rewardsConfig } from "./account.js";
+import { accountView } from "./account.js";
 
 export const modes = {
   guest: {
