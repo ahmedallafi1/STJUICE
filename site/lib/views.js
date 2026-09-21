@@ -789,10 +789,22 @@ function renderCatering({ data, state }) {
               <label class="form-field"><span>Service time *</span><input class="field" type="time" name="serviceTime" required /></label>
               <label class="form-field"><span>Guest count *</span><input class="field" type="number" name="guestCount" min="1" required /></label>
               <label class="form-field"><span>Service style *</span><select class="field" name="serviceMode" required><option value="">Choose one</option><option value="pickup">Pickup</option><option value="delivery">Delivery</option><option value="staffed_setup">Staffed setup</option></select></label>
-              <label class="form-field form-field--full"><span>Package interest</span><select class="field" name="packageInterest" id="package-interest"><option value="">Help me choose</option>${data.bundles.cateringPackages.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("")}</select></label>
-              <label class="form-field form-field--full"><span>Dietary, allergen and event notes</span><textarea class="field" name="notes" placeholder="Venue, service style, dietary needs, timing or anything else we should know."></textarea></label>
+              <fieldset class="form-field form-field--full"><legend>Venue address <small>(required for delivery or staffed setup)</small></legend><div class="form-grid">
+                <label class="form-field"><span>Street</span><input class="field" name="venueStreet" autocomplete="street-address" /></label>
+                <label class="form-field"><span>City</span><input class="field" name="venueCity" autocomplete="address-level2" /></label>
+                <label class="form-field"><span>State</span><input class="field" name="venueState" autocomplete="address-level1" /></label>
+                <label class="form-field"><span>ZIP</span><input class="field" name="venuePostalCode" autocomplete="postal-code" /></label>
+              </div></fieldset>
+              <fieldset class="form-field form-field--full catering-package-options"><legend>Package interest</legend>
+                <div class="checkbox-grid">${data.bundles.cateringPackages.map((item) => `<label class="checkbox-field"><input type="checkbox" name="packageInterest" value="${escapeHtml(item.id)}" /><span><strong>${escapeHtml(item.name)}</strong><small>${item.guestRange.min}–${item.guestRange.max} guests</small></span></label>`).join("")}</div>
+              </fieldset>
+              <label class="form-field"><span>Budget range</span><select class="field" name="budgetRange"><option value="">Not sure yet</option><option value="under-250">Under $250</option><option value="250-500">$250–$500</option><option value="500-1000">$500–$1,000</option><option value="1000-plus">$1,000+</option></select></label>
+              <div class="form-field"><span>Special requests</span><div class="checkbox-stack"><label class="checkbox-field"><input type="checkbox" name="taxExemptRequest" /><span>Tax-exempt organization</span></label><label class="checkbox-field"><input type="checkbox" name="customBrandingRequest" /><span>Custom branding / labels</span></label></div></div>
+              <label class="form-field form-field--full"><span>Dietary & allergen notes</span><textarea class="field" name="dietaryAllergenNotes" maxlength="1200" placeholder="Allergies, dietary restrictions or ingredient concerns."></textarea></label>
+              <label class="form-field form-field--full"><span>Event notes</span><textarea class="field" name="notes" maxlength="1200" placeholder="Access instructions, setup details, schedule, contact person or anything else we should know."></textarea></label>
+              <div class="form-field form-field--full info-panel"><h3>Minimum notice</h3><p>8–20 guests: 24 hours · 21–50 guests: 48 hours · 51+ guests: 5 business days · staffed setup or custom branding: 5 business days. Smaller requests depend on store capacity.</p></div>
               <label class="checkbox-field form-field--full"><input type="checkbox" name="contactConsent" required /><span>I agree that ST. JUICE may contact me about this request.</span></label>
-              <div class="form-field--full"><button class="button" type="submit">Request catering</button><p class="form-note">A confirmation will only appear after the request is securely saved.</p></div>
+              <div class="form-field--full"><button class="button" type="submit">Request catering</button><p class="form-note">A confirmation only appears after the request is securely saved. The event is not confirmed until the quote and required payment steps are complete.</p></div>
             </div>`}
         </form>
       </div>
