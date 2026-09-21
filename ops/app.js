@@ -152,7 +152,9 @@ async function renderCatalog() {
         <div class="grid">
           <label>Loyalty status<select name="loyaltyEnabled"><option value="true" ${rewards.config.loyalty.enabled ? "selected" : ""}>Active</option><option value="false" ${!rewards.config.loyalty.enabled ? "selected" : ""}>Paused</option></select></label>
           <label>Points per $1<input name="pointsPerDollar" type="number" min="0" max="100" step="1" value="${Number(rewards.config.loyalty.pointsPerDollar || 0)}"></label>
+          <label>Student benefit<select name="studentEnabled"><option value="true" ${rewards.config.accountDiscounts.student.enabled ? "selected" : ""}>Active</option><option value="false" ${!rewards.config.accountDiscounts.student.enabled ? "selected" : ""}>Paused</option></select></label>
           <label>Student discount %<input name="studentPercentOff" type="number" min="0" max="50" step=".5" value="${Number(rewards.config.accountDiscounts.student.percentOff || 0)}"></label>
+          <label>Business benefit<select name="businessEnabled"><option value="true" ${rewards.config.accountDiscounts.business.enabled ? "selected" : ""}>Active</option><option value="false" ${!rewards.config.accountDiscounts.business.enabled ? "selected" : ""}>Paused</option></select></label>
           <label>Business discount %<input name="businessPercentOff" type="number" min="0" max="50" step=".5" value="${Number(rewards.config.accountDiscounts.business.percentOff || 0)}"></label>
           <label>Birthday status<select name="birthdayEnabled"><option value="true" ${rewards.config.birthday.enabled ? "selected" : ""}>Active</option><option value="false" ${!rewards.config.birthday.enabled ? "selected" : ""}>Paused</option></select></label>
           <label>Birthday window before<input name="windowBeforeDays" type="number" min="0" max="365" value="${Number(rewards.config.birthday.windowBeforeDays || 0)}"></label>
@@ -330,8 +332,8 @@ els.panel.addEventListener("submit", async (event) => {
             pointsPerDollar: Number(data.get("pointsPerDollar"))
           },
           accountDiscounts: {
-            student: { enabled: true, percentOff: Number(data.get("studentPercentOff")) },
-            business: { enabled: true, percentOff: Number(data.get("businessPercentOff")) }
+            student: { enabled: data.get("studentEnabled") === "true", percentOff: Number(data.get("studentPercentOff")) },
+            business: { enabled: data.get("businessEnabled") === "true", percentOff: Number(data.get("businessPercentOff")) }
           },
           birthday: {
             enabled: data.get("birthdayEnabled") === "true",
