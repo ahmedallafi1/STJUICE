@@ -8,7 +8,7 @@ import { generateSlots, quoteCart, validateDeliveryAddress } from "./lib/order-e
 import { consumeTestPayment, createTestPaymentIntent, verifyTestPayment } from "./adapters/test-payment-adapter.mjs";
 import { sendToTestPos } from "./adapters/test-pos-adapter.mjs";
 import { attachOrder, handleAccountApi } from "../accounts/account-api.mjs";
-import { sessionForRequest } from "../accounts/lib/account-store.mjs";
+import { creditCompletedOrder, sessionForRequest } from "../accounts/lib/account-store.mjs";
 import { benefitSnapshot, benefitsConfig } from "../accounts/lib/benefits-engine.mjs";
 import { getLaunchReadiness } from "../launch/lib/readiness.mjs";
 
@@ -264,6 +264,7 @@ async function api(request, response, url) {
     if (next !== order.status) {
       order.status = next;
       order.statusHistory.push({ status: next, at: new Date().toISOString() });
+      if (next === "complete") order.rewards = creditCompletedOrder(order);
     }
     return json(response, 200, { order: publicOrder(order) });
   }
