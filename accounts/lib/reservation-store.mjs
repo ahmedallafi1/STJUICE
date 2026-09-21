@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { benefitsConfig } from "./benefits-engine.mjs";
 import { adminAccountsSnapshot, adminFindAccount } from "./account-store.mjs";
+import { config as orderConfig } from "../../ordering/lib/catalog-store.mjs";
 
 const fail = (message, code, status = 400, field) => {
   throw Object.assign(new Error(message), { code, status, field });
@@ -17,6 +18,28 @@ function localDate(now = new Date()) {
   }).formatToParts(now);
   const get = (type) => parts.find((part) => part.type === type)?.value;
   return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+function timeToMinutes(value) {
+  const [hours, minutes] = String(value || "").split(":").map(Number);
+  return hours * 60 + minutes;
+}
+
+function localClockMinutes(now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: orderConfig.meta.timezone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(now);
+  const get = (type) => Number(parts.find((part) => part.type === type)?.value || 0);
+  return get("hour") * 60 + get("minute");
+}
+
+function hoursForDate(dateText) {
+  const [year, month, day] = String(dateText).split("-").map(Number);
+  const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][new Date(Date.UTC(year, month - 1, day, 12)).getUTCDay()];
+  return orderConfig.fulfillment.hours[weekday];
 }
 
 export function listReservations(account) {
@@ -52,6 +75,16 @@ export function createReservationRequest(account, input = {}, now = new Date()) 
     fail(`Duration must be ${durationPolicy.min}–${durationPolicy.max} minutes in ${durationPolicy.increment}-minute increments.`, "reservation_duration_invalid", 422, "durationMinutes");
   }
 
+  const dayHours = hoursForDate(date);
+  const startMinutes = timeToMinutes(startTime);
+  const endMinutes = startMinutes + durationMinutes;
+  if (!dayHours || startMinutes < timeToMinutes(dayHours.open) || endMinutes > timeToMinutes(dayHours.close)) {
+    fail(`Reservations must fit within store hours (${dayHours?.open || "closed"}–${dayHours?.close || "closed"}).`, "reservation_outside_hours", 422, "startTime");
+  }
+  if (date === localDate(now) && startMinutes <= localClockMinutes(now)) {
+    fail("Reservation time must be in the future.", "reservation_time_past", 422, "startTime");
+  }
+
   const reservation = {
     id: `res_${randomUUID()}`,
     accountId: account.id,
@@ -79,11 +112,6 @@ export function cancelReservation(account, reservationId, now = new Date()) {
   reservation.status = "canceled";
   reservation.updatedAt = now.toISOString();
   return structuredClone(reservation);
-}
-
-function timeToMinutes(value) {
-  const [hours, minutes] = String(value || "").split(":").map(Number);
-  return hours * 60 + minutes;
 }
 
 function overlaps(a, b, bufferMinutes = 0) {
