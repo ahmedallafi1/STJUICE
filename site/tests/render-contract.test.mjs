@@ -77,13 +77,15 @@ for (const mode of ["guest", "regular", "student", "business"]) {
 state.account = {
   signedIn: true,
   csrfToken: "csrf-test",
-  profile: { name: "Student Tester", email: "student@example.edu", phone: "", birthday: "", mode: "student" },
+  profile: { name: "Student Tester", email: "student@example.edu", phone: "3145550100", birthday: "1999-09-20", mode: "student" },
   student: { status: "not_submitted" },
   business: { status: "not_submitted" },
-  points: 0,
+  points: 999,
   favorites: [],
   savedMixes: [],
-  orderHistory: [],
+  orderHistory: [{ id: "order_old", orderNumber: "STJ-OLD", service: "pickup", status: "complete", total: 9.95, items: [], createdAt: "2026-09-01T12:00:00Z" }],
+  addresses: [{ id: "addr_test", label: "Home", street: "11 S Vandeventer Ave", city: "St. Louis", state: "MO", postalCode: "63108" }],
+  cateringRequests: [{ id: "cat_test", reference: "STJ-CAT-0001", eventDate: "2026-10-01", guestCount: 25, status: "quoted", quote: { amount: 450, version: 1 } }],
   reservations: [{
     id: "res_test",
     purpose: "study_group",
@@ -94,48 +96,75 @@ state.account = {
     status: "requested"
   }],
   benefits: {
-    discount: { enabled: false, verificationRequired: true, verificationStatus: "not_submitted", activePercentOff: 0 },
-    loyalty: { enabled: true, enrolled: true, points: 99 },
-    birthday: { enabled: false, eligible: false }
+    discount: { enabled: true, verificationRequired: true, verificationStatus: "not_submitted", verificationSatisfied: false, activePercentOff: 0 },
+    loyalty: { enabled: true, enrolled: true, points: 999 },
+    birthday: { enabled: true, eligible: false, alreadyIssuedThisYear: false }
   },
   rewardsWallet: {
-    points: 99,
-    lifetimeEarned: 99,
+    points: 999,
+    lifetimeEarned: 999,
     lifetimeRedeemed: 0,
     transactions: [],
-    grants: [{ id: "grant_test", kind: "loyalty_redemption", rewardType: "fixed_discount", status: "available" }]
+    grants: [{ id: "grant_test", label: "$5 reward", kind: "loyalty_redemption", rewardType: "fixed_discount", status: "available" }]
   },
   rewardsConfig: {
     enabled: true,
     pointsPerDollar: 10,
-    redemptions: [{ id: "reward_test", points: 50, type: "fixed_discount", value: 5 }]
+    autoEnrollOnAccountCreation: true,
+    redemptions: [
+      { id: "reward-500", label: "$5 reward", points: 500, type: "fixed_discount", value: 5 },
+      { id: "reward-900", label: "Free drink", points: 900, type: "free_product", value: null },
+      { id: "reward-1200", label: "Free dessert", points: 1200, type: "free_product", value: null },
+      { id: "reward-1800", label: "$15 Party Box reward", points: 1800, type: "item_discount", value: 15 }
+    ]
   },
   reservationConfig: {
     enabled: true,
     partySize: { min: 2, max: 40 },
     durationMinutes: { min: 30, max: 240, increment: 30 },
-    purposes: ["study_group", "work_group", "meeting", "social", "other"]
+    purposes: ["study_group", "student_organization", "work_group", "meeting", "birthday", "celebration", "general_group", "other"]
   }
 };
 state.mode = "student";
+
+const unverifiedStudentAccount = renderPage({ path: "/account", params: new URLSearchParams() }, { data, state });
+assert.ok(unverifiedStudentAccount.includes("data-student-verification-form"), "Unverified Student must render verification submission");
+assert.ok(!unverifiedStudentAccount.includes("10% active"), "Student discount must not activate before verification");
+
+state.account.student = { status: "verified", expiresAt: "2027-09-20" };
+state.account.benefits.discount = { enabled: true, verificationRequired: true, verificationStatus: "verified", verificationSatisfied: true, activePercentOff: 10 };
 const studentAccount = renderPage({ path: "/account", params: new URLSearchParams() }, { data, state });
-assert.ok(studentAccount.includes("data-student-verification-form"), "Student account must render verification submission");
+assert.ok(studentAccount.includes("Verified"));
+assert.ok(studentAccount.includes("10% active"), "Verified Student must see the active fixed discount");
 assert.ok(studentAccount.includes("data-reservation-form"), "Signed-in account must render reservation request form");
-assert.ok(studentAccount.includes("Study group"), "Reservation purpose must be customer-readable");
+assert.ok(studentAccount.includes("Student organization"), "Expanded reservation purposes must be customer-readable");
 assert.ok(studentAccount.includes("Requested"), "Reservation status must be visible");
-assert.ok(studentAccount.includes("MEMBER WALLET"), "Signed-in account must render the member wallet");
+assert.ok(studentAccount.includes("MEMBER WALLET"), "Signed-in account must render member wallet");
 assert.ok(studentAccount.includes('data-action="apply-reward-grant"'), "Available wallet grant must be selectable for checkout");
-assert.ok(studentAccount.includes("99 points"), "Active wallet balance must render from server dashboard state");
-assert.ok(!studentAccount.includes("10%"), "Disabled proposal discount must not be advertised as an active benefit");
+assert.ok(studentAccount.includes("999 points"), "Wallet balance must render from server dashboard state");
+assert.ok(studentAccount.includes("Free drink"), "Reward catalog labels must be visible");
+assert.ok(studentAccount.includes("PROFILE"));
+assert.ok(studentAccount.includes("SAVED ADDRESSES"));
+assert.ok(studentAccount.includes("Home"));
+assert.ok(studentAccount.includes("STJ-CAT-0001"));
+assert.ok(studentAccount.includes("Accept quote"));
+assert.ok(studentAccount.includes("Reorder"));
 
 state.mode = "business";
 state.account.profile.mode = "business";
 state.account.business = { status: "pending_review", company: "Test Company", role: "Office Manager" };
-state.account.benefits.discount = { enabled: false, verificationRequired: true, verificationStatus: "pending_review", activePercentOff: 0 };
-const businessAccount = renderPage({ path: "/account", params: new URLSearchParams() }, { data, state });
-assert.ok(businessAccount.includes("data-business-form"), "Pending business account must render editable business profile");
-assert.ok(businessAccount.includes("Pending review"), "Business review status must be visible");
-assert.ok(!businessAccount.includes("8%"), "Disabled proposal business discount must not be advertised as active");
+state.account.benefits.discount = { enabled: true, verificationRequired: true, verificationStatus: "pending_review", verificationSatisfied: false, activePercentOff: 0 };
+const pendingBusinessAccount = renderPage({ path: "/account", params: new URLSearchParams() }, { data, state });
+assert.ok(pendingBusinessAccount.includes("data-business-form"), "Pending business account must render editable business profile");
+assert.ok(pendingBusinessAccount.includes("Pending review"));
+assert.ok(!pendingBusinessAccount.includes("8% active"), "Business discount must not activate before approval");
+
+state.account.business = { status: "approved", company: "Test Company", role: "Office Manager" };
+state.account.benefits.discount = { enabled: true, verificationRequired: true, verificationStatus: "approved", verificationSatisfied: true, activePercentOff: 8 };
+const approvedBusinessAccount = renderPage({ path: "/account", params: new URLSearchParams() }, { data, state });
+assert.ok(approvedBusinessAccount.includes("Approved business"));
+assert.ok(approvedBusinessAccount.includes("8% active"), "Approved Business must see the active fixed discount");
+assert.ok(approvedBusinessAccount.includes("Plan catering"));
 
 state.account = undefined;
 state.mode = "guest";
@@ -148,6 +177,7 @@ state.cart = [{ key: "test", name: "Pistachio Saint", image: "test.webp", sizeLa
 assert.ok(renderCart(data, state).includes("$19.90"), "Cart must calculate line totals");
 
 state.checkout.quote = {
+  mode: "safe_test",
   promo: null,
   fulfillment: { requiredLeadMinutes: 240 },
   items: [{ name: "Pistachio Saint", sizeLabel: "16 oz", quantity: 2, allergens: ["milk", "tree_nut"], lineTotal: { amount: 19.9 } }],
@@ -163,11 +193,13 @@ assert.ok(!checkout.includes("Service date"));
 assert.ok(!checkout.includes("Available time"));
 
 state.runtimeConfig = { mode: "production", payments: { live: true } };
+state.checkout.quote.mode = "production";
 const liveCheckout = renderPage({ path: "/checkout", params: new URLSearchParams() }, { data, state });
 assert.ok(liveCheckout.includes("CHECKOUT"));
 assert.ok(!liveCheckout.includes("ORDERING PREVIEW"));
 assert.ok(!liveCheckout.includes("No live card charge will occur yet."));
 state.runtimeConfig = null;
+state.checkout.quote.mode = "safe_test";
 assert.ok(checkout.includes("Minimum prep:"));
 assert.ok(checkout.includes("4 hr"));
 
