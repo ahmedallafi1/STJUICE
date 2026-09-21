@@ -76,6 +76,39 @@ try {
   assert.equal(boxQuote.response.status, 200, JSON.stringify(boxQuote.payload));
   assert.equal(boxQuote.payload.fulfillment.requiredLeadMinutes, 240);
 
+  const boxSoldOut = await json("/api/admin/commercial/boxes/study-night-box", {
+    method: "PATCH",
+    headers: adminHeaders,
+    body: JSON.stringify({ status: "sold_out" })
+  });
+  assert.equal(boxSoldOut.response.status, 200);
+  const boxSoldOutQuote = await json("/api/cart/validate", {
+    method: "POST",
+    body: JSON.stringify({
+      service: "pickup",
+      items: [{
+        kind: "catalog",
+        productId: "study-night-box",
+        sizeId: "serves-2-3",
+        quantity: 1,
+        modifierSelections: {
+          "study-box-drinks": ["lemon-mint", "blue-rush"],
+          "box-sauces": ["milk-chocolate"],
+          "box-toppings": ["cookie-crumb"]
+        }
+      }],
+      promoCode: "",
+      tipPercent: 0
+    })
+  });
+  assert.equal(boxSoldOutQuote.response.status, 422);
+  assert.ok(boxSoldOutQuote.payload.errors.some((row) => row.code === "product_sold_out"));
+  await json("/api/admin/commercial/boxes/study-night-box", {
+    method: "PATCH",
+    headers: adminHeaders,
+    body: JSON.stringify({ status: "available", leadTime: { type: "scheduled", minimumHours: 4 } })
+  });
+
   const scheduled = await json("/api/admin/commercial/drops/dragon-cloud-cup", {
     method: "PATCH",
     headers: adminHeaders,
@@ -100,6 +133,24 @@ try {
   });
   assert.equal(archived.response.status, 200);
 
+  const archivedQuote = await json("/api/cart/validate", {
+    method: "POST",
+    body: JSON.stringify({
+      service: "pickup",
+      items: [{
+        kind: "catalog",
+        productId: "dragon-cloud-cup",
+        sizeId: "regular",
+        quantity: 1,
+        modifierSelections: {}
+      }],
+      promoCode: "",
+      tipPercent: 0
+    })
+  });
+  assert.equal(archivedQuote.response.status, 422);
+  assert.ok(archivedQuote.payload.errors.some((row) => row.code === "product_paused"));
+
   const publicState = await json("/api/catalog-status");
   assert.equal(publicState.response.status, 200);
   assert.equal(publicState.payload.products["pistachio-saint"].status, "available");
@@ -115,8 +166,10 @@ try {
     status: "valid",
     soldOutBlockedServerSide: true,
     partyBoxLeadTimeEnforced: true,
+    partyBoxSoldOutBlockedServerSide: true,
     dropLifecycleControlled: true,
     dropPublishWindowControlled: true,
+    archivedDropBlockedServerSide: true,
     publicCommercialStateAvailable: true
   }, null, 2));
 } finally {
