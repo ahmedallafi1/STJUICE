@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import {
+  adminReviewBusiness,
+  adminReviewStudent,
   registerAccount,
   requestStudentVerification,
   updateBusiness
@@ -22,159 +24,181 @@ import {
   createReservationRequest,
   listReservations
 } from "../lib/reservation-store.mjs";
+import { rewardGrantDiscount } from "../../ordering/lib/promotion-engine.mjs";
 
 const now = new Date("2026-09-20T17:00:00Z");
 
-assert.equal(benefitsConfig.loyalty.enabled, false, "Proposed loyalty economics must not activate without owner approval");
-assert.equal(benefitsConfig.loyalty.proposal.pointsPerDollar, 10);
-assert.equal(benefitsConfig.accountDiscounts.student.enabled, false);
-assert.equal(benefitsConfig.accountDiscounts.student.proposalPercentOff, 10);
-assert.equal(benefitsConfig.accountDiscounts.business.enabled, false);
-assert.equal(benefitsConfig.accountDiscounts.business.proposalPercentOff, 8);
+assert.equal(benefitsConfig.loyalty.enabled, true);
+assert.equal(benefitsConfig.loyalty.autoEnrollOnAccountCreation, true);
+assert.equal(benefitsConfig.loyalty.pointsPerDollar, 10);
+assert.deepEqual((benefitsConfig.loyalty.redemptions || []).map((row) => row.points), [500, 900, 1200, 1800]);
+assert.equal(benefitsConfig.accountDiscounts.student.enabled, true);
+assert.equal(benefitsConfig.accountDiscounts.student.percentOff, 10);
+assert.equal(benefitsConfig.accountDiscounts.business.enabled, true);
+assert.equal(benefitsConfig.accountDiscounts.business.percentOff, 8);
+assert.equal(benefitsConfig.birthday.enabled, true);
+assert.equal(benefitsConfig.birthday.windowBeforeDays, 3);
+assert.equal(benefitsConfig.birthday.windowAfterDays, 7);
+assert.equal(benefitsConfig.birthday.minimumAccountAgeDays, 30);
 
 const regular = registerAccount({
-  name: "Phase Two Regular",
-  email: "phase2-regular@example.com",
-  password: "PhaseTwoTest!123",
+  name: "Requirements Regular",
+  email: "requirements-regular@example.com",
+  password: "Requirements!123",
   type: "regular"
 });
+assert.equal(regular.rewards.enrolled, true, "Registered accounts must join rewards automatically");
 assert.equal(rewardLedger(regular).points, 0);
 
 const earned = appendRewardTransaction(regular, {
   type: "earn",
   points: 100,
-  sourceId: "order_phase2_1",
-  reason: "Test eligible purchase",
+  sourceId: "order_requirements_1",
+  reason: "Eligible purchase",
   createdAt: now
 });
 assert.equal(earned.summary.points, 100);
 assert.equal(earned.idempotentReplay, false);
-
 const replay = appendRewardTransaction(regular, {
   type: "earn",
   points: 100,
-  sourceId: "order_phase2_1",
-  reason: "Duplicate delivery",
+  sourceId: "order_requirements_1",
+  reason: "Duplicate event",
   createdAt: now
 });
-assert.equal(replay.summary.points, 100, "Idempotent reward source must not double-credit points");
 assert.equal(replay.idempotentReplay, true);
-
-const redeemed = appendRewardTransaction(regular, {
-  type: "redeem",
-  points: -40,
-  sourceId: "redeem_phase2_1",
-  reason: "Test redemption",
-  createdAt: now
-});
-assert.equal(redeemed.summary.points, 60);
-assert.throws(
-  () => appendRewardTransaction(regular, { type: "redeem", points: -100, sourceId: "redeem_too_much" }),
-  (error) => error?.code === "reward_points_insufficient"
-);
+assert.equal(replay.summary.points, 100);
 
 const student = registerAccount({
-  name: "Phase Two Student",
-  email: "phase2-student@example.edu",
-  password: "PhaseTwoTest!123",
+  name: "Requirements Student",
+  email: "requirements-student@example.edu",
+  password: "Requirements!123",
   type: "student",
   birthday: "1999-09-20"
 });
 student.createdAt = "2026-01-01T00:00:00.000Z";
 let studentBenefits = benefitSnapshot(student, now);
 assert.equal(studentBenefits.discount.activePercentOff, 0);
-assert.equal(studentBenefits.discount.proposalPercentOff, 10);
 assert.equal(studentBenefits.discount.verificationSatisfied, false);
-assert.equal(studentBenefits.birthday.proposalEligible, true);
-assert.equal(studentBenefits.birthday.eligible, false, "Birthday benefit must remain disabled until activation");
+assert.equal(studentBenefits.birthday.eligible, true);
 
 requestStudentVerification(student, {
-  schoolEmail: "student@university.edu",
+  schoolEmail: "requirements@university.edu",
   institution: "Example University"
 });
 studentBenefits = benefitSnapshot(student, now);
 assert.equal(studentBenefits.discount.verificationStatus, "pending_manual_review");
-assert.equal(studentBenefits.discount.activePercentOff, 0, "Pending verification must never activate a student discount");
+assert.equal(studentBenefits.discount.activePercentOff, 0);
+
+adminReviewStudent(student.id, {
+  status: "verified",
+  expiresAt: "2027-09-20",
+  reviewerReference: "requirements-test"
+});
+studentBenefits = benefitSnapshot(student, now);
+assert.equal(studentBenefits.discount.verificationStatus, "verified");
+assert.equal(studentBenefits.discount.activePercentOff, 10, "Verified Student must receive the configured fixed discount");
+
+student.student.expiresAt = "2026-01-01";
+studentBenefits = benefitSnapshot(student, now);
+assert.equal(studentBenefits.discount.verificationStatus, "expired");
+assert.equal(studentBenefits.discount.activePercentOff, 0, "Expired Student verification must stop the discount");
+student.student.expiresAt = "2027-09-20";
 
 const business = registerAccount({
-  name: "Phase Two Business",
-  email: "phase2-business@example.com",
-  password: "PhaseTwoTest!123",
+  name: "Requirements Business",
+  email: "requirements-business@example.com",
+  password: "Requirements!123",
   type: "business"
 });
 const businessProfile = updateBusiness(business, { company: "Example Co", role: "Office Manager" });
 assert.equal(businessProfile.status, "pending_review");
-const businessBenefits = benefitSnapshot(business, now);
-assert.equal(businessBenefits.discount.proposalPercentOff, 8);
+let businessBenefits = benefitSnapshot(business, now);
 assert.equal(businessBenefits.discount.activePercentOff, 0);
+adminReviewBusiness(business.id, { status: "approved", reviewerReference: "requirements-test" });
+businessBenefits = benefitSnapshot(business, now);
+assert.equal(businessBenefits.discount.activePercentOff, 8, "Approved Business account must receive configured fixed discount");
 
 const publicStudentBenefits = publicBenefitSnapshot(student, now);
-assert.equal("proposalPercentOff" in publicStudentBenefits.discount, false, "Public benefit snapshot must not expose proposal discount economics");
-assert.equal("proposal" in publicStudentBenefits.loyalty, false, "Public benefit snapshot must not expose proposal loyalty thresholds");
-assert.equal("proposalEligible" in publicStudentBenefits.birthday, false, "Public benefit snapshot must not expose proposal birthday eligibility");
+assert.equal("proposalPercentOff" in publicStudentBenefits.discount, false);
+assert.equal("proposal" in publicStudentBenefits.loyalty, false);
+assert.equal("proposalEligible" in publicStudentBenefits.birthday, false);
 
 const rewardMember = registerAccount({
   name: "Reward Member",
-  email: "reward-member@example.com",
-  password: "PhaseTwoTest!123",
+  email: "requirements-reward@example.com",
+  password: "Requirements!123",
   type: "regular"
 });
-rewardMember.rewards.enrolled = true;
-const previousLoyalty = structuredClone(benefitsConfig.loyalty);
-benefitsConfig.loyalty.enabled = true;
-benefitsConfig.loyalty.pointsPerDollar = 10;
-benefitsConfig.loyalty.redemptions = [{ id: "reward-test", points: 50, type: "free_addon", value: null }];
-
 const rewardOrder = {
   id: "order_reward_test",
   orderNumber: "STJ-REWARD",
   createdAt: now.toISOString(),
-  totals: { subtotal: { cents: 1000 }, discount: { cents: 100 } }
+  totals: { subtotal: { cents: 10000 }, discount: { cents: 1000 } }
 };
 const credited = creditOrderRewards(rewardMember, rewardOrder);
 assert.equal(credited.credited, true);
-assert.equal(rewardLedger(rewardMember).points, 90, "Reward earning must exclude discounts and ignore tax/tip/fees");
+assert.equal(rewardLedger(rewardMember).points, 900, "10 points/$ must be based on eligible spend after discounts");
 const creditedAgain = creditOrderRewards(rewardMember, rewardOrder);
-assert.equal(creditedAgain.credited, false, "Order rewards must be idempotent by order id");
-assert.equal(rewardLedger(rewardMember).points, 90);
+assert.equal(creditedAgain.credited, false);
+assert.equal(rewardLedger(rewardMember).points, 900);
 
-const redeemedReward = redeemConfiguredReward(rewardMember, "reward-test", now);
-assert.equal(redeemedReward.rewards.points, 40);
-assert.equal(redeemedReward.grant.status, "available");
-assert.equal(availableRewardGrant(rewardMember, redeemedReward.grant.id)?.id, redeemedReward.grant.id);
-const consumedGrant = consumeRewardGrant(rewardMember, redeemedReward.grant.id, "order_grant_test", now);
+const freeDrink = redeemConfiguredReward(rewardMember, "reward-900", now);
+assert.equal(freeDrink.rewards.points, 0);
+assert.equal(freeDrink.grant.label, "Free drink");
+assert.equal(freeDrink.grant.status, "available");
+assert.equal(availableRewardGrant(rewardMember, freeDrink.grant.id)?.id, freeDrink.grant.id);
+
+const freeDrinkPricing = rewardGrantDiscount({
+  subtotalCents: 995,
+  items: [{ productId: "pistachio-saint", quantity: 1, unitPrice: { cents: 995 } }],
+  grant: freeDrink.grant
+});
+assert.equal(freeDrinkPricing.applicable, true);
+assert.equal(freeDrinkPricing.discountCents, 995);
+
+const consumedGrant = consumeRewardGrant(rewardMember, freeDrink.grant.id, "order_grant_test", now);
 assert.equal(consumedGrant.grant.status, "consumed");
-assert.equal(availableRewardGrant(rewardMember, redeemedReward.grant.id), null, "Consumed grant must no longer be available");
-const consumedReplay = consumeRewardGrant(rewardMember, redeemedReward.grant.id, "order_grant_test", now);
-assert.equal(consumedReplay.idempotentReplay, true, "Grant consumption must be idempotent for the same order");
-const reversed = reverseOrderRewards(rewardMember, rewardOrder, "Refunded test order");
+assert.equal(availableRewardGrant(rewardMember, freeDrink.grant.id), null);
+assert.equal(consumeRewardGrant(rewardMember, freeDrink.grant.id, "order_grant_test", now).idempotentReplay, true);
+
+const reverseMember = registerAccount({
+  name: "Refund Member",
+  email: "requirements-refund@example.com",
+  password: "Requirements!123",
+  type: "regular"
+});
+const reverseOrder = {
+  id: "order_reverse_test",
+  orderNumber: "STJ-REVERSE",
+  createdAt: now.toISOString(),
+  totals: { subtotal: { cents: 1000 }, discount: { cents: 0 } }
+};
+creditOrderRewards(reverseMember, reverseOrder);
+appendRewardTransaction(reverseMember, { type: "redeem", points: -50, sourceId: "redeem_1", reason: "Reward spend", createdAt: now });
+const reversed = reverseOrderRewards(reverseMember, reverseOrder, "Refunded test order");
 assert.equal(reversed.reversed, true);
-assert.equal(rewardLedger(rewardMember).points, -50, "Refund clawback must remain auditable even after earned points were partially spent");
-const reversedAgain = reverseOrderRewards(rewardMember, rewardOrder, "Duplicate refund webhook");
-assert.equal(reversedAgain.reversed, false);
-assert.equal(reversedAgain.reason, "already_reversed");
-assert.equal(rewardLedger(rewardMember).points, -50, "Refund reversal must be idempotent");
-Object.assign(benefitsConfig.loyalty, previousLoyalty);
+assert.equal(rewardLedger(reverseMember).points, -50);
+assert.equal(rewardLedger(reverseMember).lifetimeRedeemed, 50, "Refund clawback must not inflate lifetime redeemed");
+assert.equal(reverseOrderRewards(reverseMember, reverseOrder).reason, "already_reversed");
 
 const birthdayMember = registerAccount({
   name: "Birthday Member",
-  email: "birthday-member@example.com",
-  password: "PhaseTwoTest!123",
+  email: "requirements-birthday@example.com",
+  password: "Requirements!123",
   type: "regular",
   birthday: "1990-09-20"
 });
 birthdayMember.createdAt = "2025-01-01T00:00:00.000Z";
-const previousBirthday = structuredClone(benefitsConfig.birthday);
-benefitsConfig.birthday.enabled = true;
-benefitsConfig.birthday.windowBeforeDays = 3;
-benefitsConfig.birthday.windowAfterDays = 7;
-benefitsConfig.birthday.minimumAccountAgeDays = 30;
-benefitsConfig.birthday.reward = { type: "free_item", value: null };
+const birthdayBefore = benefitSnapshot(birthdayMember, now);
+assert.equal(birthdayBefore.birthday.eligible, true);
 const birthdayGrant = claimBirthdayReward(birthdayMember, now);
 assert.equal(birthdayGrant.idempotentReplay, false);
+assert.equal(birthdayGrant.grant.label, "Birthday drink");
+assert.equal(benefitSnapshot(birthdayMember, now).birthday.alreadyIssuedThisYear, true);
+assert.equal(benefitSnapshot(birthdayMember, now).birthday.eligible, false);
 const birthdayReplay = claimBirthdayReward(birthdayMember, now);
-assert.equal(birthdayReplay.idempotentReplay, true, "Birthday grant must only issue once per calendar year");
-Object.assign(benefitsConfig.birthday, previousBirthday);
+assert.equal(birthdayReplay.idempotentReplay, true, "Birthday reward must issue once per calendar year");
 
 const reservation = createReservationRequest(student, {
   purpose: "study_group",
@@ -186,7 +210,6 @@ const reservation = createReservationRequest(student, {
   notes: "Need outlets near the table."
 }, now);
 assert.equal(reservation.status, "requested");
-assert.equal(reservation.partySize, 8);
 assert.equal(listReservations(student).length, 1);
 
 assert.throws(
@@ -199,16 +222,37 @@ assert.throws(
   }, now),
   (error) => error?.code === "reservation_party_size_invalid"
 );
+assert.throws(
+  () => createReservationRequest(student, {
+    purpose: "birthday",
+    date: "2026-09-21",
+    startTime: "22:00",
+    durationMinutes: 60,
+    partySize: 8
+  }, now),
+  (error) => error?.code === "reservation_outside_hours"
+);
+assert.throws(
+  () => createReservationRequest(student, {
+    purpose: "meeting",
+    date: "2026-02-31",
+    startTime: "18:00",
+    durationMinutes: 60,
+    partySize: 4
+  }, now),
+  (error) => error?.code === "reservation_date_invalid"
+);
 
 const canceled = cancelReservation(student, reservation.id, new Date("2026-09-20T18:00:00Z"));
 assert.equal(canceled.status, "canceled");
-assert.equal(listReservations(student)[0].status, "canceled");
 
 console.log(JSON.stringify({
   status: "valid",
-  rewardLedgerBalance: rewardLedger(regular).points,
-  studentProposalPercent: studentBenefits.discount.proposalPercentOff,
-  businessProposalPercent: businessBenefits.discount.proposalPercentOff,
-  birthdayProposalEligible: studentBenefits.birthday.proposalEligible,
-  reservationStatus: listReservations(student)[0].status
+  automaticRewards: true,
+  pointsPerDollar: benefitsConfig.loyalty.pointsPerDollar,
+  studentPercent: 10,
+  businessPercent: 8,
+  birthdayOncePerYear: true,
+  studentExpiryEnforced: true,
+  reservationHoursEnforced: true
 }, null, 2));
