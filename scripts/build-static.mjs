@@ -1,4 +1,4 @@
-import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs";
+import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import "./generate-browser-data.mjs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -48,4 +48,51 @@ for (const source of publicSources) {
   }
 }
 
-console.log(JSON.stringify({ status: "built", output: "dist-public", files: countFiles(output), bytes: totalBytes(output), referencesChecked }, null, 2));
+const publicOrigin = String(process.env.ST_JUICE_PUBLIC_ORIGIN || "").trim().replace(/\/+$/, "");
+const indexingEnabled = process.env.ST_JUICE_ENABLE_INDEXING === "true";
+if (indexingEnabled && !/^https:\/\//.test(publicOrigin)) {
+  throw new Error("ST_JUICE_PUBLIC_ORIGIN must be an https URL before indexing can be enabled.");
+}
+
+let sitemapGenerated = false;
+if (indexingEnabled) {
+  const catalog = JSON.parse(readFileSync(resolve(root, "menu/data/catalog.json"), "utf8"));
+  const routes = [
+    "/", "/menu", "/drops", "/build", "/boxes", "/catering", "/rewards", "/location", "/about",
+    ...catalog.products.map((product) => `/product/${encodeURIComponent(product.id)}`)
+  ];
+  const sitemap = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...routes.map((route) => `  <url><loc>${publicOrigin}${route}</loc></url>`),
+    '</urlset>',
+    ''
+  ].join("\n");
+  writeFileSync(resolve(output, "sitemap.xml"), sitemap);
+
+  const robots = `User-agent: *\nAllow: /\n\nSitemap: ${publicOrigin}/sitemap.xml\n`;
+  writeFileSync(resolve(output, "site/robots.txt"), robots);
+
+  const indexPath = resolve(output, "site/index.html");
+  let indexHtml = readFileSync(indexPath, "utf8");
+  indexHtml = indexHtml.replace(
+    '<meta name="robots" content="noindex, nofollow, noarchive" />',
+    '<meta name="robots" content="index, follow" />'
+  );
+  indexHtml = indexHtml.replace(
+    '<meta property="og:site_name" content="ST. JUICE" />',
+    `<meta property="og:site_name" content="ST. JUICE" />\n    <meta property="og:url" content="${publicOrigin}/" />\n    <link rel="canonical" href="${publicOrigin}/" data-stj-canonical />`
+  );
+  writeFileSync(indexPath, indexHtml);
+  sitemapGenerated = true;
+}
+
+console.log(JSON.stringify({
+  status: "built",
+  output: "dist-public",
+  files: countFiles(output),
+  bytes: totalBytes(output),
+  referencesChecked,
+  indexingEnabled,
+  sitemapGenerated
+}, null, 2));
