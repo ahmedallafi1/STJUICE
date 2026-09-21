@@ -84,7 +84,20 @@ export function adminCommercialSnapshot() {
 }
 
 export function productOperationalStatus(productId) {
-  return productStates.get(String(productId || ""))?.status || "available";
+  const id = String(productId || "");
+  const productStatus = productStates.get(id)?.status || "available";
+  if (productStatus !== "available") return productStatus;
+
+  const boxStatus = boxStates.get(id)?.status;
+  if (boxStatus && boxStatus !== "available") return boxStatus;
+
+  const drop = dropStates.get(id);
+  if (drop) {
+    const dropStatus = effectiveDropStatus(drop);
+    if (dropStatus === "sold_out") return "sold_out";
+    if (dropStatus !== "active") return "paused";
+  }
+  return "available";
 }
 
 export function boxOperationalState(productId) {
