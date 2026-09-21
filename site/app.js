@@ -64,6 +64,7 @@ function freshCheckout() {
     deliveryCheck: null,
     contact: { name: "", email: "", phone: "", marketingConsent: false },
     promoCode: "",
+    rewardGrantId: "",
     tipPercent: 0,
     allergenAcknowledged: false,
     quote: null,
@@ -304,6 +305,7 @@ function cartRequest() {
       modifierSelections: item.modifierSelections || {}, instructions: item.instructions || "", quantity: item.quantity
     }),
     promoCode: state.checkout.promoCode,
+    rewardGrantId: state.checkout.rewardGrantId,
     tipPercent: state.checkout.tipPercent
   };
 }
@@ -513,6 +515,24 @@ document.addEventListener("click", async (event) => {
       render({ preserveScroll: true });
       toast("Mix saved", "Available in your account dashboard.");
     } catch (error) { toast("Mix did not save", errorMessage(error)); }
+    return;
+  }
+  if (action === "apply-reward-grant") {
+    state.checkout.rewardGrantId = actionElement.dataset.grantId || "";
+    state.checkout.quote = null;
+    state.checkout.autoPrepared = false;
+    state.checkout.idempotencyKey = "";
+    render({ preserveScroll: true });
+    toast("Reward selected", state.cart.length ? "It will be validated against your bag at checkout." : "Add an eligible item, then the reward will be validated at checkout.");
+    return;
+  }
+  if (action === "remove-reward-grant") {
+    state.checkout.rewardGrantId = "";
+    state.checkout.quote = null;
+    state.checkout.autoPrepared = false;
+    state.checkout.idempotencyKey = "";
+    render({ preserveScroll: true });
+    toast("Reward removed from checkout");
     return;
   }
   if (action === "enroll-rewards") {
