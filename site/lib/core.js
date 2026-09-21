@@ -124,7 +124,7 @@ export function hydrateIcons(root = document) {
   });
 }
 
-export function mediaBadge(label = "Concept visual") {
+export function mediaBadge(label = "Preview image") {
   return `<span class="media-status">${escapeHtml(label)}</span>`;
 }
 
