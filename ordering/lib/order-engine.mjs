@@ -1,4 +1,5 @@
 import { builder, builderOptions, builderStepById, config, modifierById, productById } from "./catalog-store.mjs";
+import { combineDiscounts } from "./promotion-engine.mjs";
 
 const cents = (value) => Math.round(Number(value || 0) * 100);
 const dollars = (value) => Number((Number(value || 0) / 100).toFixed(2));
@@ -191,7 +192,7 @@ function builderLine(input, index, errors, warnings) {
   };
 }
 
-export function quoteCart(request = {}) {
+export function quoteCart(request = {}, pricingContext = {}) {
   const errors = [];
   const warnings = [];
   const service = String(request.service || "");
@@ -205,13 +206,20 @@ export function quoteCart(request = {}) {
   }).filter(Boolean);
 
   const subtotal = items.reduce((sum, item) => sum + item.lineTotal.cents, 0);
-  let discount = 0;
+  let promoDiscount = 0;
   const promoCode = cleanText(request.promoCode, 30).toUpperCase();
   if (promoCode) {
     const promo = config.pricing.promo;
-    if (promoCode === promo.testCode) discount = Math.min(Math.round(subtotal * promo.percentOff / 100), cents(promo.maximumDiscount));
-    else errors.push({ code: "promo_invalid", message: "That promo code is not valid in safe test mode." });
+    if (promoCode === promo.testCode) promoDiscount = Math.min(Math.round(subtotal * promo.percentOff / 100), cents(promo.maximumDiscount));
+    else errors.push({ code: "promo_invalid", message: "That promo code is not valid in the ordering preview." });
   }
+  const discounts = combineDiscounts({
+    subtotalCents: subtotal,
+    promoDiscountCents: promoDiscount,
+    benefitSnapshot: pricingContext.benefits || null,
+    stackingPolicy: pricingContext.stackingPolicy || "best_discount"
+  });
+  const discount = discounts.totalDiscountCents;
   const tipPercent = Number(request.tipPercent || 0);
   if (!config.pricing.tips.allowedPercentages.includes(tipPercent)) errors.push({ code: "tip_invalid", message: "Choose an available tip percentage." });
   const taxable = Math.max(0, subtotal - discount);
@@ -232,7 +240,16 @@ export function quoteCart(request = {}) {
     items,
     errors,
     warnings,
-    promo: promoCode ? { code: promoCode, status: discount ? "applied_test" : "invalid" } : null,
+    promo: promoCode ? { code: promoCode, status: discounts.applied.includes("promo") ? "applied" : promoDiscount ? "not_stacked" : "invalid" } : null,
+    accountBenefit: {
+      applied: discounts.applied.includes("account"),
+      percentOff: discounts.accountPercentOff
+    },
+    discountBreakdown: {
+      promo: moneyFields(discounts.promoDiscountCents),
+      account: moneyFields(discounts.accountDiscountCents),
+      stackingPolicy: discounts.stackingPolicy
+    },
     totals: {
       subtotal: moneyFields(subtotal),
       discount: moneyFields(discount),
