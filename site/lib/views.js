@@ -26,7 +26,7 @@ export const modes = {
     short: "Regular mode",
     theme: "default",
     icon: "heart",
-    announcement: "Your favorites, rewards preview and faster reorder—in one mood.",
+    announcement: "Your favorites, rewards and faster reorder—in one account.",
     line: "Save favorites, collect rewards and reorder faster.",
     detail: "Sign in to save favorites, mixes and member activity to your account."
   },
@@ -36,7 +36,7 @@ export const modes = {
     theme: "student",
     icon: "spark",
     announcement: "Student mode · Study-night picks and eligible offers up front.",
-    line: "Study-night boxes, student-value picks and verification planning.",
+    line: "Study-night boxes, verified student savings and rewards in one place.",
     detail: "No university sponsorship or affiliation is implied."
   },
   business: {
@@ -46,7 +46,7 @@ export const modes = {
     icon: "calendar",
     announcement: "Business mode · Group orders, recurring events and catering tools.",
     line: "Plan group orders, save event details and request a quote.",
-    detail: "Rates, delivery and service terms remain subject to confirmation."
+    detail: "Approved business benefits apply automatically; catering terms are confirmed per quote."
   }
 };
 
@@ -907,14 +907,23 @@ function renderAccount({ data, state }) {
     const birthday = benefits.birthday || {};
     const reservations = Array.isArray(account.reservations) ? account.reservations : [];
     const reservationConfig = account.reservationConfig || { partySize: { min: 2, max: 40 }, durationMinutes: { min: 30, max: 240, increment: 30 }, purposes: ["study_group", "work_group", "meeting", "social", "other"] };
-    const purposeLabels = { study_group: "Study group", work_group: "Work group", meeting: "Meeting", social: "Social group", other: "Other" };
+    const purposeLabels = {
+      study_group: "Study group",
+      student_organization: "Student organization",
+      work_group: "Work group",
+      meeting: "Meeting",
+      birthday: "Birthday",
+      celebration: "Small celebration",
+      general_group: "General group",
+      other: "Other"
+    };
     const reservationStatus = { requested: "Requested", confirmed: "Confirmed", declined: "Declined", canceled: "Canceled" };
     const verificationLabel = discount.verificationRequired
       ? titleCase(discount.verificationStatus || "not_submitted")
       : "Not required";
-    const rewardsLabel = loyalty.enabled ? `${Number(loyalty.points || 0)} points` : "Coming soon";
+    const rewardsLabel = loyalty.enabled ? `${Number(loyalty.points || 0)} points` : "Paused";
     const benefitLabel = Number(discount.activePercentOff || 0) > 0 ? `${discount.activePercentOff}% active` : discount.verificationRequired ? verificationLabel : "Member account";
-    const birthdayLabel = birthday.eligible ? "Available now" : birthday.enabled ? "Not active today" : "Coming soon";
+    const birthdayLabel = birthday.eligible ? "Available now" : birthday.enabled ? "Outside birthday window" : "Paused";
     const wallet = account.rewardsWallet || { points: Number(loyalty.points || 0), lifetimeEarned: 0, lifetimeRedeemed: 0, transactions: [], grants: [] };
     const rewardsConfig = account.rewardsConfig || { enabled: false, redemptions: [] };
     const availableGrants = (wallet.grants || []).filter((grant) => grant.status === "available");
@@ -922,7 +931,7 @@ function renderAccount({ data, state }) {
     return `${pageHero("YOUR ST. JUICE", `Hey, ${account.profile.name || "friend"}.`, modes[state.mode].line, `<button class="button button--outline" type="button" data-action="account-signout">Sign out</button>`)}
     <section class="section section--cream"><div class="container account-dashboard">
       <div class="account-stats">
-        <article><span>Rewards</span><strong>${escapeHtml(rewardsLabel)}</strong><small>Earn and redeem from your member wallet when activated</small></article>
+        <article><span>Rewards</span><strong>${escapeHtml(rewardsLabel)}</strong><small>Earn on eligible completed orders and redeem from your wallet</small></article>
         <article><span>Account benefit</span><strong>${escapeHtml(benefitLabel)}</strong><small>${discount.verificationRequired ? "Verification controls eligibility" : "Your member experience"}</small></article>
         <article><span>Birthday</span><strong>${escapeHtml(birthdayLabel)}</strong><small>Benefits appear here only when eligible and active</small></article>
         <article><span>Reservations</span><strong>${reservations.filter((item) => ["requested", "confirmed"].includes(item.status)).length}</strong><small>Open group requests</small></article>
@@ -930,19 +939,19 @@ function renderAccount({ data, state }) {
 
       <div class="account-section member-wallet">
         <div class="section-heading account-section__heading">
-          <div><p class="eyebrow">MEMBER WALLET</p><h2>Rewards, benefits and offers in one place.</h2><p class="lede">Only active, account-eligible benefits appear here. Proposed program values are never shown as live offers.</p></div>
+          <div><p class="eyebrow">MEMBER WALLET</p><h2>Rewards, benefits and offers in one place.</h2><p class="lede">Your balance, verified account benefit and available rewards are calculated from the active member policy.</p></div>
         </div>
         <div class="wallet-grid">
           <article class="account-panel">
             <p class="eyebrow">POINTS</p>
             <h2>${rewardsConfig.enabled ? `${Number(wallet.points || 0)} points` : "Rewards coming soon"}</h2>
-            <p>${rewardsConfig.enabled ? `${Number(wallet.lifetimeEarned || 0)} earned · ${Number(wallet.lifetimeRedeemed || 0)} redeemed` : "Your account is ready for the loyalty program when the final earning and redemption rules are approved."}</p>
-            ${rewardsConfig.enabled && !loyalty.enrolled ? `<button class="button" type="button" data-action="enroll-rewards">Join ST. Rewards</button>` : ""}
+            <p>${rewardsConfig.enabled ? `${Number(wallet.lifetimeEarned || 0)} earned · ${Number(wallet.lifetimeRedeemed || 0)} redeemed` : "Rewards are currently paused."}</p>
+            
           </article>
           <article class="account-panel">
             <p class="eyebrow">AVAILABLE REWARDS</p>
             ${rewardsConfig.enabled && loyalty.enrolled && (rewardsConfig.redemptions || []).length
-              ? `<div class="wallet-rewards">${rewardsConfig.redemptions.map((reward) => `<div class="wallet-reward"><div><strong>${escapeHtml(titleCase(reward.type))}</strong><small>${reward.points} points</small></div><button class="button button--outline button--small" type="button" data-action="redeem-reward" data-reward-id="${escapeHtml(reward.id)}" ${Number(wallet.points || 0) < Number(reward.points || 0) ? "disabled" : ""}>Redeem</button></div>`).join("")}</div>`
+              ? `<div class="wallet-rewards">${rewardsConfig.redemptions.map((reward) => `<div class="wallet-reward"><div><strong>${escapeHtml(reward.label || titleCase(reward.type))}</strong><small>${reward.points} points</small></div><button class="button button--outline button--small" type="button" data-action="redeem-reward" data-reward-id="${escapeHtml(reward.id)}" ${Number(wallet.points || 0) < Number(reward.points || 0) ? "disabled" : ""}>Redeem</button></div>`).join("")}</div>`
               : `<p>${rewardsConfig.enabled ? "No redeemable rewards are configured for this account yet." : "Rewards will appear here after the program is activated."}</p>`}
           </article>
           <article class="account-panel">
@@ -1017,6 +1026,45 @@ function renderAccount({ data, state }) {
 
       <div class="account-section"><div><p class="eyebrow">FAVORITES</p><h2>Your repeat cravings</h2></div><div class="product-grid">${favorites.length ? favorites.map((product) => buildProductCard(product, data)).join("") : `<div class="empty-state"><span class="empty-state__icon">${icon("heart")}</span><h3>No favorites yet.</h3><p>Use the heart button on a product page.</p><a class="button" href="/menu">Browse menu</a></div>`}</div></div>
       <div class="account-section"><div><p class="eyebrow">SAVED MIXES</p><h2>Your moods</h2></div><div class="saved-list">${account.savedMixes.length ? account.savedMixes.map((mix) => `<article><strong>${escapeHtml(mix.name)}</strong><small>${new Date(mix.savedAt).toLocaleDateString()}</small><a href="/build">Open builder</a></article>`).join("") : `<p>No saved mixes yet. Finish a Build Your Mood recipe and save it here.</p>`}</div></div>
+      <div class="account-section">
+        <div class="section-heading account-section__heading"><div><p class="eyebrow">PROFILE</p><h2>Your account details</h2></div></div>
+        <form class="account-form compact-account-form" data-profile-form>
+          <div class="form-grid">
+            <label class="form-field"><span>Name *</span><input class="field" name="name" value="${escapeHtml(account.profile.name || "")}" required /></label>
+            <label class="form-field"><span>Phone</span><input class="field" name="phone" type="tel" value="${escapeHtml(account.profile.phone || "")}" /></label>
+            <label class="form-field"><span>Birthday</span><input class="field" name="birthday" type="date" value="${escapeHtml(account.profile.birthday || "")}" /></label>
+            <label class="form-field"><span>Email</span><input class="field" value="${escapeHtml(account.profile.email || "")}" disabled /></label>
+          </div>
+          <button class="button button--outline" type="submit">Save profile</button>
+        </form>
+      </div>
+
+      <div class="account-section">
+        <div class="section-heading account-section__heading"><div><p class="eyebrow">SAVED ADDRESSES</p><h2>Delivery details</h2></div></div>
+        <div class="reservation-layout">
+          <form class="account-form compact-account-form" data-address-form>
+            <div class="form-grid">
+              <label class="form-field"><span>Label</span><input class="field" name="label" placeholder="Home, Office…" /></label>
+              <label class="form-field"><span>Street *</span><input class="field" name="street" required /></label>
+              <label class="form-field"><span>City *</span><input class="field" name="city" value="St. Louis" required /></label>
+              <label class="form-field"><span>State *</span><input class="field" name="state" value="MO" required /></label>
+              <label class="form-field"><span>ZIP *</span><input class="field" name="postalCode" required /></label>
+            </div>
+            <button class="button button--outline" type="submit">Save address</button>
+          </form>
+          <div class="reservation-list">
+            ${(account.addresses || []).length ? account.addresses.map((address) => `<article class="reservation-card"><div><strong>${escapeHtml(address.label)}</strong><small>${escapeHtml(address.street)}, ${escapeHtml(address.city)}, ${escapeHtml(address.state)} ${escapeHtml(address.postalCode)}</small></div><button class="text-button" type="button" data-action="remove-saved-address" data-address-id="${escapeHtml(address.id)}">Remove</button></article>`).join("") : `<div class="empty-state empty-state--compact"><h3>No saved addresses.</h3><p>Add one for faster delivery checkout.</p></div>`}
+          </div>
+        </div>
+      </div>
+
+      <div class="account-section">
+        <div class="section-heading account-section__heading"><div><p class="eyebrow">CATERING</p><h2>Your requests & quotes</h2><p class="lede">Track saved requests, quote versions and acceptance from the same account.</p></div><a class="button button--outline" href="/catering">New request</a></div>
+        <div class="saved-list">
+          ${(account.cateringRequests || []).length ? account.cateringRequests.map((request) => `<article><strong>${escapeHtml(request.reference)}</strong><small>${escapeHtml(request.eventDate)} · ${request.guestCount} guests · ${escapeHtml(titleCase(request.status))}${request.quote ? ` · ${money(request.quote.amount)} quote v${request.quote.version}` : ""}</small>${request.status === "quoted" && request.quote ? `<button class="text-button" type="button" data-action="accept-catering-quote" data-catering-id="${escapeHtml(request.id)}">Accept quote</button>` : ""}</article>`).join("") : `<p>No catering requests yet.</p>`}
+        </div>
+      </div>
+
       <div class="account-section"><div><p class="eyebrow">ORDER HISTORY</p><h2>Your recent orders</h2></div><div class="saved-list">${account.orderHistory.length ? account.orderHistory.map((order) => `<article><strong>${escapeHtml(order.orderNumber)}</strong><small>${escapeHtml(order.status)} · ${money(order.total)}</small><button class="text-button" data-action="reorder-history" data-order-id="${escapeHtml(order.id)}">Reorder</button></article>`).join("") : `<p>Your completed orders will appear here.</p>`}</div></div>
     </div></section>`;
   }
