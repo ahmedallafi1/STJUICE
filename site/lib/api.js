@@ -42,6 +42,7 @@ export const accountApi = {
   reservations: () => request("../api/account/reservations"),
   createReservation: (input, csrfToken) => request("../api/account/reservations", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(input) }),
   cancelReservation: (id, csrfToken) => request(`../api/account/reservations/${encodeURIComponent(id)}`, { method: "DELETE", headers: { "X-CSRF-Token": csrfToken } }),
+  acceptCateringQuote: (id, csrfToken) => request(`../api/account/catering/${encodeURIComponent(id)}/accept`, { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: "{}" }),
   requestStudentVerification: (input, csrfToken) => request("../api/account/student-verification", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(input) }),
   updateBusiness: (input, csrfToken) => request("../api/account/business", { method: "PATCH", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify(input) }),
   setFavorite: (productId, active, csrfToken) => request("../api/account/favorites", { method: "POST", headers: { "X-CSRF-Token": csrfToken }, body: JSON.stringify({ productId, active }) }),
