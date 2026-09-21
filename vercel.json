@@ -98,5 +98,63 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/menu",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/drops",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/build",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/boxes",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/gift-cards",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/catering",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/rewards",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/location",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/account",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/checkout",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/product/:id",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/order/:id",
+      "destination": "/site/index.html"
+    },
+    {
+      "source": "/info/:slug",
+      "destination": "/site/index.html"
+    }
   ]
 }
