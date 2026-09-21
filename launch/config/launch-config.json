@@ -55,7 +55,7 @@
   },
   "operations": {
     "console": "preview_available",
-    "staffAuthentication": "shared_secret_preview",
+    "staffAuthentication": "preview_token",
     "roleBasedAccess": false,
     "auditPersistence": "memory_only_test"
   }
