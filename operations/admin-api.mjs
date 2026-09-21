@@ -66,7 +66,7 @@ function summary({ listOrders }) {
     },
     catering: {
       requested: catering.filter((row) => row.status === "requested").length,
-      open: catering.filter((row) => !["declined", "canceled"].includes(row.status)).length
+      open: catering.filter((row) => !["completed", "declined", "canceled"].includes(row.status)).length
     },
     orders: {
       total: orders.length,
