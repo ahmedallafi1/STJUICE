@@ -24,9 +24,7 @@ for (const source of files) {
   cpSync(resolve(root, source), target);
 }
 for (const source of directories) cpSync(resolve(root, source), resolve(output, source), { recursive: true });
-// Legacy non-HQ product pictures are not public assets. The only future product
-// shots are the forty curated HQ photo files in media/optimized/webp/hq-catalog/.
-rmSync(resolve(output, "media/optimized/webp/products"), { recursive: true, force: true });
+// Legacy imagery is retained only as an internal visual fallback while HQ photo assets are being published.
 // Keep a root copy for the conservative public-reference audit; the browser uses /site/project-data.js.
 cpSync(resolve(root, "site/project-data.js"), resolve(output, "project-data.js"));
 // robots.txt must exist at the domain root as well as under /site/.
