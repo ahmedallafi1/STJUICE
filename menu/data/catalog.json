@@ -445,7 +445,13 @@
       "hqNumber": 6,
       "hqPdfPage": 6,
       "conceptImagePath": "media/optimized/webp/hq-catalog/hq-06-mango-passion.webp",
-      "photoStatus": "concept_from_pdf_not_deployed"
+      "photoStatus": "concept_from_pdf_not_deployed",
+      "drop": {
+        "code": "HQ-DROP-01",
+        "status": "active_working",
+        "startDate": null,
+        "endDate": null
+      }
     },
     {
       "id": "strawberry-lychee",
@@ -1742,7 +1748,13 @@
       "hqNumber": 29,
       "hqPdfPage": 18,
       "conceptImagePath": "media/optimized/webp/hq-catalog/hq-29-pistachio-kunafa-crepe.webp",
-      "photoStatus": "concept_from_pdf_not_deployed"
+      "photoStatus": "concept_from_pdf_not_deployed",
+      "drop": {
+        "code": "HQ-DROP-02",
+        "status": "active_working",
+        "startDate": null,
+        "endDate": null
+      }
     },
     {
       "id": "banana-caramel-waffle",
