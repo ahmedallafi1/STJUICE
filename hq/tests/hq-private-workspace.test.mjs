@@ -29,7 +29,7 @@ writeFileSync(path, JSON.stringify(master), { mode: 0o600 });
 assert.equal(loadPrivateHq(path).cards.length, 40);
 assert.equal(validatePrivateHq(master).sourcePages.length, 52);
 const review = privateHqSummary(master);
-assert.equal(review.cards, 40);
+assert.equal(review.productCount, 40);
 assert.equal(review.pages, 52);
 assert.equal(review.ownerApproved, 0);
 assert.equal(review.flagAbove30Pct, 0);
@@ -53,7 +53,7 @@ try {
   assert.equal(state.available, true);
   assert.equal(state.cards, 40);
   const summary = await (await request("summary")).json();
-  assert.equal(summary.cards, 40);
+  assert.equal(summary.productCount, 40);
   assert.equal(summary.sourcePricesAreProposals, true);
   const one = await (await request("cards/1")).json();
   assert.equal(one.ingredients, "FAKE ingredient 100 mL");
