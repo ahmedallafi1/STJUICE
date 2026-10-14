@@ -29,7 +29,7 @@ try {
   assert.ok(slots.payload.slots.length > 0);
   const schedule = slots.payload.slots[0].value;
 
-  const cartBody = { service: "pickup", items: [{ kind: "catalog", productId: "pistachio-saint", sizeId: "16oz", quantity: 1, modifierSelections: {} }], promoCode: "TEST10", tipPercent: 0 };
+  const cartBody = { service: "pickup", items: [{ kind: "catalog", productId: "blue-saint", sizeId: "16oz", quantity: 1, modifierSelections: {} }], promoCode: "TEST10", tipPercent: 0 };
   const quote = await json("/api/cart/validate", { method: "POST", body: JSON.stringify(cartBody) });
   assert.equal(quote.response.status, 200);
   assert.equal(quote.payload.valid, true);
