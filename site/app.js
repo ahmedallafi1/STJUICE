@@ -9,10 +9,9 @@ import {
   modes,
   renderAccountDialog,
   renderCart,
-  renderFooter,
-  renderPage,
   renderServiceDialog
 } from "./lib/views.js";
+import { renderFooter, renderPage } from "./lib/hq-only-view-adapter.js";
 
 const storageKeys = {
   mode: "stjuice-stage06-mode",

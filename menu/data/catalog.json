@@ -1,15 +1,17 @@
 {
   "meta": {
     "brand": "ST. JUICE",
-    "version": "3.0.0",
+    "version": "4.0.0-hq-only",
     "currency": "USD",
     "language": "en-US",
     "priceStatus": "working_requires_owner_approval",
     "ingredientStatus": "draft_requires_recipe_and_supplier_review",
     "nutritionStatus": "unverified_all_values_null",
-    "primaryItemCount": 45,
-    "groupFormatCount": 9,
-    "activeDropCount": 2
+    "primaryItemCount": 40,
+    "groupFormatCount": 0,
+    "activeDropCount": 2,
+    "source": "St_Juice_HQ_Menu_Catalog.pdf page 4-23",
+    "imageStatus": "40 exact photos prepared in separate upload bundle; source concepts; CDN migration pending"
   },
   "recordDefaults": {
     "allergenStatus": "draft_requires_supplier_and_kitchen_review",
@@ -30,139 +32,119 @@
   },
   "categories": [
     {
-      "id": "signatures",
-      "name": "ST. Signatures",
-      "slug": "signatures",
-      "order": 1,
-      "description": "The drinks that define ST. JUICE first."
-    },
-    {
       "id": "fresh-juices",
       "name": "Fresh Juices",
       "slug": "fresh-juices",
+      "order": 1,
+      "description": "Fruit and produce juices, shaken or pressed fresh."
+    },
+    {
+      "id": "signatures",
+      "name": "Signature Fruit Drinks",
+      "slug": "signatures",
       "order": 2,
-      "description": "Fruit and produce pressed or blended to order."
+      "description": "Bright, fruit-forward ST. JUICE signatures."
     },
     {
       "id": "smoothies-protein",
-      "name": "Smoothies, Yogurt & Protein",
+      "name": "Smoothies",
       "slug": "smoothies-protein",
       "order": 3,
-      "description": "Creamy blends, yogurt shakes and protein options."
+      "description": "Cold and creamy fruit smoothies."
     },
     {
       "id": "refreshers",
-      "name": "Mojitos & Refreshers",
+      "name": "Refreshers",
       "slug": "refreshers",
       "order": 4,
-      "description": "Bright, cold and always non-alcoholic."
+      "description": "Sparkling and refreshing fruit drinks."
     },
     {
       "id": "bowls-fruit",
-      "name": "Açaí, Fruit & Fresh Bowls",
+      "name": "Bowls & Fruit Cups",
       "slug": "bowls-fruit",
       "order": 5,
-      "description": "Fruit-forward bowls and cups with customizable finishes."
+      "description": "Fruit bowls and layered cups."
     },
     {
-      "id": "chocolate-lab",
-      "name": "Chocolate Lab",
-      "slug": "chocolate-lab",
+      "id": "mini-pancakes",
+      "name": "Mini Pancakes",
+      "slug": "mini-pancakes",
       "order": 6,
-      "description": "Fresh fruit, brownie and chocolate built to dip and share."
+      "description": "Ten-piece mini pancake desserts."
     },
     {
       "id": "crepes-waffles",
       "name": "Crepes & Waffles",
       "slug": "crepes-waffles",
       "order": 7,
-      "description": "Warm folded desserts, fruit, chocolate and crunch."
+      "description": "Fresh crepes and waffle desserts."
     },
     {
-      "id": "mini-pancakes",
-      "name": "Mini Pancakes",
-      "slug": "mini-pancakes",
+      "id": "chocolate-lab",
+      "name": "Chocolate",
+      "slug": "chocolate-lab",
       "order": 8,
-      "description": "Twelve warm minis with sauce and toppings."
-    },
-    {
-      "id": "soft-serve-shakes",
-      "name": "Soft Serve & Shakes",
-      "slug": "soft-serve-shakes",
-      "order": 9,
-      "description": "Cold, creamy and finished your way."
-    },
-    {
-      "id": "dubai-collection",
-      "name": "Dubai Collection",
-      "slug": "dubai-collection",
-      "order": 10,
-      "description": "Rotating pistachio, kataifi and chocolate favorites."
+      "description": "Pistachio and chocolate specialties."
     },
     {
       "id": "desserts-drops",
-      "name": "Desserts & Drops",
+      "name": "Desserts",
       "slug": "desserts-drops",
-      "order": 11,
-      "description": "Warm desserts and two limited items live at a time."
+      "order": 9,
+      "description": "Brownies and fruit desserts."
     },
     {
-      "id": "flights-liters-boxes",
-      "name": "Flights, Liters & Boxes",
-      "slug": "flights-liters-boxes",
+      "id": "coffee-matcha",
+      "name": "Coffee & Matcha",
+      "slug": "coffee-matcha",
+      "order": 10,
+      "description": "Chilled espresso and matcha."
+    },
+    {
+      "id": "savory",
+      "name": "Savory",
+      "slug": "savory",
+      "order": 11,
+      "description": "Paninis, focaccia and wraps."
+    },
+    {
+      "id": "wellness-shots",
+      "name": "Juice Shots",
+      "slug": "wellness-shots",
       "order": 12,
-      "description": "Formats made to taste, carry and share."
+      "description": "Two-ounce juice shots. No therapeutic claims."
     }
   ],
   "products": [
     {
-      "id": "pistachio-saint",
-      "categoryId": "signatures",
-      "name": "Pistachio Saint",
-      "slug": "pistachio-saint",
+      "id": "citrus-sunrise",
+      "categoryId": "fresh-juices",
+      "name": "Citrus Sunrise",
+      "slug": "citrus-sunrise",
       "catalogRole": "primary",
       "productType": "drink",
-      "description": "Creamy pistachio, banana and date with a roasted pistachio finish.",
+      "description": "Fresh juice served chilled.",
       "sizes": [
         {
           "id": "16oz",
           "label": "16 oz",
-          "price": 9.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 11.45
+          "price": 8.5
         }
       ],
       "moods": [
-        "creamy",
-        "pistachio",
-        "protein-ready"
+        "fresh",
+        "fruity"
       ],
       "occasions": [
         "morning",
         "afternoon",
-        "late-night"
+        "evening"
       ],
-      "draftIngredients": [
-        "milk",
-        "banana",
-        "date",
-        "pistachio cream",
-        "roasted pistachio"
-      ],
-      "containsAllergens": [
-        "milk",
-        "tree_nut"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "sweetness",
-        "protein-boost",
-        "drink-premium-extras"
-      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
           "all_day"
@@ -172,20 +154,358 @@
           "pickup",
           "delivery"
         ],
-        "deliverySuitability": "good"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 5,
-        "max": 8
+        "min": 4,
+        "max": 12
       },
       "pairingIds": [
-        "classic-minis"
+        "garden-green"
       ],
       "alternativeIds": [
-        "pistachio-power"
+        "golden-turmeric-shot"
       ],
-      "featuredRank": 1
+      "hqNumber": 1,
+      "hqPdfPage": 4,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-01-citrus-sunrise.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "garden-green",
+      "categoryId": "fresh-juices",
+      "name": "Garden Green",
+      "slug": "garden-green",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "Fresh juice served chilled.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 8.75
+        }
+      ],
+      "moods": [
+        "fresh",
+        "fruity"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "ruby-root"
+      ],
+      "alternativeIds": [
+        "citrus-sunrise"
+      ],
+      "hqNumber": 2,
+      "hqPdfPage": 4,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-02-garden-green.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "ruby-root",
+      "categoryId": "fresh-juices",
+      "name": "Ruby Root",
+      "slug": "ruby-root",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "Fresh juice served chilled.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 8.75
+        }
+      ],
+      "moods": [
+        "fresh",
+        "fruity"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "pineapple-mint"
+      ],
+      "alternativeIds": [
+        "garden-green"
+      ],
+      "hqNumber": 3,
+      "hqPdfPage": 5,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-03-ruby-root.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "pineapple-mint",
+      "categoryId": "fresh-juices",
+      "name": "Pineapple Mint",
+      "slug": "pineapple-mint",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "Fresh juice served chilled.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 8.5
+        }
+      ],
+      "moods": [
+        "fresh",
+        "fruity"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "watermelon-lime"
+      ],
+      "alternativeIds": [
+        "ruby-root"
+      ],
+      "hqNumber": 4,
+      "hqPdfPage": 5,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-04-pineapple-mint.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "watermelon-lime",
+      "categoryId": "fresh-juices",
+      "name": "Watermelon Lime",
+      "slug": "watermelon-lime",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "Fresh juice served chilled.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 8.25
+        }
+      ],
+      "moods": [
+        "fresh",
+        "fruity"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "mango-passion"
+      ],
+      "alternativeIds": [
+        "pineapple-mint"
+      ],
+      "hqNumber": 5,
+      "hqPdfPage": 6,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-05-watermelon-lime.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "mango-passion",
+      "categoryId": "signatures",
+      "name": "Mango Passion",
+      "slug": "mango-passion",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A signature fruit blend, served chilled.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 9.25
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "strawberry-lychee"
+      ],
+      "alternativeIds": [
+        "watermelon-lime"
+      ],
+      "featuredRank": 1,
+      "hqNumber": 6,
+      "hqPdfPage": 6,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-06-mango-passion.webp",
+      "photoStatus": "concept_from_pdf_not_deployed",
+      "drop": {
+        "code": "HQ-DROP-01",
+        "status": "active_working",
+        "startDate": null,
+        "endDate": null
+      }
+    },
+    {
+      "id": "strawberry-lychee",
+      "categoryId": "signatures",
+      "name": "Strawberry Lychee",
+      "slug": "strawberry-lychee",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A signature fruit blend, served chilled.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 9.25
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "blue-saint"
+      ],
+      "alternativeIds": [
+        "mango-passion"
+      ],
+      "hqNumber": 7,
+      "hqPdfPage": 7,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-07-strawberry-lychee.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
       "id": "blue-saint",
@@ -194,41 +514,26 @@
       "slug": "blue-saint",
       "catalogRole": "primary",
       "productType": "drink",
-      "description": "Blue raspberry, lemon and coconut water with a bright chilled finish.",
+      "description": "A signature fruit blend, served chilled.",
       "sizes": [
         {
           "id": "16oz",
           "label": "16 oz",
-          "price": 8.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.45
+          "price": 8.5
         }
       ],
       "moods": [
-        "fresh",
-        "fruity"
+        "sweet"
       ],
       "occasions": [
+        "morning",
         "afternoon",
-        "study-night",
-        "game-day"
+        "evening"
       ],
-      "draftIngredients": [
-        "coconut water",
-        "lemon",
-        "blue raspberry flavor base",
-        "ice"
-      ],
+      "draftIngredients": [],
       "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "sweetness",
-        "ice-level",
-        "refresher-extras"
-      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
           "all_day"
@@ -238,1006 +543,163 @@
           "pickup",
           "delivery"
         ],
-        "deliverySuitability": "good"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
         "min": 4,
-        "max": 7
+        "max": 12
       },
       "pairingIds": [
-        "dragon-cloud-cup"
+        "kiwi-cucumber"
       ],
       "alternativeIds": [
-        "blue-rush"
+        "strawberry-lychee"
       ],
-      "featuredRank": 4
+      "featuredRank": 4,
+      "hqNumber": 8,
+      "hqPdfPage": 7,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-08-blue-saint.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
-      "id": "berry-boulevard",
+      "id": "kiwi-cucumber",
       "categoryId": "signatures",
-      "name": "Berry Boulevard",
-      "slug": "berry-boulevard",
+      "name": "Kiwi Cucumber",
+      "slug": "kiwi-cucumber",
       "catalogRole": "primary",
       "productType": "drink",
-      "description": "Strawberry, blueberry, raspberry and apple blended cold.",
+      "description": "A signature fruit blend, served chilled.",
       "sizes": [
         {
           "id": "16oz",
           "label": "16 oz",
-          "price": 8.95
-        },
+          "price": 9
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "peach-hibiscus"
+      ],
+      "alternativeIds": [
+        "blue-saint"
+      ],
+      "hqNumber": 9,
+      "hqPdfPage": 8,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-09-kiwi-cucumber.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "peach-hibiscus",
+      "categoryId": "signatures",
+      "name": "Peach Hibiscus",
+      "slug": "peach-hibiscus",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A signature fruit blend, served chilled.",
+      "sizes": [
         {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.45
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 8.75
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "strawberry-cloud"
+      ],
+      "alternativeIds": [
+        "kiwi-cucumber"
+      ],
+      "hqNumber": 10,
+      "hqPdfPage": 8,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-10-peach-hibiscus.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "strawberry-cloud",
+      "categoryId": "smoothies-protein",
+      "name": "Strawberry Cloud",
+      "slug": "strawberry-cloud",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A smooth, chilled fruit blend.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 9.5
         }
       ],
       "moods": [
         "fruity",
-        "fresh"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon"
-      ],
-      "draftIngredients": [
-        "strawberry",
-        "blueberry",
-        "raspberry",
-        "apple juice",
-        "ice"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "sweetness",
-        "protein-boost",
-        "drink-fruit-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "saint-acai"
-      ],
-      "alternativeIds": [
-        "berry-flex"
-      ],
-      "featuredRank": 3
-    },
-    {
-      "id": "lemon-chrome",
-      "categoryId": "signatures",
-      "name": "Lemon Chrome",
-      "slug": "lemon-chrome",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Lemon, mint and light honey over crushed ice; non-alcoholic.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 7.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 9.45
-        }
-      ],
-      "moods": [
-        "fresh",
-        "citrus"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "lemon",
-        "mint",
-        "honey",
-        "water",
-        "ice"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "sweetness",
-        "ice-level",
-        "refresher-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 4,
-        "max": 7
-      },
-      "pairingIds": [
-        "saint-fruit-stick"
-      ],
-      "alternativeIds": [
-        "lemon-mint"
-      ],
-      "featuredRank": 5
-    },
-    {
-      "id": "saint-sunset",
-      "categoryId": "signatures",
-      "name": "Saint Sunset",
-      "slug": "saint-sunset",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Mango, passion fruit and orange layered for a tropical finish.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.45
-        }
-      ],
-      "moods": [
-        "tropical",
-        "fruity"
-      ],
-      "occasions": [
-        "afternoon",
-        "date-night",
-        "game-day"
-      ],
-      "draftIngredients": [
-        "mango",
-        "passion fruit",
-        "orange",
-        "ice"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "sweetness",
-        "ice-level",
-        "drink-fruit-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "strawberry-fold"
-      ],
-      "alternativeIds": [
-        "mango-passion-fizz"
-      ],
-      "featuredRank": 2
-    },
-    {
-      "id": "the-vandeventer",
-      "categoryId": "signatures",
-      "name": "The Vandeventer",
-      "slug": "the-vandeventer",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Avocado, date, honey and milk with pistachio crunch.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 10.45
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 11.95
-        }
-      ],
-      "moods": [
-        "creamy",
-        "pistachio"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon"
-      ],
-      "draftIngredients": [
-        "avocado",
-        "date",
-        "honey",
-        "milk",
-        "pistachio"
-      ],
-      "containsAllergens": [
-        "milk",
-        "tree_nut"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "sweetness",
-        "protein-boost",
-        "drink-premium-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 6,
-        "max": 9
-      },
-      "pairingIds": [
-        "loaded-brownie"
-      ],
-      "alternativeIds": [
-        "pistachio-saint"
-      ],
-      "featuredRank": 6
-    },
-    {
-      "id": "midnight-mango",
-      "categoryId": "signatures",
-      "name": "Midnight Mango",
-      "slug": "midnight-mango",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Mango cream shake with a dark chocolate ripple.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 9.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 11.45
-        }
-      ],
-      "moods": [
-        "creamy",
-        "chocolate",
-        "tropical"
-      ],
-      "occasions": [
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "mango",
-        "ice cream",
-        "milk",
-        "dark chocolate sauce"
-      ],
-      "containsAllergens": [
-        "milk",
-        "soy"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "time_sensitive"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 6,
-        "max": 9
-      },
-      "pairingIds": [
-        "midnight-crunch-cookie"
-      ],
-      "alternativeIds": [
-        "strawberry-shake"
-      ],
-      "featuredRank": 8
-    },
-    {
-      "id": "green-arch",
-      "categoryId": "signatures",
-      "name": "Green Arch",
-      "slug": "green-arch",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Green apple, pineapple, cucumber, spinach and mint.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.45
-        }
-      ],
-      "moods": [
-        "fresh",
-        "green"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon"
-      ],
-      "draftIngredients": [
-        "green apple",
-        "pineapple",
-        "cucumber",
-        "spinach",
-        "mint"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "sweetness",
-        "ice-level",
-        "drink-produce-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "loaded-fruit-cup"
-      ],
-      "alternativeIds": [
-        "beet-route"
-      ],
-      "featuredRank": 7
-    },
-    {
-      "id": "orange-press",
-      "categoryId": "fresh-juices",
-      "name": "Orange Press",
-      "slug": "orange-press",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Fresh orange, pressed to order.",
-      "sizes": [
-        {
-          "id": "12oz",
-          "label": "12 oz",
-          "price": 6.95
-        },
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.45
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 9.95
-        }
-      ],
-      "moods": [
-        "fresh",
-        "citrus"
-      ],
-      "occasions": [
-        "morning"
-      ],
-      "draftIngredients": [
-        "orange"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "ice-level",
-        "juice-produce-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "morning",
-          "afternoon"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 4,
-        "max": 7
-      },
-      "pairingIds": [
-        "classic-minis"
-      ],
-      "alternativeIds": [
-        "pineapple-lime"
-      ]
-    },
-    {
-      "id": "watermelon-wave",
-      "categoryId": "fresh-juices",
-      "name": "Watermelon Wave",
-      "slug": "watermelon-wave",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Cold watermelon with a clean, juicy finish.",
-      "sizes": [
-        {
-          "id": "12oz",
-          "label": "12 oz",
-          "price": 6.95
-        },
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.45
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 9.95
-        }
-      ],
-      "moods": [
-        "fresh",
-        "fruity"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon"
-      ],
-      "draftIngredients": [
-        "watermelon"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "ice-level",
-        "juice-produce-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "morning",
-          "afternoon"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 4,
-        "max": 7
-      },
-      "pairingIds": [
-        "saint-fruit-stick"
-      ],
-      "alternativeIds": [
-        "orange-press"
-      ]
-    },
-    {
-      "id": "pineapple-lime",
-      "categoryId": "fresh-juices",
-      "name": "Pineapple Lime",
-      "slug": "pineapple-lime",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Pineapple and lime, sharp and tropical.",
-      "sizes": [
-        {
-          "id": "12oz",
-          "label": "12 oz",
-          "price": 7.45
-        },
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.45
-        }
-      ],
-      "moods": [
-        "fresh",
-        "tropical"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon"
-      ],
-      "draftIngredients": [
-        "pineapple",
-        "lime"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "ice-level",
-        "juice-produce-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "morning",
-          "afternoon"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 4,
-        "max": 7
-      },
-      "pairingIds": [
-        "tropical-bowl"
-      ],
-      "alternativeIds": [
-        "saint-sunset"
-      ]
-    },
-    {
-      "id": "carrot-glow",
-      "categoryId": "fresh-juices",
-      "name": "Carrot Glow",
-      "slug": "carrot-glow",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Carrot, orange and ginger.",
-      "sizes": [
-        {
-          "id": "12oz",
-          "label": "12 oz",
-          "price": 7.45
-        },
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.45
-        }
-      ],
-      "moods": [
-        "fresh",
-        "ginger"
-      ],
-      "occasions": [
-        "morning"
-      ],
-      "draftIngredients": [
-        "carrot",
-        "orange",
-        "ginger"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "ice-level",
-        "juice-produce-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "morning",
-          "afternoon"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "classic-minis"
-      ],
-      "alternativeIds": [
-        "beet-route"
-      ]
-    },
-    {
-      "id": "beet-route",
-      "categoryId": "fresh-juices",
-      "name": "Beet Route",
-      "slug": "beet-route",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Beet, carrot, apple and lemon.",
-      "sizes": [
-        {
-          "id": "12oz",
-          "label": "12 oz",
-          "price": 7.95
-        },
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 9.45
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.95
-        }
-      ],
-      "moods": [
-        "fresh",
-        "earthy"
-      ],
-      "occasions": [
-        "morning"
-      ],
-      "draftIngredients": [
-        "beet",
-        "carrot",
-        "apple",
-        "lemon"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "ice-level",
-        "juice-produce-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "morning",
-          "afternoon"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "loaded-fruit-cup"
-      ],
-      "alternativeIds": [
-        "green-arch"
-      ]
-    },
-    {
-      "id": "mango-cloud",
-      "categoryId": "smoothies-protein",
-      "name": "Mango Cloud",
-      "slug": "mango-cloud",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Mango and yogurt blended thick and cold.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.45
-        }
-      ],
-      "moods": [
-        "creamy",
-        "tropical"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon"
-      ],
-      "draftIngredients": [
-        "mango",
-        "yogurt",
-        "milk",
-        "ice"
-      ],
-      "containsAllergens": [
-        "milk"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "sweetness",
-        "protein-boost",
-        "drink-fruit-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "classic-minis"
-      ],
-      "alternativeIds": [
-        "strawberry-yogurt"
-      ]
-    },
-    {
-      "id": "strawberry-yogurt",
-      "categoryId": "smoothies-protein",
-      "name": "Strawberry Yogurt",
-      "slug": "strawberry-yogurt",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Strawberry and yogurt with a smooth tart finish.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.45
-        }
-      ],
-      "moods": [
-        "creamy",
-        "fruity"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon"
-      ],
-      "draftIngredients": [
-        "strawberry",
-        "yogurt",
-        "milk",
-        "ice"
-      ],
-      "containsAllergens": [
-        "milk"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "sweetness",
-        "protein-boost",
-        "drink-fruit-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "strawberry-fold"
-      ],
-      "alternativeIds": [
-        "mango-cloud"
-      ]
-    },
-    {
-      "id": "berry-flex",
-      "categoryId": "smoothies-protein",
-      "name": "Berry Flex",
-      "slug": "berry-flex",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Mixed berries, banana and vanilla protein.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 9.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 11.45
-        }
-      ],
-      "moods": [
-        "protein",
-        "fruity"
-      ],
-      "occasions": [
-        "morning",
-        "study-night"
-      ],
-      "draftIngredients": [
-        "strawberry",
-        "blueberry",
-        "raspberry",
-        "banana",
-        "vanilla protein",
-        "milk"
-      ],
-      "containsAllergens": [
-        "milk"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "sweetness",
-        "protein-boost",
-        "drink-fruit-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "berry-acai"
-      ],
-      "alternativeIds": [
-        "berry-boulevard"
-      ]
-    },
-    {
-      "id": "banana-charge",
-      "categoryId": "smoothies-protein",
-      "name": "Banana Charge",
-      "slug": "banana-charge",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Banana, date, peanut butter and vanilla protein.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 10.45
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 11.95
-        }
-      ],
-      "moods": [
-        "protein",
         "creamy"
       ],
       "occasions": [
         "morning",
-        "study-night"
+        "afternoon",
+        "evening"
       ],
-      "draftIngredients": [
-        "banana",
-        "date",
-        "peanut butter",
-        "vanilla protein",
+      "draftIngredients": [],
+      "containsAllergens": [
         "milk"
       ],
-      "containsAllergens": [
-        "milk",
-        "peanut"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "sweetness",
-        "protein-boost"
-      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
           "all_day"
@@ -1247,66 +709,56 @@
           "pickup",
           "delivery"
         ],
-        "deliverySuitability": "good"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 5,
-        "max": 8
+        "min": 4,
+        "max": 12
       },
       "pairingIds": [
-        "loaded-brownie"
+        "pistachio-date"
       ],
       "alternativeIds": [
-        "berry-flex"
-      ]
+        "peach-hibiscus"
+      ],
+      "featuredRank": 5,
+      "hqNumber": 11,
+      "hqPdfPage": 9,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-11-strawberry-cloud.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
-      "id": "pistachio-power",
+      "id": "pistachio-date",
       "categoryId": "smoothies-protein",
-      "name": "Pistachio Power",
-      "slug": "pistachio-power",
+      "name": "Pistachio Date",
+      "slug": "pistachio-date",
       "catalogRole": "primary",
       "productType": "drink",
-      "description": "Pistachio, banana, milk and vanilla protein.",
+      "description": "A smooth, chilled fruit blend.",
       "sizes": [
         {
           "id": "16oz",
           "label": "16 oz",
-          "price": 10.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 12.45
+          "price": 10.5
         }
       ],
       "moods": [
-        "protein",
-        "pistachio"
+        "fruity",
+        "creamy"
       ],
       "occasions": [
         "morning",
-        "study-night"
+        "afternoon",
+        "evening"
       ],
-      "draftIngredients": [
-        "pistachio cream",
-        "banana",
-        "milk",
-        "vanilla protein",
-        "roasted pistachio"
-      ],
+      "draftIngredients": [],
       "containsAllergens": [
         "milk",
         "tree_nut"
       ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "sweetness",
-        "protein-boost",
-        "drink-premium-extras"
-      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
           "all_day"
@@ -1316,461 +768,221 @@
           "pickup",
           "delivery"
         ],
-        "deliverySuitability": "good"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 5,
-        "max": 8
+        "min": 4,
+        "max": 12
       },
       "pairingIds": [
-        "pistachio-minis"
+        "mango-coconut"
       ],
       "alternativeIds": [
-        "pistachio-saint"
-      ]
+        "strawberry-cloud"
+      ],
+      "hqNumber": 12,
+      "hqPdfPage": 9,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-12-pistachio-date.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
-      "id": "lemon-mint",
-      "categoryId": "refreshers",
-      "name": "Lemon Mint",
-      "slug": "lemon-mint",
+      "id": "mango-coconut",
+      "categoryId": "smoothies-protein",
+      "name": "Mango Coconut",
+      "slug": "mango-coconut",
       "catalogRole": "primary",
       "productType": "drink",
-      "description": "Lemon, fresh mint and sparkling water over ice; non-alcoholic.",
+      "description": "A smooth, chilled fruit blend.",
       "sizes": [
         {
           "id": "16oz",
           "label": "16 oz",
-          "price": 7.45
-        },
+          "price": 9.75
+        }
+      ],
+      "moods": [
+        "fruity",
+        "creamy"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "blueberry-oat"
+      ],
+      "alternativeIds": [
+        "pistachio-date"
+      ],
+      "hqNumber": 13,
+      "hqPdfPage": 10,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-13-mango-coconut.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "blueberry-oat",
+      "categoryId": "smoothies-protein",
+      "name": "Blueberry Oat",
+      "slug": "blueberry-oat",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A smooth, chilled fruit blend.",
+      "sizes": [
         {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 8.95
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 9.75
+        }
+      ],
+      "moods": [
+        "fruity",
+        "creamy"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "cocoa-banana"
+      ],
+      "alternativeIds": [
+        "mango-coconut"
+      ],
+      "hqNumber": 14,
+      "hqPdfPage": 10,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-14-blueberry-oat.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "cocoa-banana",
+      "categoryId": "smoothies-protein",
+      "name": "Cocoa Banana",
+      "slug": "cocoa-banana",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A smooth, chilled fruit blend.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 10.25
+        }
+      ],
+      "moods": [
+        "fruity",
+        "creamy"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "citrus-mint-fizz"
+      ],
+      "alternativeIds": [
+        "blueberry-oat"
+      ],
+      "hqNumber": 15,
+      "hqPdfPage": 11,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-15-cocoa-banana.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "citrus-mint-fizz",
+      "categoryId": "refreshers",
+      "name": "Citrus Mint Fizz",
+      "slug": "citrus-mint-fizz",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A bright sparkling refresher.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 7.75
         }
       ],
       "moods": [
         "fresh",
-        "citrus"
-      ],
-      "occasions": [
-        "afternoon",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "lemon",
-        "mint",
-        "sparkling water",
-        "sweetener",
-        "ice"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "sweetness",
-        "ice-level",
-        "refresher-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 4,
-        "max": 7
-      },
-      "pairingIds": [
-        "saint-fruit-stick"
-      ],
-      "alternativeIds": [
-        "lemon-chrome"
-      ]
-    },
-    {
-      "id": "strawberry-lemonade",
-      "categoryId": "refreshers",
-      "name": "Strawberry Lemonade",
-      "slug": "strawberry-lemonade",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Strawberry, lemon and sparkling water; non-alcoholic.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 7.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 9.45
-        }
-      ],
-      "moods": [
-        "fruity",
-        "citrus"
-      ],
-      "occasions": [
-        "afternoon",
-        "game-day"
-      ],
-      "draftIngredients": [
-        "strawberry",
-        "lemon",
-        "sparkling water",
-        "sweetener",
-        "ice"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "sweetness",
-        "ice-level",
-        "refresher-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 4,
-        "max": 7
-      },
-      "pairingIds": [
-        "strawberry-dip-cup"
-      ],
-      "alternativeIds": [
-        "blue-rush"
-      ]
-    },
-    {
-      "id": "mango-passion-fizz",
-      "categoryId": "refreshers",
-      "name": "Mango Passion Fizz",
-      "slug": "mango-passion-fizz",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Mango, passion fruit and sparkling citrus; non-alcoholic.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.45
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 9.95
-        }
-      ],
-      "moods": [
-        "tropical",
-        "fresh"
-      ],
-      "occasions": [
-        "afternoon",
-        "date-night"
-      ],
-      "draftIngredients": [
-        "mango",
-        "passion fruit",
-        "citrus",
-        "sparkling water",
-        "ice"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "sweetness",
-        "ice-level",
-        "refresher-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 4,
-        "max": 7
-      },
-      "pairingIds": [
-        "tropical-bowl"
-      ],
-      "alternativeIds": [
-        "saint-sunset"
-      ]
-    },
-    {
-      "id": "blue-rush",
-      "categoryId": "refreshers",
-      "name": "Blue Rush",
-      "slug": "blue-rush",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Blue raspberry, lemon and sparkling water; non-alcoholic.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 7.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 9.45
-        }
-      ],
-      "moods": [
-        "fruity",
-        "fresh"
-      ],
-      "occasions": [
-        "study-night",
-        "game-day",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "blue raspberry flavor base",
-        "lemon",
-        "sparkling water",
-        "ice"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "sweetness",
-        "ice-level",
-        "refresher-extras"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 4,
-        "max": 7
-      },
-      "pairingIds": [
-        "dragon-cloud-cup"
-      ],
-      "alternativeIds": [
-        "blue-saint"
-      ]
-    },
-    {
-      "id": "saint-acai",
-      "categoryId": "bowls-fruit",
-      "name": "Saint Açaí",
-      "slug": "saint-acai",
-      "catalogRole": "primary",
-      "productType": "bowl",
-      "description": "Açaí base, banana, strawberry, granola and honey.",
-      "sizes": [
-        {
-          "id": "regular",
-          "label": "Regular",
-          "price": 11.95
-        },
-        {
-          "id": "large",
-          "label": "Large",
-          "price": 14.45
-        }
-      ],
-      "moods": [
-        "fruity",
-        "fresh"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon"
-      ],
-      "draftIngredients": [
-        "açaí base",
-        "banana",
-        "strawberry",
-        "granola",
-        "honey"
-      ],
-      "containsAllergens": [
-        "wheat"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "bowl-fruit",
-        "dessert-sauces",
-        "dessert-toppings",
-        "bowl-boosts"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "time_sensitive"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 6,
-        "max": 9
-      },
-      "pairingIds": [
-        "orange-press"
-      ],
-      "alternativeIds": [
-        "berry-acai"
-      ]
-    },
-    {
-      "id": "berry-acai",
-      "categoryId": "bowls-fruit",
-      "name": "Berry Açaí",
-      "slug": "berry-acai",
-      "catalogRole": "primary",
-      "productType": "bowl",
-      "description": "Açaí base, mixed berries, banana, granola and berry drizzle.",
-      "sizes": [
-        {
-          "id": "regular",
-          "label": "Regular",
-          "price": 12.45
-        },
-        {
-          "id": "large",
-          "label": "Large",
-          "price": 14.95
-        }
-      ],
-      "moods": [
-        "fruity",
-        "berry"
-      ],
-      "occasions": [
-        "morning",
-        "afternoon"
-      ],
-      "draftIngredients": [
-        "açaí base",
-        "mixed berries",
-        "banana",
-        "granola",
-        "berry sauce"
-      ],
-      "containsAllergens": [
-        "wheat"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "bowl-fruit",
-        "dessert-sauces",
-        "dessert-toppings",
-        "bowl-boosts"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "time_sensitive"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 6,
-        "max": 9
-      },
-      "pairingIds": [
-        "berry-boulevard"
-      ],
-      "alternativeIds": [
-        "saint-acai"
-      ]
-    },
-    {
-      "id": "tropical-bowl",
-      "categoryId": "bowls-fruit",
-      "name": "Tropical Bowl",
-      "slug": "tropical-bowl",
-      "catalogRole": "primary",
-      "productType": "bowl",
-      "description": "Mango-pineapple base, banana, kiwi, coconut and granola.",
-      "sizes": [
-        {
-          "id": "regular",
-          "label": "Regular",
-          "price": 11.95
-        },
-        {
-          "id": "large",
-          "label": "Large",
-          "price": 14.45
-        }
-      ],
-      "moods": [
-        "tropical",
         "fruity"
       ],
       "occasions": [
         "morning",
-        "afternoon"
+        "afternoon",
+        "evening"
       ],
-      "draftIngredients": [
-        "mango-pineapple base",
-        "banana",
-        "kiwi",
-        "coconut",
-        "granola"
-      ],
-      "containsAllergens": [
-        "wheat"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "bowl-fruit",
-        "dessert-sauces",
-        "dessert-toppings",
-        "bowl-boosts"
-      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
           "all_day"
@@ -1780,19 +992,411 @@
           "pickup",
           "delivery"
         ],
-        "deliverySuitability": "time_sensitive"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 6,
-        "max": 9
+        "min": 4,
+        "max": 12
       },
       "pairingIds": [
-        "mango-passion-fizz"
+        "berry-basil-fizz"
       ],
       "alternativeIds": [
+        "cocoa-banana"
+      ],
+      "hqNumber": 16,
+      "hqPdfPage": 11,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-16-citrus-mint-fizz.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "berry-basil-fizz",
+      "categoryId": "refreshers",
+      "name": "Berry Basil Fizz",
+      "slug": "berry-basil-fizz",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A bright sparkling refresher.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 8.25
+        }
+      ],
+      "moods": [
+        "fresh",
+        "fruity"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "cucumber-lime-fizz"
+      ],
+      "alternativeIds": [
+        "citrus-mint-fizz"
+      ],
+      "hqNumber": 17,
+      "hqPdfPage": 12,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-17-berry-basil-fizz.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "cucumber-lime-fizz",
+      "categoryId": "refreshers",
+      "name": "Cucumber Lime Fizz",
+      "slug": "cucumber-lime-fizz",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A bright sparkling refresher.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 7.75
+        }
+      ],
+      "moods": [
+        "fresh",
+        "fruity"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "peach-ginger-fizz"
+      ],
+      "alternativeIds": [
+        "berry-basil-fizz"
+      ],
+      "hqNumber": 18,
+      "hqPdfPage": 12,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-18-cucumber-lime-fizz.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "peach-ginger-fizz",
+      "categoryId": "refreshers",
+      "name": "Peach Ginger Fizz",
+      "slug": "peach-ginger-fizz",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A bright sparkling refresher.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 8.25
+        }
+      ],
+      "moods": [
+        "fresh",
+        "fruity"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "pomegranate-hibiscus"
+      ],
+      "alternativeIds": [
+        "cucumber-lime-fizz"
+      ],
+      "hqNumber": 19,
+      "hqPdfPage": 13,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-19-peach-ginger-fizz.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "pomegranate-hibiscus",
+      "categoryId": "refreshers",
+      "name": "Pomegranate Hibiscus",
+      "slug": "pomegranate-hibiscus",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A bright sparkling refresher.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 8.25
+        }
+      ],
+      "moods": [
+        "fresh",
+        "fruity"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "acai-berry-bowl"
+      ],
+      "alternativeIds": [
+        "peach-ginger-fizz"
+      ],
+      "hqNumber": 20,
+      "hqPdfPage": 13,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-20-pomegranate-hibiscus.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "acai-berry-bowl",
+      "categoryId": "bowls-fruit",
+      "name": "Acai Berry Bowl",
+      "slug": "acai-berry-bowl",
+      "catalogRole": "primary",
+      "productType": "bowl",
+      "description": "Fruit bowl with an arranged finish.",
+      "sizes": [
+        {
+          "id": "16ozbowl",
+          "label": "16 oz bowl",
+          "price": 12.5
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "wheat"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "tropical-sun-bowl"
+      ],
+      "alternativeIds": [
+        "pomegranate-hibiscus"
+      ],
+      "featuredRank": 3,
+      "hqNumber": 21,
+      "hqPdfPage": 14,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-21-acai-berry-bowl.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "tropical-sun-bowl",
+      "categoryId": "bowls-fruit",
+      "name": "Tropical Sun Bowl",
+      "slug": "tropical-sun-bowl",
+      "catalogRole": "primary",
+      "productType": "bowl",
+      "description": "Fruit bowl with an arranged finish.",
+      "sizes": [
+        {
+          "id": "16ozbowl",
+          "label": "16 oz bowl",
+          "price": 12.5
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "pistachio-yogurt-bowl"
+      ],
+      "alternativeIds": [
+        "acai-berry-bowl"
+      ],
+      "hqNumber": 22,
+      "hqPdfPage": 14,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-22-tropical-sun-bowl.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "pistachio-yogurt-bowl",
+      "categoryId": "bowls-fruit",
+      "name": "Pistachio Yogurt Bowl",
+      "slug": "pistachio-yogurt-bowl",
+      "catalogRole": "primary",
+      "productType": "bowl",
+      "description": "Fruit bowl with an arranged finish.",
+      "sizes": [
+        {
+          "id": "16ozbowl",
+          "label": "16 oz bowl",
+          "price": 11.75
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk",
+        "tree_nut"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
         "loaded-fruit-cup"
-      ]
+      ],
+      "alternativeIds": [
+        "tropical-sun-bowl"
+      ],
+      "hqNumber": 23,
+      "hqPdfPage": 15,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-23-pistachio-yogurt-bowl.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
       "id": "loaded-fruit-cup",
@@ -1801,1085 +1405,30 @@
       "slug": "loaded-fruit-cup",
       "catalogRole": "primary",
       "productType": "fruit_cup",
-      "description": "Seasonal fruit with one sauce and two toppings.",
+      "description": "Layered fruit-and-cream cup.",
       "sizes": [
         {
-          "id": "regular",
-          "label": "Regular",
-          "price": 8.95
-        },
-        {
-          "id": "large",
-          "label": "Large",
-          "price": 11.95
+          "id": "16ozcup",
+          "label": "16 oz cup",
+          "price": 10
         }
       ],
       "moods": [
-        "fresh",
-        "fruity",
-        "customizable"
+        "sweet"
       ],
       "occasions": [
+        "morning",
         "afternoon",
-        "study-night",
-        "party"
-      ],
-      "draftIngredients": [
-        "seasonal fruit selection"
-      ],
-      "containsAllergens": [],
-      "allergenMode": "configuration_dependent",
-      "modifierGroupIds": [
-        "bowl-fruit",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "lemon-mint"
-      ],
-      "alternativeIds": [
-        "strawberry-dip-cup"
-      ]
-    },
-    {
-      "id": "strawberry-dip-cup",
-      "categoryId": "chocolate-lab",
-      "name": "Strawberry Dip Cup",
-      "slug": "strawberry-dip-cup",
-      "catalogRole": "primary",
-      "productType": "dessert_cup",
-      "description": "Fresh strawberries finished with your choice of chocolate.",
-      "sizes": [
-        {
-          "id": "regular",
-          "label": "Regular",
-          "price": 9.95
-        },
-        {
-          "id": "large",
-          "label": "Large",
-          "price": 12.95
-        }
-      ],
-      "moods": [
-        "chocolate",
-        "fruity"
-      ],
-      "occasions": [
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "strawberry",
-        "customer-selected chocolate"
-      ],
-      "containsAllergens": [
-        "milk",
-        "soy"
-      ],
-      "allergenMode": "configuration_dependent",
-      "modifierGroupIds": [
-        "chocolate-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 6,
-        "max": 9
-      },
-      "pairingIds": [
-        "strawberry-lemonade"
-      ],
-      "alternativeIds": [
-        "dubai-strawberry-cup"
-      ]
-    },
-    {
-      "id": "saint-fruit-stick",
-      "categoryId": "chocolate-lab",
-      "name": "Saint Fruit Stick",
-      "slug": "saint-fruit-stick",
-      "catalogRole": "primary",
-      "productType": "dessert",
-      "description": "Strawberry, banana and pineapple dipped to order.",
-      "sizes": [
-        {
-          "id": "standard",
-          "label": "Standard",
-          "price": 7.95
-        }
-      ],
-      "moods": [
-        "chocolate",
-        "fruity"
-      ],
-      "occasions": [
-        "date-night",
-        "party"
-      ],
-      "draftIngredients": [
-        "strawberry",
-        "banana",
-        "pineapple",
-        "customer-selected chocolate"
-      ],
-      "containsAllergens": [
-        "milk",
-        "soy"
-      ],
-      "allergenMode": "configuration_dependent",
-      "modifierGroupIds": [
-        "chocolate-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "lemon-chrome"
-      ],
-      "alternativeIds": [
-        "brownie-fruit-stick"
-      ]
-    },
-    {
-      "id": "brownie-fruit-stick",
-      "categoryId": "chocolate-lab",
-      "name": "Brownie Fruit Stick",
-      "slug": "brownie-fruit-stick",
-      "catalogRole": "primary",
-      "productType": "dessert",
-      "description": "Brownie, strawberry and banana with chocolate drizzle.",
-      "sizes": [
-        {
-          "id": "standard",
-          "label": "Standard",
-          "price": 8.95
-        }
-      ],
-      "moods": [
-        "chocolate",
-        "shareable"
-      ],
-      "occasions": [
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "brownie",
-        "strawberry",
-        "banana",
-        "chocolate sauce"
-      ],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat",
-        "soy"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "chocolate-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 6,
-        "max": 9
-      },
-      "pairingIds": [
-        "blue-rush"
-      ],
-      "alternativeIds": [
-        "saint-fruit-stick"
-      ]
-    },
-    {
-      "id": "build-your-own-dip",
-      "categoryId": "chocolate-lab",
-      "name": "Build Your Own Dip",
-      "slug": "build-your-own-dip",
-      "catalogRole": "primary",
-      "productType": "dessert_cup",
-      "description": "Choose fruit, chocolate, sauce and crunch.",
-      "sizes": [
-        {
-          "id": "regular",
-          "label": "Regular",
-          "price": 9.95,
-          "startingAt": true
-        },
-        {
-          "id": "large",
-          "label": "Large",
-          "price": 12.95,
-          "startingAt": true
-        }
-      ],
-      "moods": [
-        "chocolate",
-        "customizable"
-      ],
-      "occasions": [
-        "date-night",
-        "party"
+        "evening"
       ],
       "draftIngredients": [],
-      "containsAllergens": [],
-      "allergenMode": "configuration_dependent",
-      "modifierGroupIds": [
-        "bowl-fruit",
-        "chocolate-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 6,
-        "max": 10
-      },
-      "pairingIds": [
-        "lemon-mint"
-      ],
-      "alternativeIds": [
-        "strawberry-dip-cup"
-      ]
-    },
-    {
-      "id": "st-crepe",
-      "categoryId": "crepes-waffles",
-      "name": "ST. Crepe",
-      "slug": "st-crepe",
-      "catalogRole": "primary",
-      "productType": "hot_dessert",
-      "description": "Strawberry, banana, milk chocolate and pistachio crunch.",
-      "sizes": [
-        {
-          "id": "standard",
-          "label": "Standard",
-          "price": 13.95
-        }
-      ],
-      "moods": [
-        "chocolate",
-        "pistachio",
-        "warm"
-      ],
-      "occasions": [
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "crepe batter",
-        "strawberry",
-        "banana",
-        "milk chocolate",
-        "pistachio"
-      ],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat",
-        "soy",
-        "tree_nut"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "dessert-fruit",
-        "chocolate-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 8,
-        "max": 12
-      },
-      "pairingIds": [
-        "lemon-chrome"
-      ],
-      "alternativeIds": [
-        "pistachio-minis"
-      ]
-    },
-    {
-      "id": "strawberry-fold",
-      "categoryId": "crepes-waffles",
-      "name": "Strawberry Fold",
-      "slug": "strawberry-fold",
-      "catalogRole": "primary",
-      "productType": "hot_dessert",
-      "description": "Strawberries, cream and your choice of chocolate.",
-      "sizes": [
-        {
-          "id": "standard",
-          "label": "Standard",
-          "price": 11.95
-        }
-      ],
-      "moods": [
-        "fruity",
-        "chocolate",
-        "warm"
-      ],
-      "occasions": [
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "crepe batter",
-        "strawberry",
-        "cream",
-        "customer-selected chocolate"
-      ],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat",
-        "soy"
-      ],
-      "allergenMode": "configuration_dependent",
-      "modifierGroupIds": [
-        "dessert-fruit",
-        "chocolate-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 8,
-        "max": 12
-      },
-      "pairingIds": [
-        "strawberry-lemonade"
-      ],
-      "alternativeIds": [
-        "st-crepe"
-      ]
-    },
-    {
-      "id": "brownie-fold",
-      "categoryId": "crepes-waffles",
-      "name": "Brownie Fold",
-      "slug": "brownie-fold",
-      "catalogRole": "primary",
-      "productType": "hot_dessert",
-      "description": "Brownie bites, banana, chocolate and cookie crumble.",
-      "sizes": [
-        {
-          "id": "standard",
-          "label": "Standard",
-          "price": 13.45
-        }
-      ],
-      "moods": [
-        "chocolate",
-        "crunchy",
-        "warm"
-      ],
-      "occasions": [
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "crepe batter",
-        "brownie",
-        "banana",
-        "chocolate sauce",
-        "cookie crumble"
-      ],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat",
-        "soy"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "dessert-fruit",
-        "chocolate-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 8,
-        "max": 12
-      },
-      "pairingIds": [
-        "midnight-mango"
-      ],
-      "alternativeIds": [
-        "loaded-brownie"
-      ]
-    },
-    {
-      "id": "loaded-waffle",
-      "categoryId": "crepes-waffles",
-      "name": "Loaded Waffle",
-      "slug": "loaded-waffle",
-      "catalogRole": "primary",
-      "productType": "hot_dessert",
-      "description": "Belgian-style waffle, fruit, ice cream and two sauces.",
-      "sizes": [
-        {
-          "id": "standard",
-          "label": "Standard",
-          "price": 14.95
-        }
-      ],
-      "moods": [
-        "shareable",
-        "chocolate",
-        "warm"
-      ],
-      "occasions": [
-        "date-night",
-        "party",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "waffle batter",
-        "seasonal fruit",
-        "ice cream",
-        "customer-selected sauces"
-      ],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat",
-        "soy"
-      ],
-      "allergenMode": "configuration_dependent",
-      "modifierGroupIds": [
-        "dessert-fruit",
-        "chocolate-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 9,
-        "max": 13
-      },
-      "pairingIds": [
-        "blue-rush"
-      ],
-      "alternativeIds": [
-        "st-crepe"
-      ]
-    },
-    {
-      "id": "classic-minis",
-      "categoryId": "mini-pancakes",
-      "name": "Classic Minis",
-      "slug": "classic-minis",
-      "catalogRole": "primary",
-      "productType": "hot_dessert",
-      "description": "Twelve warm mini pancakes with one sauce and one topping.",
-      "sizes": [
-        {
-          "id": "12-piece",
-          "label": "12 pieces",
-          "price": 9.95
-        }
-      ],
-      "moods": [
-        "warm",
-        "customizable"
-      ],
-      "occasions": [
-        "study-night",
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "mini pancake batter",
-        "customer-selected sauce",
-        "customer-selected topping"
-      ],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat"
-      ],
-      "allergenMode": "configuration_dependent",
-      "modifierGroupIds": [
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 7,
-        "max": 11
-      },
-      "pairingIds": [
-        "orange-press"
-      ],
-      "alternativeIds": [
-        "pistachio-minis"
-      ]
-    },
-    {
-      "id": "pistachio-minis",
-      "categoryId": "mini-pancakes",
-      "name": "Pistachio Minis",
-      "slug": "pistachio-minis",
-      "catalogRole": "primary",
-      "productType": "hot_dessert",
-      "description": "Twelve minis with pistachio sauce and roasted pistachio.",
-      "sizes": [
-        {
-          "id": "12-piece",
-          "label": "12 pieces",
-          "price": 11.95
-        }
-      ],
-      "moods": [
-        "pistachio",
-        "warm",
-        "crunchy"
-      ],
-      "occasions": [
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "mini pancake batter",
-        "pistachio sauce",
-        "roasted pistachio"
-      ],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat",
-        "tree_nut"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 7,
-        "max": 11
-      },
-      "pairingIds": [
-        "pistachio-saint"
-      ],
-      "alternativeIds": [
-        "dubai-minis"
-      ]
-    },
-    {
-      "id": "dubai-minis",
-      "categoryId": "mini-pancakes",
-      "name": "Dubai Minis",
-      "slug": "dubai-minis",
-      "catalogRole": "primary",
-      "productType": "hot_dessert",
-      "description": "Twelve minis with pistachio cream, kataifi crunch and chocolate.",
-      "sizes": [
-        {
-          "id": "12-piece",
-          "label": "12 pieces",
-          "price": 13.95
-        }
-      ],
-      "moods": [
-        "pistachio",
-        "chocolate",
-        "crunchy"
-      ],
-      "occasions": [
-        "date-night",
-        "late-night",
-        "party"
-      ],
-      "draftIngredients": [
-        "mini pancake batter",
-        "pistachio cream",
-        "kataifi crunch",
-        "chocolate"
-      ],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat",
-        "soy",
-        "tree_nut"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 8,
-        "max": 12
-      },
-      "pairingIds": [
-        "lemon-mint"
-      ],
-      "alternativeIds": [
-        "pistachio-minis"
-      ]
-    },
-    {
-      "id": "pistachio-soft-serve",
-      "categoryId": "soft-serve-shakes",
-      "name": "Pistachio Soft Serve",
-      "slug": "pistachio-soft-serve",
-      "catalogRole": "primary",
-      "productType": "frozen_dessert",
-      "description": "Pistachio soft serve with optional drizzle or crunch.",
-      "sizes": [
-        {
-          "id": "regular",
-          "label": "Regular",
-          "price": 6.45
-        },
-        {
-          "id": "large",
-          "label": "Large",
-          "price": 8.45
-        }
-      ],
-      "moods": [
-        "pistachio",
-        "creamy"
-      ],
-      "occasions": [
-        "afternoon",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "pistachio soft-serve base"
-      ],
-      "containsAllergens": [
-        "milk",
-        "tree_nut"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup"
-        ],
-        "deliverySuitability": "not_recommended_until_packaging_test"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 3,
-        "max": 6
-      },
-      "pairingIds": [
-        "loaded-brownie"
-      ],
-      "alternativeIds": [
-        "pistachio-saint"
-      ]
-    },
-    {
-      "id": "strawberry-shake",
-      "categoryId": "soft-serve-shakes",
-      "name": "Strawberry Shake",
-      "slug": "strawberry-shake",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Strawberry ice cream and milk blended thick.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 8.95
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.45
-        }
-      ],
-      "moods": [
-        "creamy",
-        "fruity"
-      ],
-      "occasions": [
-        "afternoon",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "strawberry ice cream",
-        "milk",
-        "strawberry"
-      ],
-      "containsAllergens": [
-        "milk"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "time_sensitive"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "strawberry-dip-cup"
-      ],
-      "alternativeIds": [
-        "cookies-cream-shake"
-      ]
-    },
-    {
-      "id": "cookies-cream-shake",
-      "categoryId": "soft-serve-shakes",
-      "name": "Cookies & Cream Shake",
-      "slug": "cookies-cream-shake",
-      "catalogRole": "primary",
-      "productType": "drink",
-      "description": "Chocolate sandwich cookie, ice cream and milk.",
-      "sizes": [
-        {
-          "id": "16oz",
-          "label": "16 oz",
-          "price": 9.45
-        },
-        {
-          "id": "20oz",
-          "label": "20 oz",
-          "price": 10.95
-        }
-      ],
-      "moods": [
-        "creamy",
-        "chocolate",
-        "crunchy"
-      ],
-      "occasions": [
-        "study-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "chocolate sandwich cookie",
-        "ice cream",
-        "milk"
-      ],
       "containsAllergens": [
         "milk",
         "wheat",
-        "soy"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "milk-choice",
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "time_sensitive"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 5,
-        "max": 8
-      },
-      "pairingIds": [
-        "midnight-crunch-cookie"
-      ],
-      "alternativeIds": [
-        "strawberry-shake"
-      ]
-    },
-    {
-      "id": "dubai-strawberry-cup",
-      "categoryId": "dubai-collection",
-      "name": "Dubai Strawberry Cup",
-      "slug": "dubai-strawberry-cup",
-      "catalogRole": "primary",
-      "productType": "dessert_cup",
-      "description": "Strawberries, pistachio cream, kataifi crunch and chocolate.",
-      "sizes": [
-        {
-          "id": "regular",
-          "label": "Regular",
-          "price": 11.95
-        },
-        {
-          "id": "large",
-          "label": "Large",
-          "price": 14.95
-        }
-      ],
-      "moods": [
-        "pistachio",
-        "chocolate",
-        "crunchy"
-      ],
-      "occasions": [
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "strawberry",
-        "pistachio cream",
-        "kataifi crunch",
-        "chocolate"
-      ],
-      "containsAllergens": [
-        "milk",
-        "wheat",
-        "soy",
-        "tree_nut"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "all_day"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 6,
-        "max": 9
-      },
-      "pairingIds": [
-        "lemon-mint"
-      ],
-      "alternativeIds": [
-        "strawberry-dip-cup"
-      ]
-    },
-    {
-      "id": "st-dubai-bar",
-      "categoryId": "dubai-collection",
-      "name": "ST. Dubai Bar",
-      "slug": "st-dubai-bar",
-      "catalogRole": "primary",
-      "productType": "packaged_dessert",
-      "description": "Chocolate shell filled with pistachio cream and kataifi crunch.",
-      "sizes": [
-        {
-          "id": "standard",
-          "label": "Standard bar",
-          "price": 12.95
-        }
-      ],
-      "moods": [
-        "pistachio",
-        "chocolate",
-        "giftable"
-      ],
-      "occasions": [
-        "gift",
-        "date-night",
-        "late-night"
-      ],
-      "draftIngredients": [
-        "chocolate",
-        "pistachio cream",
-        "kataifi crunch"
-      ],
-      "containsAllergens": [
-        "milk",
-        "wheat",
-        "soy",
         "tree_nut"
       ],
       "allergenMode": "fixed",
-      "modifierGroupIds": [
-        "gift-presentation"
-      ],
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
           "all_day"
@@ -2889,128 +1438,54 @@
           "pickup",
           "delivery"
         ],
-        "deliverySuitability": "good"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 2,
-        "max": 5
+        "min": 4,
+        "max": 12
       },
       "pairingIds": [
-        "pistachio-saint"
+        "berry-chia-cup"
       ],
       "alternativeIds": [
-        "dubai-strawberry-cup"
-      ]
+        "pistachio-yogurt-bowl"
+      ],
+      "hqNumber": 24,
+      "hqPdfPage": 15,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-24-loaded-fruit-cup.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
-      "id": "loaded-brownie",
-      "categoryId": "desserts-drops",
-      "name": "Loaded Brownie",
-      "slug": "loaded-brownie",
+      "id": "berry-chia-cup",
+      "categoryId": "bowls-fruit",
+      "name": "Berry Chia Cup",
+      "slug": "berry-chia-cup",
       "catalogRole": "primary",
-      "productType": "hot_dessert",
-      "description": "Warm brownie, soft serve, sauce and crunch.",
+      "productType": "fruit_cup",
+      "description": "Layered fruit-and-cream cup.",
       "sizes": [
         {
-          "id": "standard",
-          "label": "Standard",
-          "price": 9.95
+          "id": "12ozcup",
+          "label": "12 oz cup",
+          "price": 9.25
         }
       ],
       "moods": [
-        "chocolate",
-        "warm",
-        "creamy"
+        "sweet"
       ],
       "occasions": [
-        "date-night",
-        "late-night"
+        "morning",
+        "afternoon",
+        "evening"
       ],
-      "draftIngredients": [
-        "brownie",
-        "soft serve",
-        "customer-selected sauce",
-        "customer-selected crunch"
-      ],
+      "draftIngredients": [],
       "containsAllergens": [
         "milk",
-        "egg",
-        "wheat",
-        "soy"
+        "tree_nut"
       ],
-      "allergenMode": "configuration_dependent",
-      "modifierGroupIds": [
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 7,
-        "max": 11
-      },
-      "pairingIds": [
-        "midnight-mango"
-      ],
-      "alternativeIds": [
-        "brownie-fold"
-      ]
-    },
-    {
-      "id": "dragon-cloud-cup",
-      "categoryId": "desserts-drops",
-      "name": "Dragon Cloud Cup",
-      "slug": "dragon-cloud-cup",
-      "catalogRole": "primary",
-      "productType": "limited_drop",
-      "drop": {
-        "code": "DROP-01",
-        "status": "active_working",
-        "startDate": null,
-        "endDate": null
-      },
-      "description": "Dragon fruit cream, strawberry, vanilla cloud and seed crunch.",
-      "sizes": [
-        {
-          "id": "standard",
-          "label": "Standard",
-          "price": 12.45
-        }
-      ],
-      "moods": [
-        "fruity",
-        "creamy",
-        "limited"
-      ],
-      "occasions": [
-        "afternoon",
-        "date-night"
-      ],
-      "draftIngredients": [
-        "dragon fruit cream",
-        "strawberry",
-        "vanilla cream",
-        "seed crunch"
-      ],
-      "containsAllergens": [
-        "milk"
-      ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "dessert-toppings"
-      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
           "all_day"
@@ -3020,441 +1495,163 @@
           "pickup",
           "delivery"
         ],
-        "deliverySuitability": "good"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 6,
-        "max": 9
+        "min": 4,
+        "max": 12
       },
       "pairingIds": [
-        "blue-rush"
+        "pistachio-berry-minis"
       ],
       "alternativeIds": [
         "loaded-fruit-cup"
       ],
-      "featuredRank": 9
+      "hqNumber": 25,
+      "hqPdfPage": 16,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-25-berry-chia-cup.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
-      "id": "midnight-crunch-cookie",
-      "categoryId": "desserts-drops",
-      "name": "Midnight Crunch Cookie",
-      "slug": "midnight-crunch-cookie",
+      "id": "pistachio-berry-minis",
+      "categoryId": "mini-pancakes",
+      "name": "Pistachio Berry Minis",
+      "slug": "pistachio-berry-minis",
       "catalogRole": "primary",
-      "productType": "limited_drop",
-      "drop": {
-        "code": "DROP-02",
-        "status": "active_working",
-        "startDate": null,
-        "endDate": null
-      },
-      "description": "Warm chocolate cookie, dark chocolate and pistachio crunch.",
+      "productType": "dessert",
+      "description": "Ten mini pancakes finished to order.",
       "sizes": [
         {
-          "id": "standard",
-          "label": "Standard",
-          "price": 8.95
+          "id": "10minis",
+          "label": "10 minis",
+          "price": 11.5
         }
       ],
       "moods": [
-        "chocolate",
-        "pistachio",
-        "limited"
+        "sweet"
       ],
       "occasions": [
-        "study-night",
-        "late-night"
+        "morning",
+        "afternoon",
+        "evening"
       ],
-      "draftIngredients": [
-        "chocolate cookie",
-        "dark chocolate",
-        "pistachio crunch"
-      ],
+      "draftIngredients": [],
       "containsAllergens": [
         "milk",
         "egg",
         "wheat",
-        "soy",
         "tree_nut"
       ],
-      "allergenMode": "fixed_plus_modifiers",
-      "modifierGroupIds": [
-        "dessert-sauces",
-        "dessert-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "dine_in",
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 7,
-        "max": 11
-      },
-      "pairingIds": [
-        "cookies-cream-shake"
-      ],
-      "alternativeIds": [
-        "loaded-brownie"
-      ],
-      "featuredRank": 10
-    },
-    {
-      "id": "st-flight",
-      "categoryId": "flights-liters-boxes",
-      "name": "ST. Flight",
-      "slug": "st-flight",
-      "catalogRole": "group_format",
-      "productType": "flight",
-      "description": "Four 6 oz tastes selected from eligible signatures.",
-      "sizes": [
-        {
-          "id": "four-6oz",
-          "label": "Four 6 oz cups",
-          "price": 18.95
-        }
-      ],
-      "moods": [
-        "shareable",
-        "discovery"
-      ],
-      "occasions": [
-        "date-night",
-        "group"
-      ],
-      "draftIngredients": [],
-      "containsAllergens": [],
-      "allergenMode": "selection_dependent",
-      "modifierGroupIds": [
-        "flight-drink-selection"
-      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
           "all_day"
         ],
         "channels": [
           "dine_in",
-          "pickup"
+          "pickup",
+          "delivery"
         ],
-        "deliverySuitability": "requires_carrier_test"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 10,
-        "max": 15
+        "min": 4,
+        "max": 12
       },
       "pairingIds": [
-        "saint-fruit-stick"
+        "lotus-crunch-minis"
       ],
       "alternativeIds": [
-        "fresh-juice-twins"
-      ]
+        "berry-chia-cup"
+      ],
+      "hqNumber": 26,
+      "hqPdfPage": 16,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-26-pistachio-berry-minis.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
-      "id": "fresh-juice-twins",
-      "categoryId": "flights-liters-boxes",
-      "name": "Fresh Juice Twins",
-      "slug": "fresh-juice-twins",
-      "catalogRole": "group_format",
-      "productType": "bundle",
-      "description": "Two 16 oz fresh juices from the eligible list.",
+      "id": "lotus-crunch-minis",
+      "categoryId": "mini-pancakes",
+      "name": "Lotus Crunch Minis",
+      "slug": "lotus-crunch-minis",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "Ten mini pancakes finished to order.",
       "sizes": [
         {
-          "id": "two-16oz",
-          "label": "Two 16 oz drinks",
-          "price": 15.95
+          "id": "10minis",
+          "label": "10 minis",
+          "price": 11.25
         }
       ],
       "moods": [
-        "fresh",
-        "shareable"
+        "sweet"
       ],
       "occasions": [
         "morning",
-        "study-night"
+        "afternoon",
+        "evening"
       ],
       "draftIngredients": [],
-      "containsAllergens": [],
-      "allergenMode": "selection_dependent",
-      "modifierGroupIds": [
-        "twin-fresh-juice-selection"
+      "containsAllergens": [
+        "milk",
+        "wheat",
+        "soy"
       ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
-          "morning",
-          "afternoon"
+          "all_day"
         ],
         "channels": [
           "dine_in",
           "pickup",
           "delivery"
         ],
-        "deliverySuitability": "good"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 8,
+        "min": 4,
         "max": 12
       },
       "pairingIds": [
-        "classic-minis"
+        "strawberry-chocolate-crepe"
       ],
       "alternativeIds": [
-        "st-flight"
-      ]
+        "pistachio-berry-minis"
+      ],
+      "hqNumber": 27,
+      "hqPdfPage": 17,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-27-lotus-crunch-minis.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
-      "id": "one-liter-juice",
-      "categoryId": "flights-liters-boxes",
-      "name": "One-Liter Juice",
-      "slug": "one-liter-juice",
-      "catalogRole": "group_format",
-      "productType": "liter",
-      "description": "A one-liter bottle from the eligible fresh-juice list.",
+      "id": "strawberry-chocolate-crepe",
+      "categoryId": "crepes-waffles",
+      "name": "Strawberry Chocolate Crepe",
+      "slug": "strawberry-chocolate-crepe",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "Filled crepe served warm.",
       "sizes": [
         {
-          "id": "1-liter",
-          "label": "1 liter",
-          "price": 15.95,
-          "startingAt": true
+          "id": "1large",
+          "label": "1 large",
+          "price": 12.5
         }
       ],
       "moods": [
-        "fresh",
-        "shareable"
+        "sweet"
       ],
       "occasions": [
-        "family",
-        "office",
-        "party"
-      ],
-      "draftIngredients": [],
-      "containsAllergens": [],
-      "allergenMode": "selection_dependent",
-      "modifierGroupIds": [
-        "liter-flavor-selection"
-      ],
-      "availability": {
-        "dayparts": [
-          "morning",
-          "afternoon"
-        ],
-        "channels": [
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 10,
-        "max": 15
-      },
-      "pairingIds": [
-        "game-day-box"
-      ],
-      "alternativeIds": [
-        "fresh-juice-twins"
-      ]
-    },
-    {
-      "id": "study-night-box",
-      "categoryId": "flights-liters-boxes",
-      "name": "Study Night Box",
-      "slug": "study-night-box",
-      "catalogRole": "group_format",
-      "productType": "party_box",
-      "description": "Twelve Classic Minis, two 16 oz refreshers, two sauces and one crunch.",
-      "sizes": [
-        {
-          "id": "serves-2-3",
-          "label": "Serves 2–3",
-          "price": 26.95
-        }
-      ],
-      "moods": [
-        "shareable",
-        "student",
-        "warm"
-      ],
-      "occasions": [
-        "study-night"
-      ],
-      "draftIngredients": [],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat"
-      ],
-      "allergenMode": "selection_dependent",
-      "modifierGroupIds": [
-        "study-box-drinks",
-        "box-sauces",
-        "box-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 15,
-        "max": 22
-      },
-      "pairingIds": [],
-      "alternativeIds": [
-        "date-night-box"
-      ]
-    },
-    {
-      "id": "date-night-box",
-      "categoryId": "flights-liters-boxes",
-      "name": "Date Night Box",
-      "slug": "date-night-box",
-      "catalogRole": "group_format",
-      "productType": "party_box",
-      "description": "Two fruit sticks, one mini dessert cup, two 12 oz drinks and an optional note.",
-      "sizes": [
-        {
-          "id": "serves-2",
-          "label": "Serves 2",
-          "price": 31.95
-        }
-      ],
-      "moods": [
-        "shareable",
-        "giftable",
-        "chocolate"
-      ],
-      "occasions": [
-        "date-night"
-      ],
-      "draftIngredients": [],
-      "containsAllergens": [],
-      "allergenMode": "selection_dependent",
-      "modifierGroupIds": [
-        "date-box-drinks",
-        "chocolate-choice",
-        "gift-note"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "good"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 15,
-        "max": 22
-      },
-      "pairingIds": [],
-      "alternativeIds": [
-        "study-night-box"
-      ]
-    },
-    {
-      "id": "game-day-box",
-      "categoryId": "flights-liters-boxes",
-      "name": "Game Day Box",
-      "slug": "game-day-box",
-      "catalogRole": "group_format",
-      "productType": "party_box",
-      "description": "Twenty-four mini pancakes, two fruit cups, three sauces and three crunches.",
-      "sizes": [
-        {
-          "id": "serves-4-6",
-          "label": "Serves 4–6",
-          "price": 49.95
-        }
-      ],
-      "moods": [
-        "shareable",
-        "warm",
-        "customizable"
-      ],
-      "occasions": [
-        "game-day",
-        "party"
-      ],
-      "draftIngredients": [],
-      "containsAllergens": [
-        "milk",
-        "egg",
-        "wheat"
-      ],
-      "allergenMode": "selection_dependent",
-      "modifierGroupIds": [
-        "box-fruit",
-        "box-sauces",
-        "box-toppings"
-      ],
-      "availability": {
-        "dayparts": [
-          "afternoon",
-          "evening"
-        ],
-        "channels": [
-          "pickup",
-          "delivery"
-        ],
-        "deliverySuitability": "quality_declines_over_time"
-      },
-      "prepTimeMinutes": {
-        "status": "working",
-        "min": 20,
-        "max": 30
-      },
-      "pairingIds": [
-        "one-liter-juice"
-      ],
-      "alternativeIds": [
-        "build-your-party-box"
-      ]
-    },
-    {
-      "id": "birthday-box",
-      "categoryId": "flights-liters-boxes",
-      "name": "Birthday Box",
-      "slug": "birthday-box",
-      "catalogRole": "group_format",
-      "productType": "party_box",
-      "description": "Twenty-four mini pancakes, two fruit sticks, a share-size brownie component, sauces, toppings and a gift note.",
-      "sizes": [
-        {
-          "id": "serves-4-6",
-          "label": "Serves 4–6",
-          "price": 59.95
-        }
-      ],
-      "moods": [
-        "shareable",
-        "giftable",
-        "celebration"
-      ],
-      "occasions": [
-        "birthday",
-        "party"
+        "morning",
+        "afternoon",
+        "evening"
       ],
       "draftIngredients": [],
       "containsAllergens": [
@@ -3463,153 +1660,731 @@
         "wheat",
         "soy"
       ],
-      "allergenMode": "selection_dependent",
-      "modifierGroupIds": [
-        "chocolate-choice",
-        "box-sauces",
-        "box-toppings",
-        "gift-note"
-      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
-          "afternoon",
-          "evening"
+          "all_day"
         ],
         "channels": [
+          "dine_in",
           "pickup",
           "delivery"
         ],
-        "deliverySuitability": "quality_declines_over_time"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 25,
-        "max": 40
+        "min": 4,
+        "max": 12
       },
       "pairingIds": [
-        "one-liter-juice"
+        "pistachio-kunafa-crepe"
       ],
       "alternativeIds": [
-        "build-your-party-box"
-      ]
+        "lotus-crunch-minis"
+      ],
+      "hqNumber": 28,
+      "hqPdfPage": 17,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-28-strawberry-chocolate-crepe.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     },
     {
-      "id": "office-box",
-      "categoryId": "flights-liters-boxes",
-      "name": "Office Box",
-      "slug": "office-box",
-      "catalogRole": "group_format",
-      "productType": "catering_box",
-      "description": "Ten individually labeled 12 oz drinks or an approved mixed configuration.",
+      "id": "pistachio-kunafa-crepe",
+      "categoryId": "crepes-waffles",
+      "name": "Pistachio Kunafa Crepe",
+      "slug": "pistachio-kunafa-crepe",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "Filled crepe served warm.",
       "sizes": [
         {
-          "id": "serves-8-10",
-          "label": "Serves 8–10",
-          "price": 79.95,
-          "startingAt": true
+          "id": "1large",
+          "label": "1 large",
+          "price": 14
         }
       ],
       "moods": [
-        "shareable",
-        "business"
+        "sweet"
       ],
       "occasions": [
-        "office",
-        "meeting"
+        "morning",
+        "afternoon",
+        "evening"
       ],
       "draftIngredients": [],
-      "containsAllergens": [],
-      "allergenMode": "selection_dependent",
-      "modifierGroupIds": [
-        "office-drink-selection",
-        "catering-addons"
+      "containsAllergens": [
+        "milk",
+        "egg",
+        "wheat",
+        "tree_nut",
+        "soy"
       ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
-          "morning",
-          "afternoon",
-          "evening"
+          "all_day"
         ],
         "channels": [
+          "dine_in",
           "pickup",
-          "quoted_delivery"
+          "delivery"
         ],
-        "deliverySuitability": "scheduled_only"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 30,
-        "max": 60
+        "min": 4,
+        "max": 12
       },
-      "pairingIds": [],
+      "pairingIds": [
+        "banana-caramel-waffle"
+      ],
       "alternativeIds": [
-        "build-your-party-box"
-      ]
+        "strawberry-chocolate-crepe"
+      ],
+      "featuredRank": 2,
+      "hqNumber": 29,
+      "hqPdfPage": 18,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-29-pistachio-kunafa-crepe.webp",
+      "photoStatus": "concept_from_pdf_not_deployed",
+      "drop": {
+        "code": "HQ-DROP-02",
+        "status": "active_working",
+        "startDate": null,
+        "endDate": null
+      }
     },
     {
-      "id": "build-your-party-box",
-      "categoryId": "flights-liters-boxes",
-      "name": "Build Your Party Box",
-      "slug": "build-your-party-box",
-      "catalogRole": "group_format",
-      "productType": "catering_box",
-      "description": "Choose two bases, fruit, sauces and toppings for six to twelve guests.",
+      "id": "banana-caramel-waffle",
+      "categoryId": "crepes-waffles",
+      "name": "Banana Caramel Waffle",
+      "slug": "banana-caramel-waffle",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "Warm waffle with a sweet finish.",
       "sizes": [
         {
-          "id": "serves-6",
-          "label": "Serves 6",
-          "price": 69.95,
-          "startingAt": true
-        },
-        {
-          "id": "serves-12",
-          "label": "Serves 12",
-          "price": 124.95,
-          "startingAt": true
+          "id": "1large",
+          "label": "1 large",
+          "price": 12.25
         }
       ],
       "moods": [
-        "shareable",
-        "customizable"
+        "sweet"
       ],
       "occasions": [
-        "birthday",
-        "party",
-        "office"
+        "morning",
+        "afternoon",
+        "evening"
       ],
       "draftIngredients": [],
-      "containsAllergens": [],
-      "allergenMode": "selection_dependent",
-      "modifierGroupIds": [
-        "party-box-bases",
-        "box-fruit",
-        "box-sauces",
-        "box-toppings",
-        "catering-addons"
+      "containsAllergens": [
+        "milk",
+        "egg",
+        "wheat",
+        "tree_nut"
       ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
       "availability": {
         "dayparts": [
-          "morning",
-          "afternoon",
-          "evening"
+          "all_day"
         ],
         "channels": [
+          "dine_in",
           "pickup",
-          "quoted_delivery"
+          "delivery"
         ],
-        "deliverySuitability": "scheduled_only"
+        "deliverySuitability": "pending_packaging_validation"
       },
       "prepTimeMinutes": {
         "status": "working",
-        "min": 35,
-        "max": 75
+        "min": 4,
+        "max": 12
       },
       "pairingIds": [
-        "one-liter-juice"
+        "dubai-chocolate-bar"
       ],
       "alternativeIds": [
-        "game-day-box"
-      ]
+        "pistachio-kunafa-crepe"
+      ],
+      "hqNumber": 30,
+      "hqPdfPage": 18,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-30-banana-caramel-waffle.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "dubai-chocolate-bar",
+      "categoryId": "chocolate-lab",
+      "name": "Dubai Chocolate Bar",
+      "slug": "dubai-chocolate-bar",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "A signature chocolate and pistachio treat.",
+      "sizes": [
+        {
+          "id": "1bar110g",
+          "label": "1 bar, 110 g",
+          "price": 12
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk",
+        "wheat",
+        "tree_nut",
+        "soy",
+        "sesame"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "pistachio-brownie"
+      ],
+      "alternativeIds": [
+        "banana-caramel-waffle"
+      ],
+      "featuredRank": 6,
+      "hqNumber": 31,
+      "hqPdfPage": 19,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-31-dubai-chocolate-bar.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "pistachio-brownie",
+      "categoryId": "desserts-drops",
+      "name": "Pistachio Brownie",
+      "slug": "pistachio-brownie",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "A rich dessert for your sweet tooth.",
+      "sizes": [
+        {
+          "id": "1square",
+          "label": "1 square",
+          "price": 8.75
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk",
+        "egg",
+        "wheat",
+        "tree_nut",
+        "soy"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "chocolate-berry-cup"
+      ],
+      "alternativeIds": [
+        "dubai-chocolate-bar"
+      ],
+      "hqNumber": 32,
+      "hqPdfPage": 19,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-32-pistachio-brownie.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "chocolate-berry-cup",
+      "categoryId": "desserts-drops",
+      "name": "Chocolate Berry Cup",
+      "slug": "chocolate-berry-cup",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "A rich dessert for your sweet tooth.",
+      "sizes": [
+        {
+          "id": "12ozcup",
+          "label": "12 oz cup",
+          "price": 9.75
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk",
+        "wheat",
+        "tree_nut",
+        "soy"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "iced-latte"
+      ],
+      "alternativeIds": [
+        "pistachio-brownie"
+      ],
+      "hqNumber": 33,
+      "hqPdfPage": 20,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-33-chocolate-berry-cup.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "iced-latte",
+      "categoryId": "coffee-matcha",
+      "name": "Iced Latte",
+      "slug": "iced-latte",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "Iced espresso and milk.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 6.25
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "iced-matcha"
+      ],
+      "alternativeIds": [
+        "chocolate-berry-cup"
+      ],
+      "hqNumber": 34,
+      "hqPdfPage": 20,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-34-iced-latte.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "iced-matcha",
+      "categoryId": "coffee-matcha",
+      "name": "Iced Matcha",
+      "slug": "iced-matcha",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "Iced matcha and milk.",
+      "sizes": [
+        {
+          "id": "16oz",
+          "label": "16 oz",
+          "price": 7.25
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "turkey-avocado-panini"
+      ],
+      "alternativeIds": [
+        "iced-latte"
+      ],
+      "hqNumber": 35,
+      "hqPdfPage": 21,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-35-iced-matcha.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "turkey-avocado-panini",
+      "categoryId": "savory",
+      "name": "Turkey Avocado Panini",
+      "slug": "turkey-avocado-panini",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "A fresh savory café item.",
+      "sizes": [
+        {
+          "id": "1sandwich",
+          "label": "1 sandwich",
+          "price": 12.75
+        }
+      ],
+      "moods": [
+        "savory"
+      ],
+      "occasions": [
+        "lunch",
+        "afternoon"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk",
+        "egg",
+        "wheat"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "caprese-pesto-focaccia"
+      ],
+      "alternativeIds": [
+        "iced-matcha"
+      ],
+      "hqNumber": 36,
+      "hqPdfPage": 21,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-36-turkey-avocado-panini.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "caprese-pesto-focaccia",
+      "categoryId": "savory",
+      "name": "Caprese Pesto Focaccia",
+      "slug": "caprese-pesto-focaccia",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "A fresh savory café item.",
+      "sizes": [
+        {
+          "id": "1sandwich",
+          "label": "1 sandwich",
+          "price": 11.75
+        }
+      ],
+      "moods": [
+        "savory"
+      ],
+      "occasions": [
+        "lunch",
+        "afternoon"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk",
+        "wheat",
+        "tree_nut"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "halloumi-pepper-wrap"
+      ],
+      "alternativeIds": [
+        "turkey-avocado-panini"
+      ],
+      "hqNumber": 37,
+      "hqPdfPage": 22,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-37-caprese-pesto-focaccia.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "halloumi-pepper-wrap",
+      "categoryId": "savory",
+      "name": "Halloumi Pepper Wrap",
+      "slug": "halloumi-pepper-wrap",
+      "catalogRole": "primary",
+      "productType": "dessert",
+      "description": "A fresh savory café item.",
+      "sizes": [
+        {
+          "id": "1wrap",
+          "label": "1 wrap",
+          "price": 12.25
+        }
+      ],
+      "moods": [
+        "savory"
+      ],
+      "occasions": [
+        "lunch",
+        "afternoon"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [
+        "milk",
+        "wheat",
+        "sesame"
+      ],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "ginger-lemon-shot"
+      ],
+      "alternativeIds": [
+        "caprese-pesto-focaccia"
+      ],
+      "hqNumber": 38,
+      "hqPdfPage": 22,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-38-halloumi-pepper-wrap.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "ginger-lemon-shot",
+      "categoryId": "wellness-shots",
+      "name": "Ginger Lemon Shot",
+      "slug": "ginger-lemon-shot",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A small chilled juice shot; no health claims.",
+      "sizes": [
+        {
+          "id": "2oz",
+          "label": "2 oz",
+          "price": 4.5
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "golden-turmeric-shot"
+      ],
+      "alternativeIds": [
+        "halloumi-pepper-wrap"
+      ],
+      "hqNumber": 39,
+      "hqPdfPage": 23,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-39-ginger-lemon-shot.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
+    },
+    {
+      "id": "golden-turmeric-shot",
+      "categoryId": "wellness-shots",
+      "name": "Golden Turmeric Shot",
+      "slug": "golden-turmeric-shot",
+      "catalogRole": "primary",
+      "productType": "drink",
+      "description": "A small chilled juice shot; no health claims.",
+      "sizes": [
+        {
+          "id": "2oz",
+          "label": "2 oz",
+          "price": 4.75
+        }
+      ],
+      "moods": [
+        "sweet"
+      ],
+      "occasions": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "draftIngredients": [],
+      "containsAllergens": [],
+      "allergenMode": "fixed",
+      "modifierGroupIds": [],
+      "availability": {
+        "dayparts": [
+          "all_day"
+        ],
+        "channels": [
+          "dine_in",
+          "pickup",
+          "delivery"
+        ],
+        "deliverySuitability": "pending_packaging_validation"
+      },
+      "prepTimeMinutes": {
+        "status": "working",
+        "min": 4,
+        "max": 12
+      },
+      "pairingIds": [
+        "citrus-sunrise"
+      ],
+      "alternativeIds": [
+        "ginger-lemon-shot"
+      ],
+      "hqNumber": 40,
+      "hqPdfPage": 23,
+      "conceptImagePath": "media/optimized/webp/hq-catalog/hq-40-golden-turmeric-shot.webp",
+      "photoStatus": "concept_from_pdf_not_deployed"
     }
   ]
 }

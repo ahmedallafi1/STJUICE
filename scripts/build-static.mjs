@@ -13,7 +13,7 @@ const files = [
   "site/index.html", "site/app.js", "site/project-data.js", "site/styles.css", "site/site.webmanifest", "site/robots.txt",
   "content/site-copy.json",
   "menu/data/catalog.json", "menu/data/modifiers.json", "menu/data/build-your-mood.json", "menu/data/bundles-catering.json",
-  "media/manifests/media-manifest.json", "media/motion/st-juice-hero-loop.svg", "media/motion/st-juice-hero-loop-fallback.svg"
+  "media/motion/st-juice-hero-loop.svg", "media/motion/st-juice-hero-loop-fallback.svg"
 ];
 // The public CDN contains only customer-facing assets. Staff HQ and operations belong behind authenticated local/server routes.
 const directories = ["site/lib", "brand/assets", "media/optimized"];
@@ -24,6 +24,7 @@ for (const source of files) {
   cpSync(resolve(root, source), target);
 }
 for (const source of directories) cpSync(resolve(root, source), resolve(output, source), { recursive: true });
+// Legacy imagery is retained only as an internal visual fallback while HQ photo assets are being published.
 // Keep a root copy for the conservative public-reference audit; the browser uses /site/project-data.js.
 cpSync(resolve(root, "site/project-data.js"), resolve(output, "project-data.js"));
 // robots.txt must exist at the domain root as well as under /site/.
@@ -38,6 +39,16 @@ function totalBytes(directory) {
     const path = resolve(directory, entry.name);
     return total + (entry.isDirectory() ? totalBytes(path) : statSync(path).size);
   }, 0);
+}
+
+// Never claim the exact PDF photos are live until each corresponding file
+// exists in the web build. Draft status falls back to existing category art.
+const hqRetailCatalog = JSON.parse(readFileSync(resolve(root, "menu/data/catalog.json"), "utf8"));
+for (const product of hqRetailCatalog.products) {
+  if (product.photoStatus !== "deployed") continue;
+  if (!product.conceptImagePath || !existsSync(resolve(output, product.conceptImagePath))) {
+    throw new Error("HQ photograph marked deployed but missing: " + product.id);
+  }
 }
 
 const publicSources = ["site/index.html", "site/app.js", "site/styles.css", "site/lib/core.js", "site/lib/views.js"];
