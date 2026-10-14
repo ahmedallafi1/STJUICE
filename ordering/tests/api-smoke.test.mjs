@@ -67,7 +67,7 @@ try {
   const memberEmail = `phase1-${Date.now()}@example.com`;
   const memberRegistration = await json("/api/account/register", {
     method: "POST",
-    body: JSON.stringify({ name: "Phase Two Member", email: memberEmail, password: "PhaseOneTest!123", type: "regular", birthday: "1990-09-20" })
+    body: JSON.stringify({ name: "Phase Two Member", email: memberEmail, password: "PhaseOneTest!123", type: "regular", birthday: `1990-${new Date().toISOString().slice(5, 10)}` })
   });
   assert.equal(memberRegistration.response.status, 201);
   const memberCookie = memberRegistration.response.headers.get("set-cookie")?.split(";")[0];
