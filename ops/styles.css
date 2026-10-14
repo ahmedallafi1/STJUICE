@@ -89,3 +89,8 @@ code { color: var(--gold); }
   .metrics { grid-template-columns: 1fr 1fr; }
   .inline-form { grid-template-columns: 1fr; }
 }
+
+/* Confidential local HQ detail is deliberately readable without public assets. */
+.hq-detail { margin-top: 1.25rem; }
+.hq-detail pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .83rem; line-height: 1.6; }
+.hq-detail p { line-height: 1.6; }
