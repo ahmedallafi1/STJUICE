@@ -14,16 +14,23 @@ const bundles = readJson("menu/data/bundles-catering.json");
 const copy = readJson("content/site-copy.json");
 const media = readJson("media/manifests/media-manifest.json");
 
-assert.equal(catalog.categories.length, 12, "Stage 05 must expose all 12 categories");
-assert.equal(catalog.products.length, 54, "Catalog count must remain 54");
-assert.equal(catalog.products.filter((item) => item.catalogRole === "primary").length, 45, "Primary item count must remain 45");
-assert.equal(catalog.products.filter((item) => item.catalogRole === "group_format").length, 9, "Group format count must remain 9");
+assert.equal(catalog.categories.length, 12, "Exactly 12 HQ categories");
+assert.equal(catalog.products.length, 40, "Exactly forty HQ cards must be the only website products");
+assert.equal(catalog.products.filter((item) => item.catalogRole === "primary").length, 40, "All HQ cards must be primary");
+assert.equal(catalog.products.filter((item) => item.catalogRole === "group_format").length, 0, "No off-catalog group-format SKUs may be purchasable");
 assert.equal(copy.drops.activeProductIds.length, 2, "Two active drops must remain configured");
 assert.equal(modifiers.groups.length, 28, "Modifier group count must remain 28");
 assert.equal(builder.steps.length, 8, "Build Your Mood must remain an eight-step contract");
-assert.equal(bundles.orderNowBoxes.length, 5, "Five direct-order box formats are required");
+assert.equal(bundles.orderNowBoxes.length, 0, "No off-HQ direct-order boxes");
 assert.equal(bundles.cateringPackages.length, 4, "Four catering starting directions are required");
 
+const hq = readJson("hq/public-product-crosswalk.json");
+assert.deepEqual(catalog.products.map((p) => p.name), hq.products.map((p) => p.name), "Only the forty HQ products in printed order");
+for (const [i,p] of catalog.products.entries()) {
+  assert.equal(p.sizes.length, 1);
+  assert.equal(p.sizes[0].price, hq.products[i].suggestedPriceUsd);
+  assert.equal(p.sizes[0].label, hq.products[i].serving);
+}
 const productIds = new Set(catalog.products.map((item) => item.id));
 const categoryIds = new Set(catalog.categories.map((item) => item.id));
 assert.equal(productIds.size, catalog.products.length, "Product IDs must be unique");
