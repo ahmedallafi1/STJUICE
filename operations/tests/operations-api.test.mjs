@@ -156,7 +156,7 @@ try {
     method: "POST",
     body: JSON.stringify({
       service: "dine_in",
-      items: [{ kind: "catalog", productId: "pistachio-saint", sizeId: "16oz", quantity: 1, modifierSelections: {} }],
+      items: [{ kind: "catalog", productId: "citrus-sunrise", sizeId: "16-oz", quantity: 1, modifierSelections: {} }],
       promoCode: "",
       tipPercent: 0
     })
