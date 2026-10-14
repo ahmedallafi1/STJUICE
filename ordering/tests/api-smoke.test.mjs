@@ -44,7 +44,7 @@ try {
   const key = `api-test-${Date.now()}`;
   const orderBody = { quoteId: quote.payload.quoteId, paymentToken: payment.payload.token, schedule, allergenAcknowledged: true, customer: { name: "Test Guest", email: "guest@example.com", phone: "3145550100", marketingConsent: false } };
   const order = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": key }, body: JSON.stringify(orderBody) });
-  assert.equal(order.response.status, 201, JSON.stringify(order.payload));
+  assert.equal(order.response.status, 201, JSON.stringify({ error: order.payload, schedule, quoteLead: quote.payload.fulfillment }));
   assert.equal(order.payload.order.status, "received");
   assert.equal(order.payload.order.customer.email, "g***@example.com");
   assert.ok(!JSON.stringify(order.payload).includes("3145550100"), "Public order response must not expose the raw phone");
