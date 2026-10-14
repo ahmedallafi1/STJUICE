@@ -282,7 +282,7 @@ async function api(request, response, url) {
     return json(response, 201, { request: publicCateringReceipt(row) });
   }
   if (request.method === "GET" && url.pathname === "/api/slots") {
-    const result = generateSlots(url.searchParams.get("service"), url.searchParams.get("date"));
+    const result = generateSlots(url.searchParams.get("service"), url.searchParams.get("date"), operationalNow());
     return json(response, result.valid ? 200 : 400, result);
   }
   if (request.method === "POST" && url.pathname === "/api/delivery/validate") {
