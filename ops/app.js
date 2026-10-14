@@ -119,11 +119,23 @@ async function renderCatering() {
 }
 
 async function renderCatalog() {
-  const [{ products, storage, editableAtRuntime }, rewards, commercial] = await Promise.all([api("catalog"), api("rewards"), api("commercial")]);
+  const [{ products, storage, editableAtRuntime }, rewards, commercial, hqReview] = await Promise.all([api("catalog"), api("rewards"), api("commercial"), api("hq/menu-review")]);
   const productState = new Map(commercial.products.map((row) => [row.productId, row]));
   els.panel.innerHTML = `
     <div class="section-title"><div><p class="eyebrow">CATALOG & REWARDS</p><h2>Commercial controls.</h2><p class="muted">Runtime editing: ${editableAtRuntime ? "enabled" : "not yet"} · ${esc(storage)} · changes reset with preview-memory restarts.</p></div></div>
     <div class="metrics">${metric("Products", products.length)}${metric("Loyalty", rewards.config.loyalty.enabled ? "Active" : "Disabled")}${metric("Student benefit", rewards.config.accountDiscounts.student.enabled ? "Active" : "Disabled")}${metric("Business benefit", rewards.config.accountDiscounts.business.enabled ? "Active" : "Disabled")}${metric("Birthday", rewards.config.birthday.enabled ? "Active" : "Disabled")}</div>
+
+    <div class="section-title"><div><p class="eyebrow">HQ MENU / 52-PAGE CATALOG</p><h2>40-card reconciliation.</h2><p class="muted">Working HQ proposals only. These values are NOT approved nutrition or customer-facing prices; no automatic product overwrite. Detailed recipes and unit economics remain private.</p></div></div>
+    <div class="metrics">
+      ${metric("HQ cards", hqReview.summary.hqProducts)}
+      ${metric("Unmatched names", hqReview.summary.nameUnmatched)}
+      ${metric("Price differences", hqReview.summary.priceConflicts)}
+      ${metric("Serving mapping", hqReview.summary.servingMappingRequired)}
+      ${metric("Aligned", hqReview.summary.aligned)}
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>HQ # / PDF</th><th>HQ item</th><th>Suggested / 1 portion</th><th>Web match</th><th>Review status</th></tr></thead><tbody>
+      ${hqReview.products.map((h) => `<tr><td>#${esc(h.hqNumber)} / p.${esc(h.pdfPage)}</td><td><strong>${esc(h.name)}</strong><br><span class="muted">${esc(h.hqCategory)}</span></td><td>${money(h.suggestedPriceUsd)} / ${esc(h.serving)}<br><span class="muted">~${esc(h.estimatedKcalUnverified)} kcal estimate; not verified</span></td><td>${h.webProducts.map((p) => `${esc(p.name)} (${esc(p.id)}) — ${p.sizes.map((s) => `${esc(s.label)} ${money(s.workingPrice)}`).join(", ")}`).join("<br>") || "<span class='muted'>Needs product mapping</span>"}</td><td>${status(h.reviewStatus)}</td></tr>`).join("")}
+    </tbody></table></div>
 
     <div class="section-title"><div><p class="eyebrow">PRODUCT AVAILABILITY</p><h2>Pause or sell out items instantly.</h2></div></div>
     <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Sizes</th><th>Status</th></tr></thead><tbody>
