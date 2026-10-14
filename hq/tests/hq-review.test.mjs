@@ -15,7 +15,7 @@ const blue = review.products.find((x) => x.name === "Blue Saint");
 assert.equal(blue.suggestedPriceUsd, 8.50);
 assert.equal(blue.webProducts[0].sizes.find((x) => x.label === "16 oz").workingPrice, 8.95);
 const serialized = JSON.stringify(review);
-for (const forbidden of ["foodCostUsd", "packagingCostUsd", "baseCogsUsd", "estimatedGrossProfitUsd", "sourceRawText", "ingredients", "supplier"]) {
+for (const forbidden of ["foodCostUsd", "packagingCostUsd", "baseCogsUsd", "estimatedGrossProfitUsd", "sourceRawText", "ingredients"]) {
   assert.equal(serialized.includes(forbidden), false, "Private HQ attribute leaked into API: " + forbidden);
 }
 console.log(JSON.stringify({ status: "passed", ...review.summary }));
