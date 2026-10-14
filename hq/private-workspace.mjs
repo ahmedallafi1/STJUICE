@@ -93,7 +93,7 @@ export function privateHqSummary(master) {
   return {
     source: "HQ concept edition 1.2, 30 September 2026",
     pages: 52,
-    cards: cards.length,
+    productCount: cards.length,
     sourcePricesAreProposals: true,
     marginsExcludeOperatingOverhead: true,
     foodModelPrepLossPct: 7,
