@@ -3596,3 +3596,10 @@ html[data-theme="student"] .product-order-bar {
   pointer-events: none;
   cursor: not-allowed;
 }
+
+/* HQ catalog concept photography: one source-matched atlas, forty crops. */
+.hq-photo { display:block; width:100%; aspect-ratio:1/1; background-color:#ded8c8; background-repeat:no-repeat; background-origin:border-box; border-radius:inherit; }
+.product-card__media .hq-photo,.category-card__image .hq-photo { width:100%;height:100%; min-height:180px;aspect-ratio:1/1; }
+.product-detail__image .hq-photo { width:100%;min-height:350px;aspect-ratio:4/5;border-radius:inherit; }
+.cart-item__image .hq-photo { width:90px;height:100px;aspect-ratio:9/10; }
+@media(max-width:640px) { .product-detail__image .hq-photo { min-height:260px; } }
