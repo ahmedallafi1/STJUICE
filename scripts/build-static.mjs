@@ -1,4 +1,4 @@
-import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import "./generate-browser-data.mjs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,7 +15,8 @@ const files = [
   "menu/data/catalog.json", "menu/data/modifiers.json", "menu/data/build-your-mood.json", "menu/data/bundles-catering.json",
   "media/manifests/media-manifest.json", "media/motion/st-juice-hero-loop.svg", "media/motion/st-juice-hero-loop-fallback.svg"
 ];
-const directories = ["site/lib", "brand/assets", "media/optimized", "ops"];
+// The public CDN contains only customer-facing assets. Staff HQ and operations belong behind authenticated local/server routes.
+const directories = ["site/lib", "brand/assets", "media/optimized"];
 
 for (const source of files) {
   const target = resolve(output, source);
@@ -88,6 +89,16 @@ if (indexingEnabled) {
   );
   writeFileSync(indexPath, indexHtml);
   sitemapGenerated = true;
+}
+
+// Explicit privacy guardrails: public hosting must not ship internal interfaces,
+// financial HQ documents, environment files, or database schemas.
+for (const forbidden of ["ops", "hq", ".env", ".env.local", "database", "operations", "launch", "accounts", "ordering"]) {
+  if (existsSync(resolve(output, forbidden))) throw new Error("Private source leaked into public build: " + forbidden);
+}
+const publicData = readFileSync(resolve(output, "site/project-data.js"), "utf8");
+for (const forbidden of ["sourceRawText", "estimatedGrossProfitUsd", "foodCostUsd", "packagingCostUsd", "baseCogsUsd"]) {
+  if (publicData.includes(forbidden)) throw new Error("Confidential HQ financial field leaked into storefront: " + forbidden);
 }
 
 console.log(JSON.stringify({
