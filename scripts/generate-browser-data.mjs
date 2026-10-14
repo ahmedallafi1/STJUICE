@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -12,6 +12,13 @@ const sources = {
 };
 
 const data = Object.fromEntries(Object.entries(sources).map(([key, path]) => [key, JSON.parse(readFileSync(resolve(root, path), "utf8"))]));
+// Exact product photos are published only after their public-safe WebPs are
+// actually committed; otherwise the category artwork remains the fallback.
+for (const product of data.catalog.products) {
+  if (!product.conceptImagePath) continue;
+  product.photoStatus = existsSync(resolve(root, product.conceptImagePath)) ? "deployed" : "awaiting_photo_upload";
+}
+
 const output = resolve(root, "site/project-data.js");
 mkdirSync(dirname(output), { recursive: true });
 writeFileSync(output, `// Generated from canonical project JSON. Do not edit by hand.\nexport const projectData = ${JSON.stringify(data)};\n`);
