@@ -70,7 +70,7 @@ export function productImage(product) {
     "dragon-cloud-cup": "../media/optimized/webp/products/dragon-cloud-cup-concept-v1.webp",
     "birthday-box": "../media/optimized/webp/packaging/birthday-box-concept-v1.webp"
   };
-  return direct[product.id] || categoryImage(product.categoryId);
+  // Exact HQ photos are mapped in the 40-card catalog and will be used once assets are in the CDN.\n  // Do not ship broken URLs or old product photos while the source images await publishing.\n  if (product.photoStatus === "deployed" && product.conceptImagePath) return "../" + product.conceptImagePath;\n  return categoryImage(product.categoryId);
 }
 
 export function categoryImage(categoryId) {
@@ -86,9 +86,9 @@ export function categoryImage(categoryId) {
     "soft-serve-shakes",
     "dubai-collection",
     "desserts-drops",
-    "flights-liters-boxes"
+    "flights-liters-boxes",\n    "coffee-matcha", "savory", "wellness-shots"
   ]);
-  const safe = known.has(categoryId) ? categoryId : "signatures";
+  const replacements = { "coffee-matcha": "smoothies-protein", "savory": "desserts-drops", "wellness-shots": "fresh-juices" };\n  const safe = replacements[categoryId] || (known.has(categoryId) ? categoryId : "signatures");
   return `../media/optimized/webp/categories/${safe}-concept-v1.webp`;
 }
 
