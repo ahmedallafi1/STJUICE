@@ -176,7 +176,7 @@ async function renderHqPrivate() {
   els.panel.innerHTML = '<div class="section-title"><div><p class="eyebrow">CONFIDENTIAL • LOCAL SESSION ONLY</p><h2>HQ source and recipe desk</h2>' +
     '<p class="muted">Development archive only. All food costs, prices, nutrition and allergen prompts are unverified. None of these values can publish to the public storefront from here.</p></div></div>' +
     '<div class="metrics">' +
-      metric("Product cards", summary.cards) + metric("Source pages", summary.pages) +
+      metric("Product cards", summary.productCount) + metric("Source pages", summary.pages) +
       metric("Base COGS over 30%", summary.flagAbove30Pct) +
       metric("10% discount needs review", summary.flagDiscountManagerReview10Pct) +
       metric("Owner approved", summary.ownerApproved) +
