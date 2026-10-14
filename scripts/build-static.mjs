@@ -43,6 +43,16 @@ function totalBytes(directory) {
   }, 0);
 }
 
+// Never claim the exact PDF photos are live until each corresponding file
+// exists in the web build. Draft status falls back to existing category art.
+const hqRetailCatalog = JSON.parse(readFileSync(resolve(root, "menu/data/catalog.json"), "utf8"));
+for (const product of hqRetailCatalog.products) {
+  if (product.photoStatus !== "deployed") continue;
+  if (!product.conceptImagePath || !existsSync(resolve(output, product.conceptImagePath))) {
+    throw new Error("HQ photograph marked deployed but missing: " + product.id);
+  }
+}
+
 const publicSources = ["site/index.html", "site/app.js", "site/styles.css", "site/lib/core.js", "site/lib/views.js"];
 let referencesChecked = 0;
 for (const source of publicSources) {
