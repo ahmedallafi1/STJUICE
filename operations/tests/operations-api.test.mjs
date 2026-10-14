@@ -35,6 +35,14 @@ try {
   const denied = await json("/api/admin/summary");
   assert.equal(denied.response.status, 401);
 
+  const deniedHq = await json("/api/admin/hq/menu-review");
+  assert.equal(deniedHq.response.status, 401);
+  const hq = await json("/api/admin/hq/menu-review", { headers: adminHeaders });
+  assert.equal(hq.response.status, 200);
+  assert.equal(hq.payload.summary.hqProducts, 40);
+  assert.equal(hq.payload.status, "requires_owner_approval");
+  assert.ok(!JSON.stringify(hq.payload).includes("foodCostUsd"));
+
   const session = await json("/api/admin/session", { headers: adminHeaders });
   assert.equal(session.response.status, 200);
   assert.equal(session.payload.authenticated, true);

@@ -28,6 +28,7 @@ const requirements = [
   ["transactional_email", () => config.communications.transactionalEmail !== "not_configured"],
   ["transactional_sms", () => config.communications.transactionalSms !== "not_configured"],
   ["approved_content", () => config.content.pricesApproved && config.content.recipesApproved && config.content.allergenControlsApproved],
+  ["hq_menu_reconciled", () => config.content.hqCatalogReconciled === true],
   ["nutrition", () => config.content.nutritionVerified === true],
   ["final_media", () => config.content.finalPhotographyApproved === true],
   ["rewards", () => config.content.rewardsRulesApproved === true],

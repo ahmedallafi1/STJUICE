@@ -23,7 +23,8 @@ try {
   assert.equal(readiness.payload.launchReady, false);
   assert.ok(readiness.payload.blockers.includes("live_payment"));
 
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+  const referenceTime = process.env.ST_JUICE_TEST_NOW ? new Date(process.env.ST_JUICE_TEST_NOW) : new Date();
+  const tomorrow = new Date(referenceTime.getTime() + 86400000).toISOString().slice(0, 10);
   const slots = await json(`/api/slots?service=pickup&date=${tomorrow}`);
   assert.ok(slots.payload.slots.length > 0);
   const schedule = slots.payload.slots[0].value;
@@ -44,7 +45,7 @@ try {
   const key = `api-test-${Date.now()}`;
   const orderBody = { quoteId: quote.payload.quoteId, paymentToken: payment.payload.token, schedule, allergenAcknowledged: true, customer: { name: "Test Guest", email: "guest@example.com", phone: "3145550100", marketingConsent: false } };
   const order = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": key }, body: JSON.stringify(orderBody) });
-  assert.equal(order.response.status, 201);
+  assert.equal(order.response.status, 201, JSON.stringify(order.payload));
   assert.equal(order.payload.order.status, "received");
   assert.equal(order.payload.order.customer.email, "g***@example.com");
   assert.ok(!JSON.stringify(order.payload).includes("3145550100"), "Public order response must not expose the raw phone");
@@ -66,7 +67,7 @@ try {
   const memberEmail = `phase1-${Date.now()}@example.com`;
   const memberRegistration = await json("/api/account/register", {
     method: "POST",
-    body: JSON.stringify({ name: "Phase Two Member", email: memberEmail, password: "PhaseOneTest!123", type: "regular", birthday: "1990-09-20" })
+    body: JSON.stringify({ name: "Phase Two Member", email: memberEmail, password: "PhaseOneTest!123", type: "regular", birthday: `1990-${new Date().toISOString().slice(5, 10)}` })
   });
   assert.equal(memberRegistration.response.status, 201);
   const memberCookie = memberRegistration.response.headers.get("set-cookie")?.split(";")[0];

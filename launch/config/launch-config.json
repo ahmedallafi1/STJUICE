@@ -39,7 +39,8 @@
     "nutritionVerified": false,
     "finalPhotographyApproved": false,
     "rewardsRulesApproved": false,
-    "studentVerificationApproved": false
+    "studentVerificationApproved": false,
+    "hqCatalogReconciled": false
   },
   "observability": {
     "errorMonitoring": "not_configured",
