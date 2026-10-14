@@ -2079,5 +2079,11 @@
       "alternativeIds": [],
       "hqNumber": 40
     }
-  ]
+  ],
+  "recordDefaults": {
+    "nutrition": {
+      "status": "unverified",
+      "values": null
+    }
+  }
 }
