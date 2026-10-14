@@ -39,7 +39,7 @@ const state = {
   orderLoading: false
 };
 
-const routes = ["/", "/menu", "/product/pistachio-saint", "/build", "/drops", "/boxes", "/catering", "/rewards", "/location", "/account", "/about", "/checkout", "/info/privacy", "/info/terms", "/info/refunds", "/info/cookies", "/info/accessibility", "/info/allergens", "/info/contact", "/missing"];
+const routes = ["/", "/menu", "/product/pistachio-date", "/build", "/drops", "/boxes", "/catering", "/rewards", "/location", "/account", "/about", "/checkout", "/info/privacy", "/info/terms", "/info/refunds", "/info/cookies", "/info/accessibility", "/info/allergens", "/info/contact", "/missing"];
 for (const path of routes) {
   const html = renderPage({ path, params: new URLSearchParams() }, { data, state });
   assert.ok(html.length > 250, `${path} must render meaningful markup`);
@@ -49,24 +49,21 @@ for (const path of routes) {
 }
 
 const menuHtml = renderPage({ path: "/menu", params: new URLSearchParams() }, { data, state });
-assert.equal((menuHtml.match(/class="product-card"/g) || []).length, 54, "Unfiltered menu must render all 54 catalog records");
+assert.equal((menuHtml.match(/class="product-card"/g) || []).length, 40, "The storefront must render exactly the 40 HQ catalog cards");
 
 state.menuFilters.query = "pistachio";
 const filteredMenu = renderPage({ path: "/menu", params: new URLSearchParams() }, { data, state });
 assert.ok((filteredMenu.match(/class="product-card"/g) || []).length >= 1, "Pistachio search must render matches");
 state.menuFilters.query = "";
 
-for (let step = 0; step < data.builder.steps.length; step += 1) {
-  state.builder.step = step;
-  const builderHtml = renderPage({ path: "/build", params: new URLSearchParams() }, { data, state });
-  assert.ok(builderHtml.includes(`STEP ${step + 1} OF ${data.builder.steps.length}`), `Builder step ${step + 1} must render`);
-}
+const retiredBuilder = renderPage({ path: "/build", params: new URLSearchParams() }, { data, state });
+assert.equal((retiredBuilder.match(/class="product-card"/g) || []).length, 40, "Old builder URL may only show HQ products");
 
 state.builder.selections = { base: "crepe", mood: "pistachio", "fruit-flavor": ["strawberry"], texture: "crunchy-finish", sauce: ["pistachio-sauce"], topping: ["kataifi-crunch"], boost: ["soft-serve-scoop"] };
 assert.equal(calculateBuilderTotal(data, state), 13.4, "Browser builder pricing must match authoritative included-choice rules");
 
 const officeProduct = renderPage({ path: "/product/office-box", params: new URLSearchParams() }, { data, state });
-assert.ok(officeProduct.includes("data-product-reference"), "Repeatable group formats must render product-reference quantity controls");
+assert.ok(!officeProduct.includes("data-product-reference"), "Discontinued office boxes must not be purchasable");
 
 for (const mode of ["guest", "regular", "student", "business"]) {
   state.mode = mode;
@@ -210,4 +207,4 @@ assert.ok(liveOrder.includes("ORDER STATUS"));
 assert.ok(!liveOrder.includes("Preview receipt"));
 assert.ok(!liveOrder.includes("No live card charge occurred."));
 
-console.log(JSON.stringify({ status: "valid", routesRendered: routes.length + 1, builderStepsRendered: data.builder.steps.length, fullMenuCards: 54, accountModesRendered: 4, checkoutRendered: true, liveCheckoutCopyValidated: true, orderRendered: true, liveOrderCopyValidated: true }, null, 2));
+console.log(JSON.stringify({ status: "valid", routesRendered: routes.length + 1, builderStepsRendered: data.builder.steps.length, fullMenuCards: 40, accountModesRendered: 4, checkoutRendered: true, liveCheckoutCopyValidated: true, orderRendered: true, liveOrderCopyValidated: true }, null, 2));

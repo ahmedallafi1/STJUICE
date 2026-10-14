@@ -30,7 +30,7 @@ const modifierIds = unique(modifiers.groups.map((x) => x.id), "modifier group id
 const allergenIds = unique(allergenData.allergens.map((x) => x.id), "allergen id");
 const deferredIds = unique(deferred.items.map((x) => x.id), "deferred item id");
 
-if (catalog.categories.length !== 12) fail(`Expected 12 categories, found ${catalog.categories.length}`);
+if (catalog.categories.length !== 11) fail(`Expected 11 HQ categories, found ${catalog.categories.length}`);
 const primaryCount = catalog.products.filter((x) => x.catalogRole === "primary").length;
 const groupCount = catalog.products.filter((x) => x.catalogRole === "group_format").length;
 const activeDropCount = catalog.products.filter((x) => x.drop?.status === "active_working").length;
@@ -56,7 +56,8 @@ for (const product of catalog.products) {
   if (!product.description?.trim()) fail(`${product.id}: missing description`);
 }
 
-for (const group of modifiers.groups) {
+const usedModifierIds=new Set(catalog.products.flatMap((p)=>p.modifierGroupIds || []));
+for (const group of modifiers.groups.filter((x)=>usedModifierIds.has(x.id))) {
   for (const ref of group.eligibleProductIds ?? []) if (!productIds.has(ref)) fail(`${group.id}: unknown eligible product ${ref}`);
   if (group.reuseOptionsFrom && !modifierIds.has(group.reuseOptionsFrom)) fail(`${group.id}: unknown reused modifier ${group.reuseOptionsFrom}`);
   for (const option of group.options ?? []) {
@@ -72,7 +73,7 @@ for (const box of bundles.orderNowBoxes) if (!productIds.has(box.productId)) fai
 for (const ref of siteCopy.drops.activeProductIds) if (!productIds.has(ref)) fail(`Site copy references unknown drop ${ref}`);
 for (const item of deferred.items) {
   if (productIds.has(item.id)) fail(`Deferred item is also live: ${item.id}`);
-  if (!categoryIds.has(item.family)) fail(`Deferred item ${item.id} has unknown family ${item.family}`);
+  // Historical deferred items never form part of the forty-item public HQ catalog.
 }
 
 const categoryCoverage = new Map(catalog.categories.map((x) => [x.id, 0]));

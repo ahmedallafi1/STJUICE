@@ -23,7 +23,7 @@ try {
   assert.equal(cfg.data.payments.live, false);
   const quote = await json("/api/cart/validate", {
     service: "pickup",
-    items: [{ kind: "catalog", productId: "pistachio-saint", sizeId: "16oz", quantity: 1, modifierSelections: {} }],
+    items: [{ kind: "catalog", productId: "citrus-sunrise", sizeId: "16-oz", quantity: 1, modifierSelections: {} }],
     tipPercent: 0
   });
   assert.equal(quote.status, 200, JSON.stringify(quote.data));

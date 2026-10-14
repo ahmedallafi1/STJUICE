@@ -12,7 +12,7 @@ async function textResponse(path) {
 }
 
 try {
-  for (const path of ["/menu", "/catering", "/product/pistachio-saint", "/info/privacy"]) {
+  for (const path of ["/menu", "/catering", "/product/citrus-sunrise", "/info/privacy"]) {
     const result = await textResponse(path);
     assert.equal(result.response.status, 200, path);
     assert.match(result.response.headers.get("content-type") || "", /text\/html/);

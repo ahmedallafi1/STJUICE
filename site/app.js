@@ -439,16 +439,19 @@ function modifierNames(product, draft) {
 function migrateStage05Cart() {
   let changed = false;
   state.cart = state.cart.filter((item) => {
-    if (item.kind === "builder" && item.builderSelections) return true;
+    if (item.kind === "builder") { changed = true; return false; }
     if (item.productId === "build-your-mood") { changed = true; return false; }
     const product = data.productById.get(item.productId);
     if (!product) { changed = true; return false; }
     if (!item.kind) { item.kind = "catalog"; changed = true; }
+    if (item.sizeId && !product.sizes.some((size) => size.id === item.sizeId)) { item.sizeId = product.sizes[0]?.id; item.modifierSelections = {}; changed = true; }
     if (!item.sizeId) {
       item.sizeId = product.sizes.find((size) => size.label === item.sizeLabel)?.id || product.sizes[0]?.id;
       changed = true;
     }
-    if (!item.modifierSelections) { item.modifierSelections = {}; changed = true; }
+    if (!item.modifierSelections || Object.keys(item.modifierSelections).length) { item.modifierSelections = {}; changed = true; }
+    if (item.unitPrice !== product.sizes.find((size) => size.id === item.sizeId)?.price) { item.unitPrice = product.sizes.find((size) => size.id === item.sizeId)?.price; changed = true; }
+    if (item.name !== product.name) { item.name = product.name; changed = true; }
     return Boolean(item.sizeId);
   });
   if (changed) writeStorage(storageKeys.cart, state.cart);

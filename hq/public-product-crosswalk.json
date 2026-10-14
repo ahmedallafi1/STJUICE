@@ -5,7 +5,7 @@
     "edition": "30 September 2026 concept v1.2",
     "pageCount": 52,
     "productCount": 40,
-    "dataStatus": "HQ proposal only: not public menu source of truth",
+    "dataStatus": "HQ concept item list now matches all 40 customer preview products; staff approvals still pending.",
     "privacy": "Public-safe crosswalk: NO recipes, portions by ingredient, commercial food/pack costs, profit, supplier quotes or private operating procedures.",
     "publishing": "Do not render estimated kcal/allergen prompts as verified consumer information."
   },
@@ -22,7 +22,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "citrus-sunrise"
+      ]
     },
     {
       "hqNumber": 2,
@@ -36,7 +38,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "garden-green"
+      ]
     },
     {
       "hqNumber": 3,
@@ -50,7 +54,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "ruby-root"
+      ]
     },
     {
       "hqNumber": 4,
@@ -64,7 +70,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "pineapple-mint"
+      ]
     },
     {
       "hqNumber": 5,
@@ -78,7 +86,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "watermelon-lime"
+      ]
     },
     {
       "hqNumber": 6,
@@ -92,7 +102,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "mango-passion"
+      ]
     },
     {
       "hqNumber": 7,
@@ -106,7 +118,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "strawberry-lychee"
+      ]
     },
     {
       "hqNumber": 8,
@@ -136,7 +150,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "kiwi-cucumber"
+      ]
     },
     {
       "hqNumber": 10,
@@ -150,7 +166,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "peach-hibiscus"
+      ]
     },
     {
       "hqNumber": 11,
@@ -164,7 +182,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "strawberry-cloud"
+      ]
     },
     {
       "hqNumber": 12,
@@ -178,7 +198,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "pistachio-date"
+      ]
     },
     {
       "hqNumber": 13,
@@ -192,7 +214,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "mango-coconut"
+      ]
     },
     {
       "hqNumber": 14,
@@ -206,7 +230,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "blueberry-oat"
+      ]
     },
     {
       "hqNumber": 15,
@@ -220,7 +246,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "cocoa-banana"
+      ]
     },
     {
       "hqNumber": 16,
@@ -234,7 +262,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "citrus-mint-fizz"
+      ]
     },
     {
       "hqNumber": 17,
@@ -248,7 +278,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "berry-basil-fizz"
+      ]
     },
     {
       "hqNumber": 18,
@@ -262,7 +294,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "cucumber-lime-fizz"
+      ]
     },
     {
       "hqNumber": 19,
@@ -276,7 +310,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "peach-ginger-fizz"
+      ]
     },
     {
       "hqNumber": 20,
@@ -290,7 +326,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "pomegranate-hibiscus"
+      ]
     },
     {
       "hqNumber": 21,
@@ -304,7 +342,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "acai-berry-bowl"
+      ]
     },
     {
       "hqNumber": 22,
@@ -318,7 +358,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "tropical-sun-bowl"
+      ]
     },
     {
       "hqNumber": 23,
@@ -332,7 +374,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "pistachio-yogurt-bowl"
+      ]
     },
     {
       "hqNumber": 24,
@@ -362,7 +406,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "berry-chia-cup"
+      ]
     },
     {
       "hqNumber": 26,
@@ -376,7 +422,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "pistachio-berry-minis"
+      ]
     },
     {
       "hqNumber": 27,
@@ -390,7 +438,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "lotus-crunch-minis"
+      ]
     },
     {
       "hqNumber": 28,
@@ -404,7 +454,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "strawberry-chocolate-crepe"
+      ]
     },
     {
       "hqNumber": 29,
@@ -418,7 +470,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "pistachio-kunafa-crepe"
+      ]
     },
     {
       "hqNumber": 30,
@@ -432,7 +486,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "banana-caramel-waffle"
+      ]
     },
     {
       "hqNumber": 31,
@@ -446,7 +502,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "dubai-chocolate-bar"
+      ]
     },
     {
       "hqNumber": 32,
@@ -460,7 +518,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "pistachio-brownie"
+      ]
     },
     {
       "hqNumber": 33,
@@ -474,7 +534,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "chocolate-berry-cup"
+      ]
     },
     {
       "hqNumber": 34,
@@ -488,7 +550,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "iced-latte"
+      ]
     },
     {
       "hqNumber": 35,
@@ -502,7 +566,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "iced-matcha"
+      ]
     },
     {
       "hqNumber": 36,
@@ -516,7 +582,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "turkey-avocado-panini"
+      ]
     },
     {
       "hqNumber": 37,
@@ -530,7 +598,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "caprese-pesto-focaccia"
+      ]
     },
     {
       "hqNumber": 38,
@@ -544,7 +614,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "halloumi-pepper-wrap"
+      ]
     },
     {
       "hqNumber": 39,
@@ -558,7 +630,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "ginger-lemon-shot"
+      ]
     },
     {
       "hqNumber": 40,
@@ -572,7 +646,9 @@
       "nutritionStatus": "estimate_unverified",
       "recipeStatus": "working_unapproved",
       "priceStatus": "working_unapproved",
-      "exactNameMatches": []
+      "exactNameMatches": [
+        "golden-turmeric-shot"
+      ]
     }
   ]
 }

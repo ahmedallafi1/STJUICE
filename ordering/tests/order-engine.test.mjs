@@ -1,123 +1,43 @@
 import assert from "node:assert/strict";
 import { generateSlots, quoteCart, validateDeliveryAddress } from "../lib/order-engine.mjs";
 
-const item = { kind: "catalog", productId: "pistachio-saint", sizeId: "16oz", quantity: 2, modifierSelections: { "milk-choice": ["oat-milk"] }, unitPrice: 0.01 };
-const quote = quoteCart({ service: "pickup", items: [item], tipPercent: 0 });
-assert.equal(quote.valid, true);
-assert.equal(quote.totals.subtotal.cents, 2190, "Server catalog and modifier prices must override a supplied browser price");
-assert.equal(quote.items[0].unitPrice.cents, 1095);
-assert.equal(quote.items[0].modifiers[0].price.cents, 100);
-
-const promo = quoteCart({ service: "pickup", items: [{ ...item, quantity: 1 }], promoCode: "test10", tipPercent: 20 });
-assert.equal(promo.valid, true);
-assert.equal(promo.totals.discount.cents, 110);
-assert.equal(promo.totals.tip.cents, 197);
-assert.equal(promo.totals.total.cents, 1182);
-
-const accountBenefitQuote = quoteCart(
-  { service: "pickup", items: [{ ...item, quantity: 1 }], tipPercent: 0 },
-  { benefits: { discount: { activePercentOff: 10 } }, stackingPolicy: "best_discount" }
-);
-assert.equal(accountBenefitQuote.valid, true);
-assert.equal(accountBenefitQuote.totals.discount.cents, 110);
-assert.equal(accountBenefitQuote.discountBreakdown.account.cents, 110);
-assert.equal(accountBenefitQuote.accountBenefit.applied, true);
-
-const forgedBenefit = quoteCart({
-  service: "pickup",
-  items: [{ ...item, quantity: 1 }],
-  tipPercent: 0,
-  accountBenefit: { activePercentOff: 99 }
-});
-assert.equal(forgedBenefit.totals.discount.cents, 0, "Client-supplied benefit data must never affect authoritative pricing");
-assert.equal(forgedBenefit.accountBenefit.applied, false);
-
-const rewardGrantQuote = quoteCart(
-  { service: "pickup", items: [{ ...item, quantity: 1 }], rewardGrantId: "grant_test", tipPercent: 0 },
-  {
-    benefits: { discount: { activePercentOff: 10 } },
-    rewardGrant: { id: "grant_test", status: "available", rewardType: "fixed_discount", value: 5 },
-    accountPromoPolicy: "best_discount",
-    rewardWithAccount: true,
-    rewardWithPromo: false
-  }
-);
-assert.equal(rewardGrantQuote.valid, true);
-assert.equal(rewardGrantQuote.rewardBenefit.applied, true);
-assert.equal(rewardGrantQuote.discountBreakdown.account.cents, 110);
-assert.equal(rewardGrantQuote.discountBreakdown.reward.cents, 500);
-assert.equal(rewardGrantQuote.totals.discount.cents, 610);
-assert.equal(rewardGrantQuote.totals.total.cents, 485);
-
-const forgedGrant = quoteCart({
-  service: "pickup",
-  items: [{ ...item, quantity: 1 }],
-  rewardGrantId: "client_forged_grant",
-  tipPercent: 0
-});
-assert.equal(forgedGrant.valid, false, "Client reward IDs require a server-resolved account grant");
-assert.ok(forgedGrant.errors.some((entry) => entry.code === "reward_grant_invalid"));
-
-const invalid = quoteCart({ service: "pickup", items: [{ kind: "catalog", productId: "fake", sizeId: "tiny", quantity: 1 }] });
-assert.equal(invalid.valid, false);
-assert.ok(invalid.errors.some((entry) => entry.code === "product_not_found"));
-
-const badModifier = quoteCart({ service: "pickup", items: [{ ...item, quantity: 1, modifierSelections: { "milk-choice": ["fake-option"] } }] });
-assert.equal(badModifier.valid, false);
-assert.ok(badModifier.errors.some((entry) => entry.code === "modifier_not_found"));
-
-const tierPricing = quoteCart({ service: "pickup", items: [{ kind: "catalog", productId: "saint-acai", sizeId: "regular", quantity: 1, modifierSelections: { "bowl-fruit": ["strawberry", "banana", "blueberry"] } }] });
-assert.equal(tierPricing.valid, true);
-assert.equal(tierPricing.items[0].unitPrice.cents, 1320, "Two included fruits plus one premium fruit must price from group rules");
-
-const officeChoices = ["orange-press", "orange-press", "watermelon-wave", "pineapple-lime", "carrot-glow", "beet-route", "lemon-mint", "strawberry-lemonade", "mango-passion-fizz", "blue-rush", "blue-rush"];
-const office = quoteCart({ service: "pickup", items: [{ kind: "catalog", productId: "office-box", sizeId: "serves-8-10", quantity: 1, modifierSelections: { "office-drink-selection": officeChoices } }] });
-assert.equal(office.valid, true);
-assert.equal(office.items[0].unitPrice.cents, 8745, "Duplicate product-reference choices and each-after-included pricing must be preserved");
-
-const studyBox = quoteCart({
-  service: "pickup",
-  items: [{
-    kind: "catalog",
-    productId: "study-night-box",
-    sizeId: "serves-2-3",
-    quantity: 1,
-    modifierSelections: {
-      "study-box-drinks": ["lemon-mint", "blue-rush"],
-      "box-sauces": ["milk-chocolate"],
-      "box-toppings": ["cookie-crumb"]
-    }
-  }]
-});
-assert.equal(studyBox.valid, true);
-for (const allergen of ["milk", "egg", "wheat"]) {
-  assert.ok(studyBox.items[0].allergens.includes(allergen), `Study Night Box must include fixed ${allergen} allergen`);
-}
-
-const builder = quoteCart({
-  service: "delivery",
-  items: [{
-    kind: "builder",
-    productId: "build-your-mood",
-    quantity: 1,
-    customName: "Pistachio Study Mood",
-    builderSelections: { base: "crepe", mood: "pistachio", "fruit-flavor": ["strawberry"], texture: "crunchy-finish", sauce: ["pistachio-sauce"], topping: ["kataifi-crunch"], boost: ["soft-serve-scoop"] }
-  }]
-});
-assert.equal(builder.valid, true);
-assert.ok(builder.items[0].allergens.includes("tree_nut"));
-assert.ok(builder.items[0].allergens.includes("wheat"));
-assert.ok(builder.warnings.some((entry) => entry.code === "delivery_quality_notice"));
-
-const now = new Date();
-const fridayDelta = (5 - now.getUTCDay() + 7) % 7;
-const friday = new Date(now); friday.setUTCDate(now.getUTCDate() + fridayDelta);
-const fridayText = friday.toISOString().slice(0, 10);
-const slots = generateSlots("pickup", fridayText, now);
-assert.equal(slots.valid, true);
-assert.ok(slots.slots.some((entry) => entry.value.includes("22:30")), "Friday must expose late-weekend slots");
-
-assert.equal(validateDeliveryAddress({ street: "11 S Vandeventer Ave", city: "St. Louis", state: "MO", postalCode: "63108" }).valid, true);
-assert.equal(validateDeliveryAddress({ city: "St. Louis" }).valid, false);
-
-console.log(JSON.stringify({ status: "valid", authoritativePricing: true, builderValidated: true, fridaySlots: slots.slots.length, deliveryMode: "manual_review_test" }, null, 2));
+const line={kind:"catalog",productId:"citrus-sunrise",sizeId:"16-oz",quantity:2,modifierSelections:{},unitPrice:0.01};
+const quote=quoteCart({service:"pickup",items:[line],tipPercent:0});
+assert.equal(quote.valid,true,JSON.stringify(quote.errors));
+assert.equal(quote.totals.subtotal.cents,1700,"Server-owned HQ price must override spoofed browser price");
+assert.equal(quote.items[0].unitPrice.cents,850);
+const promo=quoteCart({service:"pickup",items:[{...line,quantity:1}],promoCode:"test10",tipPercent:0});
+assert.equal(promo.valid,true);
+assert.equal(promo.totals.discount.cents,85);
+const ownerBenefit=quoteCart({service:"pickup",items:[{...line,quantity:1}],tipPercent:0},
+ {benefits:{discount:{activePercentOff:10}},stackingPolicy:"best_discount"});
+assert.equal(ownerBenefit.valid,true);
+assert.equal(ownerBenefit.discountBreakdown.account.cents,85);
+assert.equal(ownerBenefit.accountBenefit.applied,true);
+const forged=quoteCart({service:"pickup",items:[{...line,quantity:1}],accountBenefit:{activePercentOff:99}});
+assert.equal(forged.totals.discount.cents,0,"Browser may not forge a staff/student discount");
+const reward=quoteCart({service:"pickup",items:[{...line,quantity:1}],rewardGrantId:"grant_test"},
+ {benefits:{discount:{activePercentOff:10}},rewardGrant:{id:"grant_test",status:"available",rewardType:"fixed_discount",value:5},accountPromoPolicy:"best_discount",rewardWithAccount:true,rewardWithPromo:false});
+assert.equal(reward.valid,true);
+assert.equal(reward.rewardBenefit.applied,true);
+assert.equal(reward.discountBreakdown.reward.cents,500);
+const forgedReward=quoteCart({service:"pickup",items:[{...line,quantity:1}],rewardGrantId:"forged"});
+assert.equal(forgedReward.valid,false);
+assert.ok(forgedReward.errors.some(x=>x.code==="reward_grant_invalid"));
+const old=quoteCart({service:"pickup",items:[{kind:"catalog",productId:"pistachio-saint",sizeId:"16oz",quantity:1}]});
+assert.equal(old.valid,false,"Former 54-item site product must no longer sell");
+assert.ok(old.errors.some(x=>x.code==="product_not_found"));
+const bad=quoteCart({service:"pickup",items:[{...line,quantity:1,modifierSelections:{"milk-choice":["fake"]}}]});
+assert.equal(bad.valid,false,"Retired modifiers cannot attach to a fixed HQ catalog card");
+const builder=quoteCart({service:"pickup",items:[{kind:"builder",productId:"build-your-mood",quantity:1,builderSelections:{base:"crepe"}}]});
+assert.equal(builder.valid,false,"No non-HQ custom product may be ordered");
+assert.ok(builder.errors.some(x=>x.code==="product_not_in_hq"));
+const now=new Date();
+const friday=new Date(now);
+friday.setUTCDate(now.getUTCDate()+(5-now.getUTCDay()+7)%7);
+const slots=generateSlots("pickup",friday.toISOString().slice(0,10),now);
+assert.equal(slots.valid,true);
+assert.ok(slots.slots.some(x=>x.value.includes("22:30")));
+assert.equal(validateDeliveryAddress({street:"11 S Vandeventer Ave",city:"St. Louis",state:"MO",postalCode:"63108"}).valid,true);
+assert.equal(validateDeliveryAddress({city:"St. Louis"}).valid,false);
+console.log(JSON.stringify({status:"valid",authoritativeHqPricing:true,legacySkuBlocked:true,legacyBuilderBlocked:true,discountSecurity:true,deliveryMode:"manual_review_test"}));
