@@ -14,15 +14,15 @@ const bundles = readJson("menu/data/bundles-catering.json");
 const copy = readJson("content/site-copy.json");
 const media = readJson("media/manifests/media-manifest.json");
 
-assert.equal(catalog.categories.length, 12, "Stage 05 must expose all 12 categories");
-assert.equal(catalog.products.length, 54, "Catalog count must remain 54");
-assert.equal(catalog.products.filter((item) => item.catalogRole === "primary").length, 45, "Primary item count must remain 45");
-assert.equal(catalog.products.filter((item) => item.catalogRole === "group_format").length, 9, "Group format count must remain 9");
-assert.equal(copy.drops.activeProductIds.length, 2, "Two active drops must remain configured");
+assert.equal(catalog.categories.length, 11, "Stage 05 must expose all 11 HQ categories");
+assert.equal(catalog.products.length, 40, "Catalog count must be 40 HQ products");
+assert.equal(catalog.products.filter((item) => item.catalogRole === "primary").length, 40, "Exactly 40 HQ items must be primary");
+assert.equal(catalog.products.filter((item) => item.catalogRole === "group_format").length, 0, "Legacy group formats must be removed");
+assert.equal(copy.drops.activeProductIds.length, 0, "Legacy drops must be removed");
 assert.equal(modifiers.groups.length, 28, "Modifier group count must remain 28");
 assert.equal(builder.steps.length, 8, "Build Your Mood must remain an eight-step contract");
-assert.equal(bundles.orderNowBoxes.length, 5, "Five direct-order box formats are required");
-assert.equal(bundles.cateringPackages.length, 4, "Four catering starting directions are required");
+assert.equal(bundles.orderNowBoxes.length, 0, "Legacy boxes must be absent");
+assert.equal(bundles.cateringPackages.length, 0, "Retired pre-priced catering package records must be absent");
 
 const productIds = new Set(catalog.products.map((item) => item.id));
 const categoryIds = new Set(catalog.categories.map((item) => item.id));
