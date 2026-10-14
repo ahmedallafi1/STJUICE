@@ -1,3 +1,4 @@
+import { getHqMenuReview } from "../hq/public-review.mjs";
 import {
   adminAccountsSnapshot,
   adminReviewBusiness,
@@ -195,6 +196,11 @@ export async function handleAdminApi({
       const row = adminUpdateBoxState(decodeURIComponent(boxStateMatch[1]), await bodyJson(request));
       recordOperationsAudit("catalog.box_status_changed", { productId: row.productId, status: row.status });
       json(response, 200, { box: row });
+      return true;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/admin/hq/menu-review") {
+      json(response, 200, getHqMenuReview(catalog));
       return true;
     }
 
