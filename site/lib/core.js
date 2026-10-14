@@ -62,18 +62,11 @@ export function productStartingPrice(product) {
 }
 
 export function productImage(product) {
-  const direct = {
-    "pistachio-saint": "../media/optimized/webp/products/pistachio-saint-concept-v1.webp",
-    "saint-sunset": "../media/optimized/webp/products/saint-sunset-concept-v1.webp",
-    "dubai-strawberry-cup": "../media/optimized/webp/products/dubai-strawberry-cup-concept-v1.webp",
-    "st-crepe": "../media/optimized/webp/products/st-crepe-concept-v1.webp",
-    "dragon-cloud-cup": "../media/optimized/webp/products/dragon-cloud-cup-concept-v1.webp",
-    "birthday-box": "../media/optimized/webp/packaging/birthday-box-concept-v1.webp"
-  };
-  // Exact HQ photos are mapped in the 40-card catalog and will be used once assets are in the CDN.
-  // Do not ship broken URLs or old product photos while the source images await publishing.
-  if (product.photoStatus === "deployed" && product.conceptImagePath) return "../" + product.conceptImagePath;
-  return categoryImage(product.categoryId);
+  // Source concepts from the owner's HQ PDF, never an old off-catalog item.
+  if (product?.photoStatus === "deployed" && product?.conceptImagePath) {
+    return "../" + product.conceptImagePath;
+  }
+  return categoryImage(product?.categoryId);
 }
 
 export function categoryImage(categoryId) {
