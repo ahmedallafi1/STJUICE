@@ -163,6 +163,37 @@ async function renderCatalog() {
     </div>`;
 }
 
+
+async function renderHqPrivate() {
+  const statusData = await api("hq/private/status");
+  if (!statusData.available) {
+    els.panel.innerHTML = '<div class="section-title"><div><p class="eyebrow">CONFIDENTIAL / LOCAL ONLY</p><h2>HQ private archive</h2></div></div>' +
+      '<article class="panel-card"><p class="muted">The full 52-page HQ source is intentionally unavailable on a public deployment. On your own computer, unpack the private master outside the repository and opt in using ST_JUICE_HQ_PRIVATE_LOCAL_ENABLED=true and ST_JUICE_HQ_MASTER_PATH. See hq/README.md. No source recipes or costs are deployed to Vercel.</p>' +
+      '<p class="muted">Reason: ' + esc(statusData.reason || "not_configured") + '</p></article>';
+    return;
+  }
+  const summary = await api("hq/private/summary");
+  els.panel.innerHTML = '<div class="section-title"><div><p class="eyebrow">CONFIDENTIAL • LOCAL SESSION ONLY</p><h2>HQ source and recipe desk</h2>' +
+    '<p class="muted">Development archive only. All food costs, prices, nutrition and allergen prompts are unverified. None of these values can publish to the public storefront from here.</p></div></div>' +
+    '<div class="metrics">' +
+      metric("Product cards", summary.productCount) + metric("Source pages", summary.pages) +
+      metric("Base COGS over 30%", summary.flagAbove30Pct) +
+      metric("10% discount needs review", summary.flagDiscountManagerReview10Pct) +
+      metric("Owner approved", summary.ownerApproved) +
+    '</div><div class="table-wrap"><table><thead><tr><th>Card</th><th>Proposed selling price</th><th>Base cost</th><th>Gross margin</th><th>Review</th></tr></thead><tbody>' +
+    summary.cards.map((c) => '<tr><td><button type="button" class="button button--small" data-hq-card="' + esc(c.hqNumber) + '">#' +
+      esc(c.hqNumber) + ' • ' + esc(c.name) + '</button><br><span class="muted">' + esc(c.category) + '</span></td><td>' +
+      money(c.proposalPriceUsd) + '</td><td>' + money(c.proposalBaseCogsUsd) + '</td><td>' +
+      esc(c.proposalGrossMarginPct) + '%</td><td>' +
+      (c.modelBaseCogsAbove30Pct ? status("cost_review") : status("draft")) +
+      (c.managerReviewAt10Pct ? '<br>' + status("discount_review") : '') +
+    '</td></tr>').join("") + '</tbody></table></div>' +
+    '<div id="hq-detail" class="hq-detail panel-card" style="padding:1.2rem"><p class="muted">Select any numbered card for measured ingredients, method, packaging and source economics.</p></div>' +
+    '<div class="section-title"><div><p class="eyebrow">ORIGINAL SOURCE</p><h2>All 52 PDF pages</h2></div></div>' +
+    '<form data-hq-page-form class="inline-form"><label>View original page text <input name="page" type="number" min="1" max="52" value="29" required></label><button type="submit" class="button button--small">Read page</button></form>' +
+    '<div id="hq-page-text" class="hq-detail panel-card" style="padding:1.2rem"><p class="muted">Select a page to review its complete extracted source text. Original graphics are retained in the private PDF.</p></div>';
+}
+
 async function renderLaunch() {
   const [readiness, audit, providerData] = await Promise.all([api("readiness"), api("audit?limit=40"), api("integrations")]);
   const integrations = Object.entries(providerData.integrations || {});
@@ -175,7 +206,7 @@ async function renderLaunch() {
     <div class="table-wrap"><table><thead><tr><th>Time</th><th>Event</th><th>Details</th></tr></thead><tbody>${audit.events.map((e) => `<tr><td>${esc(e.createdAt)}</td><td>${esc(e.eventType)}</td><td><code>${esc(JSON.stringify(e.metadata))}</code></td></tr>`).join("") || '<tr><td colspan="3">No staff actions yet.</td></tr>'}</tbody></table></div>`;
 }
 
-const renderers = { overview: renderOverview, approvals: renderApprovals, reservations: renderReservations, orders: renderOrders, catering: renderCatering, catalog: renderCatalog, launch: renderLaunch };
+const renderers = { overview: renderOverview, approvals: renderApprovals, reservations: renderReservations, orders: renderOrders, catering: renderCatering, catalog: renderCatalog, "hq-private": renderHqPrivate, launch: renderLaunch };
 
 async function renderTab() {
   els.panel.innerHTML = '<div class="empty">Loading…</div>';
@@ -231,11 +262,23 @@ for (const button of els.tabs) {
 }
 
 els.panel.addEventListener("click", async (event) => {
+  const hqCard = event.target.closest("[data-hq-card]");
   const student = event.target.closest("[data-review-student]");
   const business = event.target.closest("[data-review-business]");
   const reservation = event.target.closest("[data-reservation]");
   try {
-    if (student) {
+    if (hqCard) {
+      const card = await api("hq/private/cards/" + encodeURIComponent(hqCard.dataset.hqCard));
+      els.panel.querySelector("#hq-detail").innerHTML = '<p class="eyebrow">HQ CARD #' + esc(card.hqNumber) + ' / SOURCE PAGE ' + esc(card.sourcePdfPage) + '</p>' +
+        '<h3>' + esc(card.name) + '</h3>' +
+        '<p><strong>Measured build:</strong> ' + esc(card.ingredients) + '</p>' +
+        '<p><strong>Method:</strong> ' + esc(card.method) + '</p>' +
+        '<p><strong>Presentation:</strong> ' + esc(card.presentation) + '</p>' +
+        '<p><strong>Allergen prompt (unverified):</strong> ' + esc(card.allergenPrompt) + '</p>' +
+        '<p>Suggested retail: ' + money(card.suggestedPriceUsd) + ' • Food cost: ' + money(card.foodCostUsd) +
+        ' • Packaging: ' + money(card.packagingCostUsd) + ' • Base COGS: ' + money(card.baseCogsUsd) +
+        ' • Gross profit (not net profit): ' + money(card.estimatedGrossProfitUsd) + '</p>';
+    } else if (student) {
       await api(`students/${encodeURIComponent(student.dataset.reviewStudent)}`, { method: "PATCH", body: JSON.stringify({ status: student.dataset.status, reviewerReference: "ops-console" }) });
       flash("Student review updated."); await renderTab();
     } else if (business) {
@@ -249,15 +292,21 @@ els.panel.addEventListener("click", async (event) => {
 });
 
 els.panel.addEventListener("submit", async (event) => {
+  const hqPageForm = event.target.closest("[data-hq-page-form]");
   const orderForm = event.target.closest("[data-order-form]");
   const cateringForm = event.target.closest("[data-catering-form]");
   const productStateForm = event.target.closest("[data-product-state-form]");
   const dropStateForm = event.target.closest("[data-drop-state-form]");
   const boxStateForm = event.target.closest("[data-box-state-form]");
-  if (!orderForm && !cateringForm && !productStateForm && !dropStateForm && !boxStateForm) return;
+  if (!orderForm && !cateringForm && !productStateForm && !dropStateForm && !boxStateForm && !hqPageForm) return;
   event.preventDefault();
   try {
-    if (orderForm) {
+    if (hqPageForm) {
+      const pageNumber = Number(new FormData(hqPageForm).get("page"));
+      if (!Number.isInteger(pageNumber) || pageNumber < 1 || pageNumber > 52) throw new Error("Choose page 1-52.");
+      const page = await api("hq/private/page?number=" + pageNumber);
+      els.panel.querySelector("#hq-page-text").innerHTML = '<p class="eyebrow">SOURCE PAGE ' + esc(page.page) + '</p><pre>' + esc(page.text) + '</pre>';
+    } else if (orderForm) {
       const data = new FormData(orderForm);
       await api(`orders/${encodeURIComponent(orderForm.dataset.orderForm)}/status`, { method: "PATCH", body: JSON.stringify({ status: data.get("status") }) });
       flash("Order status updated."); await renderTab();

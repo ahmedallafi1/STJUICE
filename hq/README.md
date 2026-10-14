@@ -48,6 +48,77 @@ Run:
 The strict HQ audit will intentionally fail until the mismatches are resolved.
 The normal audit validates the contract and reports outstanding decisions.
 
+
+## 14 October 2026 — Local confidential HQ workspace (implemented)
+
+This repository is still **public** unless the GitHub owner changes its visibility.
+No recipe weights, vendor invoices, item COGS, margins, private source PDF, or
+source-page body text were committed.
+
+The owner-only private HQ ZIP was assembled from the exact 52-page source.
+It contains the original illustrated PDF, a full 52-page text archive, 40 complete
+recipe cards, 40 unit-economics rows, 40 sample student discount rows, and
+an internal costing CSV. Each data field is marked a development proposal.
+
+### Use the private ZIP with the running app on your own computer
+
+1. Download the **STJUICE_HQ_PRIVATE_MASTER_2026-10-14.zip** attachment from
+   the ChatGPT conversation. Store and unpack it in a secure folder **outside**
+   your GitHub repo, for example `~/STJUICE_HQ_PRIVATE/`. Its internal JSON file
+   is `hq-master-private.json`. Restrict folder/files to your own user account.
+2. Run the STJUICE site locally, bound to the loopback interface. Example on macOS:
+
+   ```sh
+   export ST_JUICE_ADMIN_TOKEN='REPLACE_WITH_OWN_LONG_RANDOM_SECRET'
+   export ST_JUICE_HQ_PRIVATE_LOCAL_ENABLED=true
+   export ST_JUICE_HQ_MASTER_PATH="$HOME/STJUICE_HQ_PRIVATE/hq-master-private.json"
+   npm start
+   ```
+
+3. Visit the **local** Operations console (`http://127.0.0.1:3000/ops/`
+   if the app prints port 3000), unlock with your own operations secret and
+   choose **HQ Private**. You can inspect:
+   - All forty confidential recipe builds, methods and presentation specs.
+   - Proposed price, estimated food/packaging cost, estimated gross margin.
+   - Cards above 30% base COGS and estimated 10% discount cases above the
+     PDF's 45% manager-review threshold.
+   - The source text of **every one of the 52 PDF pages**, page-by-page.
+   - All figures remain proposals; the site does not publish or write edits.
+4. For command-line access without a browser:
+
+   ```sh
+   npm run hq:private -- summary
+   npm run hq:private -- card 8
+   npm run hq:private -- page 42
+   ```
+
+**Safety contract:** `/api/admin/hq/private/*` is protected by the admin
+credential **and** refuses access unless explicitly opted in from a
+loopback-only, non-production Node server. Vercel/cloud production always
+denies private HQ access even if environment variables are mis-set.
+No private file is copied into `dist-public` or `site/project-data.js`.
+This is a **local preview tool**, not production staff RBAC or audited
+persistent cloud storage. Owner, manager and staff identities and privileges
+must be implemented before remote access or editing.
+
+### Existing direct-PDF importer
+
+`npm run import:hq -- "/private/path/St_Juice_HQ_Menu_Catalog.pdf"`
+requires Poppler `pdftotext`. Its default destination is
+`~/STJUICE_HQ_PRIVATE/` and may be overridden with
+`ST_JUICE_HQ_IMPORT_DIRECTORY`; an in-repository destination is refused.
+The original PDF and all page texts are retained. The archive extracted from
+the ChatGPT private ZIP already has a richer structured 40-unit-economics
+record, so use `hq-master-private.json` from the ZIP when available.
+
+### What is NOT automatically approved or switched on
+
+There is no production payment/POS, verified student or service-worker discount,
+live database, staff RBAC, food-safety approval, supplier-cost agreement or
+allergen/nutrition validation. The public menu's 54 records are unchanged.
+38 draft card names are not exact matches, and Blue Saint price/formula,
+Loaded Fruit Cup serving and 10-vs-12 minis require explicit reconciliation.
+
 ## Exact scope of the 52-page PDF (source of truth, not public content)
 
 Pages 1-3: brand title, development warnings, usage, launch guide, contents.

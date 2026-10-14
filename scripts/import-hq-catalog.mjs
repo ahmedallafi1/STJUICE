@@ -1,6 +1,7 @@
 // Keep source PDF, all 52 pages of extracted text, recipe quantities and unit economics PRIVATE.
 // The GitHub repository is public: never commit hq/private/ or expose this output to client bundles.
-import { readFileSync, mkdirSync, copyFileSync, writeFileSync } from "node:fs";
+import { readFileSync, mkdirSync, copyFileSync, writeFileSync, chmodSync } from "node:fs";
+import { homedir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { dirname, join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -62,7 +63,8 @@ pages.forEach((page, i) => {
 if (cards.length !== 40 || cards.some((c, i) => c.hqNumber !== i + 1)) {
   throw new Error("Expected 40 correctly ordered HQ cards, got " + cards.length);
 }
-const privateDir = join(root, "hq", "private");
+const privateDir = resolve(process.env.ST_JUICE_HQ_IMPORT_DIRECTORY || join(homedir(), "STJUICE_HQ_PRIVATE"));
+if (privateDir === root || privateDir.startsWith(root + "/")) throw new Error("HQ import must stay outside the public repository checkout.");
 mkdirSync(privateDir, { recursive: true, mode: 0o700 });
 const manifest = {
   metadata: {
@@ -78,4 +80,5 @@ const manifest = {
 };
 writeFileSync(join(privateDir, "hq-catalog-full.json"), JSON.stringify(manifest, null, 2), { mode: 0o600 });
 copyFileSync(source, join(privateDir, "hq-catalog-source.pdf"));
-console.log(JSON.stringify({ status: "private_import_complete", pages: pages.length, cards: cards.length, destination: "hq/private/", notes: "Contains all source page text and original 52-page PDF including visuals; neither is committed to GitHub." }));
+chmodSync(join(privateDir, "hq-catalog-source.pdf"), 0o600);
+console.log(JSON.stringify({ status: "private_import_complete", pages: pages.length, cards: cards.length, destination: privateDir, notes: "Contains all source page text and original 52-page PDF including visuals; neither is committed to GitHub." }));

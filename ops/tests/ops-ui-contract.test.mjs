@@ -5,7 +5,7 @@ const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
 const app = await readFile(new URL("../app.js", import.meta.url), "utf8");
 const styles = await readFile(new URL("../styles.css", import.meta.url), "utf8");
 
-for (const marker of ["ST. JUICE Operations", "noindex,nofollow,noarchive", 'id="login-form"', 'id="console"', 'data-tab="catalog"', 'data-tab="launch"']) {
+for (const marker of ["ST. JUICE Operations", "noindex,nofollow,noarchive", 'id="login-form"', 'id="console"', 'data-tab="catalog"', 'data-tab="hq-private"', 'data-tab="launch"']) {
   assert.ok(html.includes(marker), `Operations HTML missing ${marker}`);
 }
 for (const marker of ["api(\"commercial\")", "data-product-state-form", "data-drop-state-form", "data-box-state-form", "commercial/products/", "commercial/drops/", "commercial/boxes/", "Recent staff actions", "Launch", "hq/menu-review", "HQ MENU / 52-PAGE CATALOG"]) {

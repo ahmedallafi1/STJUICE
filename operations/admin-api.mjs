@@ -1,3 +1,4 @@
+import { privateWorkspaceAccess, loadPrivateHq, privateHqSummary, privateHqCard, privateHqPage } from "../hq/private-workspace.mjs";
 import { getHqMenuReview } from "../hq/public-review.mjs";
 import {
   adminAccountsSnapshot,
@@ -197,6 +198,38 @@ export async function handleAdminApi({
       recordOperationsAudit("catalog.box_status_changed", { productId: row.productId, status: row.status });
       json(response, 200, { box: row });
       return true;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/admin/hq/private/status") {
+      const access = privateWorkspaceAccess(request);
+      if (!access.available) return json(response, 200, access), true;
+      try {
+        const data = loadPrivateHq();
+        json(response, 200, { available: true, mode: "local_only", cards: data.cards.length, pages: 52 });
+      } catch {
+        json(response, 200, { available: false, mode: "disabled", reason: "private_file_missing_or_invalid" });
+      }
+      return true;
+    }
+    if (request.method === "GET" && url.pathname.startsWith("/api/admin/hq/private/")) {
+      const access = privateWorkspaceAccess(request);
+      if (!access.available) return json(response, 403, { error: { code: "hq_local_only", message: "Private HQ requires an opted-in loopback-only development server; never a public deployment." } }), true;
+      let data;
+      try { data = loadPrivateHq(); }
+      catch { return json(response, 503, { error: { code: "hq_master_unavailable", message: "The private HQ file is missing or has not passed validation." } }), true; }
+      if (url.pathname === "/api/admin/hq/private/summary") {
+        json(response, 200, privateHqSummary(data)); return true;
+      }
+      const cardMatch = url.pathname.match(/^\/api\/admin\/hq\/private\/cards\/(\d+)$/);
+      if (cardMatch) {
+        const item = privateHqCard(data, Number(cardMatch[1]));
+        json(response, item ? 200 : 404, item || { error: { code: "hq_card_not_found" } }); return true;
+      }
+      if (url.pathname === "/api/admin/hq/private/page") {
+        const page = privateHqPage(data, Number(url.searchParams.get("number")));
+        json(response, page ? 200 : 404, page || { error: { code: "hq_page_not_found" } }); return true;
+      }
+      json(response, 404, { error: { code: "hq_route_not_found" } }); return true;
     }
 
     if (request.method === "GET" && url.pathname === "/api/admin/hq/menu-review") {
