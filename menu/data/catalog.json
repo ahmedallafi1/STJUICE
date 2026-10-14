@@ -138,7 +138,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "featuredRank": 1
+      "featuredRank": 1,
+      "hqNumber": 1
     },
     {
       "id": "garden-green",
@@ -186,7 +187,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "featuredRank": 2
+      "featuredRank": 2,
+      "hqNumber": 2
     },
     {
       "id": "ruby-root",
@@ -234,7 +236,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "featuredRank": 3
+      "featuredRank": 3,
+      "hqNumber": 3
     },
     {
       "id": "pineapple-mint",
@@ -282,7 +285,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "featuredRank": 4
+      "featuredRank": 4,
+      "hqNumber": 4
     },
     {
       "id": "watermelon-lime",
@@ -330,7 +334,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "featuredRank": 5
+      "featuredRank": 5,
+      "hqNumber": 5
     },
     {
       "id": "mango-passion",
@@ -378,7 +383,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "featuredRank": 6
+      "featuredRank": 6,
+      "hqNumber": 6
     },
     {
       "id": "strawberry-lychee",
@@ -426,7 +432,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "featuredRank": 7
+      "featuredRank": 7,
+      "hqNumber": 7
     },
     {
       "id": "blue-saint",
@@ -474,7 +481,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "featuredRank": 8
+      "featuredRank": 8,
+      "hqNumber": 8
     },
     {
       "id": "kiwi-cucumber",
@@ -521,7 +529,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 9
     },
     {
       "id": "peach-hibiscus",
@@ -568,7 +577,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 10
     },
     {
       "id": "strawberry-cloud",
@@ -617,7 +627,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 11
     },
     {
       "id": "pistachio-date",
@@ -667,7 +678,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 12
     },
     {
       "id": "mango-coconut",
@@ -714,7 +726,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 13
     },
     {
       "id": "blueberry-oat",
@@ -763,7 +776,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 14
     },
     {
       "id": "cocoa-banana",
@@ -812,7 +826,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 15
     },
     {
       "id": "citrus-mint-fizz",
@@ -859,7 +874,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 16
     },
     {
       "id": "berry-basil-fizz",
@@ -906,7 +922,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 17
     },
     {
       "id": "cucumber-lime-fizz",
@@ -953,7 +970,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 18
     },
     {
       "id": "peach-ginger-fizz",
@@ -1000,7 +1018,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 19
     },
     {
       "id": "pomegranate-hibiscus",
@@ -1047,7 +1066,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 20
     },
     {
       "id": "acai-berry-bowl",
@@ -1095,7 +1115,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 21
     },
     {
       "id": "tropical-sun-bowl",
@@ -1141,7 +1162,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 22
     },
     {
       "id": "pistachio-yogurt-bowl",
@@ -1190,7 +1212,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 23
     },
     {
       "id": "loaded-fruit-cup",
@@ -1240,7 +1263,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 24
     },
     {
       "id": "berry-chia-cup",
@@ -1289,7 +1313,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 25
     },
     {
       "id": "pistachio-berry-minis",
@@ -1340,7 +1365,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 26
     },
     {
       "id": "lotus-crunch-minis",
@@ -1390,7 +1416,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 27
     },
     {
       "id": "strawberry-chocolate-crepe",
@@ -1441,7 +1468,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 28
     },
     {
       "id": "pistachio-kunafa-crepe",
@@ -1493,7 +1521,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 29
     },
     {
       "id": "banana-caramel-waffle",
@@ -1544,7 +1573,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 30
     },
     {
       "id": "dubai-chocolate-bar",
@@ -1596,7 +1626,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 31
     },
     {
       "id": "pistachio-brownie",
@@ -1648,7 +1679,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 32
     },
     {
       "id": "chocolate-berry-cup",
@@ -1699,7 +1731,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 33
     },
     {
       "id": "iced-latte",
@@ -1747,7 +1780,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 34
     },
     {
       "id": "iced-matcha",
@@ -1795,7 +1829,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 35
     },
     {
       "id": "turkey-avocado-panini",
@@ -1845,7 +1880,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 36
     },
     {
       "id": "caprese-pesto-focaccia",
@@ -1895,7 +1931,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 37
     },
     {
       "id": "halloumi-pepper-wrap",
@@ -1945,7 +1982,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 38
     },
     {
       "id": "ginger-lemon-shot",
@@ -1991,7 +2029,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 39
     },
     {
       "id": "golden-turmeric-shot",
@@ -2037,7 +2076,8 @@
         "max": 12
       },
       "pairingIds": [],
-      "alternativeIds": []
+      "alternativeIds": [],
+      "hqNumber": 40
     }
   ]
 }
