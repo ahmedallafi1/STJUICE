@@ -15,6 +15,7 @@
     "audit": "node scripts/release-audit.mjs",
     "prestart": "node scripts/generate-browser-data.mjs",
     "audit:hq": "node scripts/audit-hq-menu.mjs",
-    "import:hq": "node scripts/import-hq-catalog.mjs"
+    "import:hq": "node scripts/import-hq-catalog.mjs",
+    "hq:private": "node scripts/hq-private.mjs"
   }
 }
