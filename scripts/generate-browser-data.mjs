@@ -13,6 +13,14 @@ const sources = {
 };
 
 const data = Object.fromEntries(Object.entries(sources).map(([key, path]) => [key, JSON.parse(readFileSync(resolve(root, path), "utf8"))]));
+// Browser exports include only the forty HQ retail products. Keep obsolete custom
+// builders, old modifier references and concept media references out of public JSON.
+data.modifiers = { groups: [] };
+data.builder = { steps: [] };
+data.bundles.orderNowBoxes = [];
+data.bundles.cateringPackages = [];
+data.media.assets = (data.media.assets || []).filter((asset) =>
+  !String(asset.type || "").includes("product") && !String(asset.subjectRef || "").includes("box"));
 const output = resolve(root, "site/project-data.js");
 mkdirSync(dirname(output), { recursive: true });
 writeFileSync(output, `// Generated from canonical project JSON. Do not edit by hand.\nexport const projectData = ${JSON.stringify(data)};\n`);
