@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { once } from "node:events";
 import { startOrderingServer } from "../server.mjs";
-import { generateSlots } from "../lib/order-engine.mjs";
 import { benefitsConfig } from "../../accounts/lib/benefits-engine.mjs";
 
 process.env.STJ_TEST_ADMIN_TOKEN = "phase1-api-test-admin";
@@ -24,7 +23,8 @@ try {
   assert.equal(readiness.payload.launchReady, false);
   assert.ok(readiness.payload.blockers.includes("live_payment"));
 
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+  const referenceTime = process.env.ST_JUICE_TEST_NOW ? new Date(process.env.ST_JUICE_TEST_NOW) : new Date();
+  const tomorrow = new Date(referenceTime.getTime() + 86400000).toISOString().slice(0, 10);
   const slots = await json(`/api/slots?service=pickup&date=${tomorrow}`);
   assert.ok(slots.payload.slots.length > 0);
   const schedule = slots.payload.slots[0].value;
@@ -45,7 +45,7 @@ try {
   const key = `api-test-${Date.now()}`;
   const orderBody = { quoteId: quote.payload.quoteId, paymentToken: payment.payload.token, schedule, allergenAcknowledged: true, customer: { name: "Test Guest", email: "guest@example.com", phone: "3145550100", marketingConsent: false } };
   const order = await json("/api/orders", { method: "POST", headers: { "Idempotency-Key": key }, body: JSON.stringify(orderBody) });
-  assert.equal(order.response.status, 201, JSON.stringify({ error: order.payload, schedule, quoteLead: quote.payload.fulfillment, testNowEnv: process.env.ST_JUICE_TEST_NOW || null, quoteService: quote.payload.service, recalculated: generateSlots("pickup", tomorrow, new Date(), quote.payload.fulfillment?.requiredLeadMinutes)?.slots?.slice(0,2), tomorrow, utcNow: new Date().toISOString() }));
+  assert.equal(order.response.status, 201, JSON.stringify(order.payload));
   assert.equal(order.payload.order.status, "received");
   assert.equal(order.payload.order.customer.email, "g***@example.com");
   assert.ok(!JSON.stringify(order.payload).includes("3145550100"), "Public order response must not expose the raw phone");
