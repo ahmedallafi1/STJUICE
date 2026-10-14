@@ -8,8 +8,7 @@ const sources = {
   modifiers: "menu/data/modifiers.json",
   builder: "menu/data/build-your-mood.json",
   bundles: "menu/data/bundles-catering.json",
-  copy: "content/site-copy.json",
-  media: "media/manifests/media-manifest.json"
+  copy: "content/site-copy.json"
 };
 
 const data = Object.fromEntries(Object.entries(sources).map(([key, path]) => [key, JSON.parse(readFileSync(resolve(root, path), "utf8"))]));
