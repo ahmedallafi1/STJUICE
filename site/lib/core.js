@@ -63,7 +63,7 @@ export function productStartingPrice(product) {
 
 export function productImage(product) {
   // Source concepts from the owner's HQ PDF, never an old off-catalog item.
-  if (product?.photoStatus === "deployed" && product?.conceptImagePath) {
+  if (product?.conceptImagePath) {
     return "../" + product.conceptImagePath;
   }
   return categoryImage(product?.categoryId);
