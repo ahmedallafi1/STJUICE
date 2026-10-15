@@ -620,7 +620,7 @@ function renderBuilder({ data, state }) {
           </div>
         </section>
         <aside class="builder-summary" aria-label="Current build summary">
-          <div class="builder-summary__visual"><img src="../media/optimized/webp/products/pistachio-saint-concept-v1.webp" alt="ST. JUICE Build Your Mood preview" width="720" height="900" /></div>
+          <div class="builder-summary__visual"><img src="../media/optimized/webp/hq/catalog-atlas.webp" alt="ST. JUICE Build Your Mood preview" width="720" height="900" /></div>
           <div class="builder-summary__body">
             <p class="eyebrow">LIVE BUILD</p>
             <h3>${escapeHtml(state.builder.name || `${moodName === "No mood yet" ? "Your" : moodName} mood`)}</h3>
