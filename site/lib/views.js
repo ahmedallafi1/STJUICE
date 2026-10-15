@@ -18,7 +18,7 @@ export const modes = {
     short: "Guest mode",
     theme: "default",
     icon: "spark",
-    announcement: "Open daily on Vandeventer · Pickup and delivery available.",
+    announcement: "ST. JUICE · 40-item concept menu and demo ordering",
     line: "Browse the full menu and checkout without an account.",
     detail: "No sign-in required. Your cart and service choice stay on this device."
   },
@@ -195,7 +195,7 @@ function renderHome({ data, state }) {
       <div class="container">
         <div class="section-heading"><div><p class="eyebrow">WHY ST. JUICE</p><h2>Fresh early. Sweet late. Built for the whole day.</h2></div></div>
         <div class="principle-grid">
-          <article class="principle-card"><span class="principle-card__number">01</span><h3>Fresh starts early.</h3><p>Juices, smoothies, protein-ready blends and bowls begin at 6:30 AM.</p></article>
+          <article class="principle-card"><span class="principle-card__number">01</span><h3>Fresh starts early.</h3><p>Juices, smoothies and bowls lead the daytime menu once service begins.</p></article>
           <article class="principle-card"><span class="principle-card__number">02</span><h3>Dessert owns the night.</h3><p>Crepes, chocolate, mini pancakes and pistachio desserts carry the late shift.</p></article>
           <article class="principle-card"><span class="principle-card__number">03</span><h3>Groups have their own lane.</h3><p>Our forty HQ favorites make personal orders and group catering simple.</p></article>
         </div>
