@@ -7,7 +7,9 @@
     "productCount": 40,
     "dataStatus": "HQ concept item list now matches all 40 customer preview products; staff approvals still pending.",
     "privacy": "Public-safe crosswalk: NO recipes, portions by ingredient, commercial food/pack costs, profit, supplier quotes or private operating procedures.",
-    "publishing": "Do not render estimated kcal/allergen prompts as verified consumer information."
+    "publishing": "Do not render estimated kcal/allergen prompts as verified consumer information.",
+    "sourcePdfSha256": "d775c750ff12b4472838cee43c50514785a3e6abe26babec7b078b85df69f443",
+    "imageNote": "All 40 concept photographs remain provisional until test-kitchen approval; atlas maps product number 1–40 to 5x8 image cells."
   },
   "products": [
     {
