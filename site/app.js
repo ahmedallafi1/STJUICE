@@ -533,7 +533,7 @@ function addBuilderMood() {
     key: signature,
     productId: "build-your-mood",
     name,
-    image: "../media/optimized/webp/products/pistachio-saint-concept-v1.webp",
+    image: "../media/optimized/webp/hq/catalog-atlas.webp",
     sizeLabel: base.name,
     builderSelections: structuredClone(state.builder.selections),
     customName: name,
