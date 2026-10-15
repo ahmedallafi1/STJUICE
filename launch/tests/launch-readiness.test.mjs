@@ -6,7 +6,8 @@ assert.equal(launchConfig.release, "stage-09-launch-candidate");
 assert.equal(result.mode, "safe_test", "Partially configured candidate must stay in safe-test mode");
 assert.equal(result.launchReady, false, "Missing owner/vendor inputs must block a live claim");
 assert.ok(result.required >= 20, "Launch gate must cover all operational domains");
-assert.equal(result.configured, 2, "Approved legal identity and operating-hours assumptions must be retained");
+assert.equal(result.configured, 1, "Only the verified legal-identity launch gate is preapproved");
+assert.ok(result.blockers.includes("hours"), "Unapproved opening hours must block live release");
 for (const blocker of ["public_origin", "indexing", "live_payment", "live_pos", "tax", "database", "staff_auth", "operations_audit", "nutrition", "hq_menu_reconciled", "release_approval"]) assert.ok(result.blockers.includes(blocker), `${blocker} must remain blocked`);
 assert.ok(!JSON.stringify(launchConfig).match(/sk_live|password|secret_[A-Za-z0-9]/i), "Committed launch config must not contain credentials");
 
