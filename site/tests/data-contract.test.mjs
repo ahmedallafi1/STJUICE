@@ -14,6 +14,30 @@ const bundles = readJson("menu/data/bundles-catering.json");
 const copy = readJson("content/site-copy.json");
 const media = readJson("media/manifests/media-manifest.json");
 
+
+const crosswalk = readJson("hq/public-product-crosswalk.json");
+assert.equal(crosswalk.meta.sourcePdfSha256, "d775c750ff12b4472838cee43c50514785a3e6abe26babec7b078b85df69f443", "Exact concept PDF fingerprint must be retained");
+assert.equal(crosswalk.products.length, 40);
+assert.equal(crosswalk.meta.pageCount, 52);
+assert.equal(new Set(catalog.products.map((p) => p.hqNumber)).size, 40, "Each HQ photo number must be unique");
+for (let i = 0; i < 40; i++) {
+  const item = crosswalk.products[i];
+  const product = catalog.products[i];
+  assert.equal(product.hqNumber, i + 1, "Atlas photo slot must match HQ card order");
+  assert.equal(product.name, item.name, "Customer menu name must match the source");
+  assert.equal(product.sizes.length, 1, "HQ specifies only one size per product");
+  assert.equal(product.sizes[0].label, item.serving, "Source serving must not be changed");
+  assert.equal(product.sizes[0].price, item.suggestedPriceUsd, "Working menu price must be exact HQ suggestion");
+  assert.equal(item.sourcePdfPage, 4 + Math.floor(i / 2), "Photo must correspond to printed page");
+  assert.ok(!("estimatedKcal" in product), "Unverified nutritional claims must stay off storefront");
+  for (const forbidden of ["ingredientsText", "foodCostUsd", "packagingCostUsd", "baseCogsUsd", "estimatedGrossProfitUsd"]) {
+    assert.ok(!(forbidden in product), "Secret HQ data leaked into public menu: " + forbidden);
+  }
+}
+assert.deepEqual(catalog.products.find((p) => p.id === "blueberry-oat").containsAllergens, [], "Plant-based oat milk does not establish dairy content");
+assert.match(catalog.products.find((p) => p.id === "blueberry-oat").allergenReviewNote, /oat milk/i);
+assert.equal(copy.drops.activeProductIds.length, 0);
+
 assert.equal(catalog.categories.length, 11, "Stage 05 must expose all 11 HQ categories");
 assert.equal(catalog.products.length, 40, "Catalog count must be 40 HQ products");
 assert.equal(catalog.products.filter((item) => item.catalogRole === "primary").length, 40, "Exactly 40 HQ items must be primary");
@@ -60,6 +84,11 @@ for (const route of ["/menu", "/build", "/drops", "/boxes", "/catering", "/rewar
 assert.ok(stylesSource.includes("prefers-reduced-motion"), "Reduced-motion CSS is required");
 assert.ok(stylesSource.includes(":focus-visible"), "Visible keyboard focus is required");
 assert.ok(appSource.includes("localStorage"), "Cart and service continuity is required");
+assert.ok(viewsSource.includes("data.catalog.categories.length} WAYS IN"), "Category count must be dynamic, not the old twelve");
+assert.ok(!viewsSource.includes("12 WAYS IN"), "Old twelve-category claim must not remain");
+assert.ok(viewsSource.includes("Potential: "), "Unverified allergens must not be asserted as confirmed");
+assert.ok(!viewsSource.includes("Contains ${escapeHtml(titleCase(item))}"), "Product page cannot assert supplier-unverified allergens as confirmed");
+assert.ok(viewsSource.includes("Opening hours to be confirmed"), "Unknown opening hours must not be presented as current");
 assert.ok(viewsSource.includes("ORDERING PREVIEW"), "Ordering preview boundary must be visible");
 assert.ok(appSource.includes("orderingApi"), "Checkout must use the authoritative order API");
 assert.ok(appSource.includes("allergenAcknowledged"), "Checkout must require an allergen acknowledgement");
