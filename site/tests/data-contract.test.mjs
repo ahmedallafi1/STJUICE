@@ -89,6 +89,13 @@ assert.ok(!viewsSource.includes("12 WAYS IN"), "Old twelve-category claim must n
 assert.ok(viewsSource.includes("Potential: "), "Unverified allergens must not be asserted as confirmed");
 assert.ok(!viewsSource.includes("Contains ${escapeHtml(titleCase(item))}"), "Product page cannot assert supplier-unverified allergens as confirmed");
 assert.ok(viewsSource.includes("Opening hours to be confirmed"), "Unknown opening hours must not be presented as current");
+assert.ok(!viewsSource.includes("Open daily on Vandeventer"), "Do not represent preopening as actively trading");
+assert.ok(!viewsSource.includes("Study-night boxes"), "Discontinued group products cannot be advertised to students");
+assert.ok(!viewsSource.includes("collect rewards"), "Inactive points cannot be advertised as accruing");
+assert.ok(viewsSource.includes("Demo delivery; real coverage is not active"), "Demo delivery coverage must be truthfully described");
+
+assert.ok(!viewsSource.includes("begin at 6:30 AM"), "Do not claim unapproved opening time");
+assert.ok(!indexHtml.includes("Open daily on Vandeventer"), "Static fallback must not make false operating claims");
 assert.ok(viewsSource.includes("ORDERING PREVIEW"), "Ordering preview boundary must be visible");
 assert.ok(appSource.includes("orderingApi"), "Checkout must use the authoritative order API");
 assert.ok(appSource.includes("allergenAcknowledged"), "Checkout must require an allergen acknowledgement");

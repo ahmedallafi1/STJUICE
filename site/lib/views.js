@@ -18,7 +18,7 @@ export const modes = {
     short: "Guest mode",
     theme: "default",
     icon: "spark",
-    announcement: "Open daily on Vandeventer · Pickup and delivery available.",
+    announcement: "ST. JUICE · 40-item concept menu and demo ordering",
     line: "Browse the full menu and checkout without an account.",
     detail: "No sign-in required. Your cart and service choice stay on this device."
   },
@@ -28,7 +28,7 @@ export const modes = {
     theme: "default",
     icon: "heart",
     announcement: "Your favorites, rewards preview and faster reorder—in one mood.",
-    line: "Save favorites, collect rewards and reorder faster.",
+    line: "Save favorites and preview future rewards; demo orders earn no real points.",
     detail: "Sign in to save favorites, mixes and member activity to your account."
   },
   student: {
@@ -36,8 +36,8 @@ export const modes = {
     short: "Student mode",
     theme: "student",
     icon: "spark",
-    announcement: "Student mode · Study-night picks and eligible offers up front.",
-    line: "Study-night boxes, student-value picks and verification planning.",
+    announcement: "Student mode · Browse the forty HQ items and preview verification.",
+    line: "Explore HQ menu items and student account verification planning.",
     detail: "No university sponsorship or affiliation is implied."
   },
   business: {
@@ -45,16 +45,16 @@ export const modes = {
     short: "Business mode",
     theme: "business",
     icon: "calendar",
-    announcement: "Business mode · Group orders, recurring events and catering tools.",
-    line: "Plan group orders, save event details and request a quote.",
+    announcement: "Business mode · Catering inquiries and group planning previews.",
+    line: "Browse the 40 HQ items and request a group quote.",
     detail: "Rates, delivery and service terms remain subject to confirmation."
   }
 };
 
 export const serviceModes = {
-  pickup: { label: "Pickup", icon: "pickup", detail: "Pick up on Vandeventer" },
-  delivery: { label: "Delivery", icon: "delivery", detail: "Delivery availability is confirmed during checkout" },
-  dine_in: { label: "Dine in", icon: "dine", detail: "Enjoy it at the shop" }
+  pickup: { label: "Pickup", icon: "pickup", detail: "Preview pickup service at Vandeventer" },
+  delivery: { label: "Delivery", icon: "delivery", detail: "Demo delivery; real coverage is not active" },
+  dine_in: { label: "Dine in", icon: "dine", detail: "Preview counter ordering before opening" }
 };
 
 function pageHero(eyebrow, title, intro, actions = "") {
@@ -195,7 +195,7 @@ function renderHome({ data, state }) {
       <div class="container">
         <div class="section-heading"><div><p class="eyebrow">WHY ST. JUICE</p><h2>Fresh early. Sweet late. Built for the whole day.</h2></div></div>
         <div class="principle-grid">
-          <article class="principle-card"><span class="principle-card__number">01</span><h3>Fresh starts early.</h3><p>Juices, smoothies, protein-ready blends and bowls begin at 6:30 AM.</p></article>
+          <article class="principle-card"><span class="principle-card__number">01</span><h3>Fresh starts early.</h3><p>Juices, smoothies and bowls lead the daytime menu once service begins.</p></article>
           <article class="principle-card"><span class="principle-card__number">02</span><h3>Dessert owns the night.</h3><p>Crepes, chocolate, mini pancakes and pistachio desserts carry the late shift.</p></article>
           <article class="principle-card"><span class="principle-card__number">03</span><h3>Groups have their own lane.</h3><p>Our forty HQ favorites make personal orders and group catering simple.</p></article>
         </div>

@@ -6,7 +6,7 @@
     "legalNameApproved": true,
     "publicPhone": null,
     "publicEmail": null,
-    "hoursApproved": true,
+    "hoursApproved": false,
     "mapsListingApproved": false
   },
   "commerce": {

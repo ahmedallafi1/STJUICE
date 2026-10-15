@@ -10,10 +10,14 @@
     "id": "vandeventer",
     "name": "ST. JUICE · Vandeventer",
     "address": "11 S Vandeventer Ave, St. Louis, MO",
-    "status": "confirmed_open_in_site"
+    "status": "preopening_preview"
   },
   "fulfillment": {
-    "supported": ["pickup", "delivery", "dine_in"],
+    "supported": [
+      "pickup",
+      "delivery",
+      "dine_in"
+    ],
     "schedulingDays": 7,
     "slotIncrementMinutes": 30,
     "leadMinutes": {
@@ -22,13 +26,34 @@
       "dine_in": 15
     },
     "hours": {
-      "sunday": { "open": "06:30", "close": "21:00" },
-      "monday": { "open": "06:30", "close": "21:00" },
-      "tuesday": { "open": "06:30", "close": "21:00" },
-      "wednesday": { "open": "06:30", "close": "21:00" },
-      "thursday": { "open": "06:30", "close": "21:00" },
-      "friday": { "open": "06:30", "close": "23:00" },
-      "saturday": { "open": "06:30", "close": "23:00" }
+      "sunday": {
+        "open": "06:30",
+        "close": "21:00"
+      },
+      "monday": {
+        "open": "06:30",
+        "close": "21:00"
+      },
+      "tuesday": {
+        "open": "06:30",
+        "close": "21:00"
+      },
+      "wednesday": {
+        "open": "06:30",
+        "close": "21:00"
+      },
+      "thursday": {
+        "open": "06:30",
+        "close": "21:00"
+      },
+      "friday": {
+        "open": "06:30",
+        "close": "23:00"
+      },
+      "saturday": {
+        "open": "06:30",
+        "close": "23:00"
+      }
     },
     "delivery": {
       "mode": "manual_review_test",
@@ -36,7 +61,8 @@
       "realRadiusMiles": null,
       "realMinimum": null,
       "realFee": null
-    }
+    },
+    "hoursStatus": "demo_schedule_owner_approval_required"
   },
   "pricing": {
     "catalogPriceStatus": "working_requires_owner_approval",
@@ -57,7 +83,12 @@
     },
     "tips": {
       "status": "optional_test_control",
-      "allowedPercentages": [0, 15, 18, 20]
+      "allowedPercentages": [
+        0,
+        15,
+        18,
+        20
+      ]
     },
     "promo": {
       "status": "test_only",
