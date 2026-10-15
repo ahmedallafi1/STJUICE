@@ -439,7 +439,7 @@ function modifierNames(product, draft) {
 function migrateStage05Cart() {
   let changed = false;
   state.cart = state.cart.filter((item) => {
-    if (item.kind === "builder") { changed = true; return false; }
+    if (item.kind === "builder" && item.builderSelections) return true;
     if (item.productId === "build-your-mood") { changed = true; return false; }
     const product = data.productById.get(item.productId);
     if (!product) { changed = true; return false; }
@@ -533,7 +533,7 @@ function addBuilderMood() {
     key: signature,
     productId: "build-your-mood",
     name,
-    image: "../media/optimized/webp/hq/catalog-atlas.webp",
+    image: "../media/optimized/webp/products/pistachio-saint-concept-v1.webp",
     sizeLabel: base.name,
     builderSelections: structuredClone(state.builder.selections),
     customName: name,

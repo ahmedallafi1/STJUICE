@@ -18,7 +18,7 @@ export const modes = {
     short: "Guest mode",
     theme: "default",
     icon: "spark",
-    announcement: "ST. JUICE · 40-item concept menu and demo ordering",
+    announcement: "Open daily on Vandeventer · Pickup and delivery available.",
     line: "Browse the full menu and checkout without an account.",
     detail: "No sign-in required. Your cart and service choice stay on this device."
   },
@@ -28,7 +28,7 @@ export const modes = {
     theme: "default",
     icon: "heart",
     announcement: "Your favorites, rewards preview and faster reorder—in one mood.",
-    line: "Save favorites and preview future rewards; demo orders earn no real points.",
+    line: "Save favorites, collect rewards and reorder faster.",
     detail: "Sign in to save favorites, mixes and member activity to your account."
   },
   student: {
@@ -36,8 +36,8 @@ export const modes = {
     short: "Student mode",
     theme: "student",
     icon: "spark",
-    announcement: "Student mode · Browse the forty HQ items and preview verification.",
-    line: "Explore HQ menu items and student account verification planning.",
+    announcement: "Student mode · Study-night picks and eligible offers up front.",
+    line: "Study-night boxes, student-value picks and verification planning.",
     detail: "No university sponsorship or affiliation is implied."
   },
   business: {
@@ -45,16 +45,16 @@ export const modes = {
     short: "Business mode",
     theme: "business",
     icon: "calendar",
-    announcement: "Business mode · Catering inquiries and group planning previews.",
-    line: "Browse the 40 HQ items and request a group quote.",
+    announcement: "Business mode · Group orders, recurring events and catering tools.",
+    line: "Plan group orders, save event details and request a quote.",
     detail: "Rates, delivery and service terms remain subject to confirmation."
   }
 };
 
 export const serviceModes = {
-  pickup: { label: "Pickup", icon: "pickup", detail: "Preview pickup service at Vandeventer" },
-  delivery: { label: "Delivery", icon: "delivery", detail: "Demo delivery; real coverage is not active" },
-  dine_in: { label: "Dine in", icon: "dine", detail: "Preview counter ordering before opening" }
+  pickup: { label: "Pickup", icon: "pickup", detail: "Pick up on Vandeventer" },
+  delivery: { label: "Delivery", icon: "delivery", detail: "Delivery availability is confirmed during checkout" },
+  dine_in: { label: "Dine in", icon: "dine", detail: "Enjoy it at the shop" }
 };
 
 function pageHero(eyebrow, title, intro, actions = "") {
@@ -109,10 +109,10 @@ function renderHome({ data, state }) {
     .slice(0, 3);
 
   const modeFeature = {
-    guest: { eyebrow: "YOUR FIRST POUR", title: "Start with the craving.", body: "Explore all forty HQ catalog products and try the demo checkout." },
+    guest: { eyebrow: "YOUR FIRST POUR", title: "Start with the craving.", body: "Explore the full menu, build your mood and check out as a guest whenever online ordering opens." },
     regular: { eyebrow: "YOUR ST. JUICE", title: "Your favorites, one tap away.", body: "Keep favorites, saved mixes and recent orders together under your account." },
     student: { eyebrow: "STUDENT EXPERIENCE", title: "Study fuel. Sweet breaks. Your lane.", body: "A focused blue-and-white experience built around value, group study moments and easy repeat ordering." },
-    business: { eyebrow: "BUSINESS EXPERIENCE", title: "Bring the whole room into it.", body: "Plan catering inquiries around the forty-item HQ catalog." }
+    business: { eyebrow: "BUSINESS EXPERIENCE", title: "Bring the whole room into it.", body: "Move from office drops to catering requests with a darker, polished workspace built for groups." }
   }[state.mode];
 
   return `
@@ -130,10 +130,10 @@ function renderHome({ data, state }) {
           <p class="hero__body">${escapeHtml(copy.home.hero.body)}</p>
           <div class="button-row">
             <a class="button" href="/menu">${escapeHtml(copy.home.hero.primaryCta)}</a>
-            <a class="button button--outline" href="/menu?category=fresh-juices">${escapeHtml(copy.home.hero.secondaryCta)}</a>
+            <a class="button button--outline" href="/build">${escapeHtml(copy.home.hero.secondaryCta)}</a>
           </div>
           <div class="hero__meta">
-            <span>Opening hours to be confirmed</span>
+            <span>Open from 6:30 AM</span>
             <span>Dine-in · Pickup · Delivery</span>
             <span>11 S Vandeventer Ave</span>
           </div>
@@ -149,6 +149,36 @@ function renderHome({ data, state }) {
             <span><h3>${escapeHtml(service.label)}</h3><p>${escapeHtml(service.detail)}</p></span>
             ${icon("arrow")}
           </button>`).join("")}
+      </div>
+    </section>
+
+    <section class="section section--cream">
+      <div class="container">
+        <div class="section-heading">
+          <div><p class="eyebrow">NEW AT ST. JUICE</p><h2>Try what just dropped.</h2><p class="lede">Limited releases and new combinations live here first.</p></div>
+          <a class="text-link" href="/drops">Explore New Drops ${icon("arrow")}</a>
+        </div>
+        <div class="feature-grid">
+          ${drops.map((product) => `
+            <article class="feature-card">
+              ${productPhoto(product, "feature-card__photo", product.name)}
+              <div class="feature-card__content">
+                <p class="eyebrow">NEW DROP</p>
+                <h3>${escapeHtml(product.name)}</h3>
+                <p>${escapeHtml(product.description)}</p>
+                <a class="button button--light button--small ${product.runtimeStatus && product.runtimeStatus !== "available" ? "is-disabled" : ""}" ${product.runtimeStatus && product.runtimeStatus !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="/product/${escapeHtml(product.id)}"`}>${product.runtimeStatus === "sold_out" ? "Sold out" : product.runtimeStatus === "paused" ? "Unavailable" : "View drop"}</a>
+              </div>
+            </article>`).join("")}
+          <article class="feature-card">
+            <img src="../media/optimized/webp/packaging/birthday-box-concept-v1.webp" alt="ST. JUICE Birthday Box" loading="lazy" width="720" height="900" />
+            <div class="feature-card__content">
+              <p class="eyebrow">FOR THE GROUP</p>
+              <h3>Bring the whole table.</h3>
+              <p>Study nights, birthdays and office runs get a format of their own.</p>
+              <a class="button button--light button--small" href="/boxes">Explore Party Boxes</a>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -172,6 +202,20 @@ function renderHome({ data, state }) {
       </div>
     </section>
 
+    <section class="section section--surface">
+      <div class="container split-feature">
+        <div class="split-feature__copy">
+          <p class="eyebrow">BUILD YOUR MOOD</p>
+          <h2>${escapeHtml(copy.home.builder.headline)}</h2>
+          <p class="lede">${escapeHtml(copy.home.builder.body)}</p>
+          <div class="button-row"><a class="button" href="/build">${escapeHtml(copy.home.builder.cta)}</a></div>
+        </div>
+        <div class="split-feature__media">
+          <img src="../media/motion/st-juice-hero-loop.svg" alt="ST. JUICE Build Your Mood artwork" loading="lazy" width="1600" height="900" />
+        </div>
+      </div>
+    </section>
+
     <section class="section section--soft">
       <div class="container">
         <div class="section-heading">
@@ -191,13 +235,23 @@ function renderHome({ data, state }) {
       </div>
     </section>
 
+    <section class="section section--cream">
+      <div class="container">
+        <div class="section-heading">
+          <div><p class="eyebrow">PARTY BOXES</p><h2>${escapeHtml(copy.boxes.title)}</h2><p class="lede">${escapeHtml(copy.boxes.intro)}</p></div>
+          <a class="button button--outline" href="/boxes">Explore boxes</a>
+        </div>
+        <div class="product-grid">${boxes.map((product) => buildProductCard(product, data)).join("")}</div>
+      </div>
+    </section>
+
     <section class="section section--dark">
       <div class="container">
         <div class="section-heading"><div><p class="eyebrow">WHY ST. JUICE</p><h2>Fresh early. Sweet late. Built for the whole day.</h2></div></div>
         <div class="principle-grid">
-          <article class="principle-card"><span class="principle-card__number">01</span><h3>Fresh starts early.</h3><p>Juices, smoothies and bowls lead the daytime menu once service begins.</p></article>
-          <article class="principle-card"><span class="principle-card__number">02</span><h3>Dessert owns the night.</h3><p>Crepes, chocolate, mini pancakes and pistachio desserts carry the late shift.</p></article>
-          <article class="principle-card"><span class="principle-card__number">03</span><h3>Groups have their own lane.</h3><p>Our forty HQ favorites make personal orders and group catering simple.</p></article>
+          <article class="principle-card"><span class="principle-card__number">01</span><h3>Fresh starts early.</h3><p>Juices, smoothies, protein-ready blends and bowls begin at 6:30 AM.</p></article>
+          <article class="principle-card"><span class="principle-card__number">02</span><h3>Dessert owns the night.</h3><p>Crepes, chocolate, mini pancakes, pistachio and new drops carry the late shift.</p></article>
+          <article class="principle-card"><span class="principle-card__number">03</span><h3>Groups have their own lane.</h3><p>Party Boxes and catering make the bigger order feel just as intentional as the single cup.</p></article>
         </div>
       </div>
     </section>
@@ -209,7 +263,7 @@ function renderHome({ data, state }) {
           <h2>${escapeHtml(copy.home.location.headline)}</h2>
           <div class="location-card__facts">
             <div class="location-fact"><span class="location-fact__icon">${icon("pin")}</span><div><strong>${escapeHtml(copy.home.location.address)}</strong><span>St. Louis, Missouri</span></div></div>
-            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(copy.home.location.hours)}</strong><span>Hours not yet confirmed</span></div></div>
+            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(copy.home.location.hours)}</strong><span>Open daily</span></div></div>
             <div class="location-fact"><span class="location-fact__icon">${icon("pickup")}</span><div><strong>Dine-in · Pickup · Delivery</strong><span>Choose the handoff that fits the day.</span></div></div>
           </div>
           <a class="button" href="/location">Location & hours</a>
@@ -439,8 +493,7 @@ function renderProduct(productId, { data, state }) {
               <div class="info-panel">
                 <h3>Allergen information</h3>
                 <p>${escapeHtml(data.copy.product.allergenNote)}</p>
-                ${product.allergenReviewNote ? `<p class="muted">${escapeHtml(product.allergenReviewNote)}</p>` : ""}
-                <div class="allergen-row">${(product.containsAllergens || []).length ? product.containsAllergens.map((item) => `<span class="allergen-pill">Potential: ${escapeHtml(titleCase(item))}</span>`).join("") : `<span class="chip">Supplier and cross-contact review pending</span>`}</div>
+                <div class="allergen-row">${(product.containsAllergens || []).length ? product.containsAllergens.map((item) => `<span class="allergen-pill">Contains ${escapeHtml(titleCase(item))}</span>`).join("") : `<span class="chip">Cross-contact may still occur</span>`}</div>
               </div>
             </div>
 
@@ -620,7 +673,7 @@ function renderBuilder({ data, state }) {
           </div>
         </section>
         <aside class="builder-summary" aria-label="Current build summary">
-          <div class="builder-summary__visual"><img src="../media/optimized/webp/hq/catalog-atlas.webp" alt="ST. JUICE Build Your Mood preview" width="720" height="900" /></div>
+          <div class="builder-summary__visual"><img src="../media/optimized/webp/products/pistachio-saint-concept-v1.webp" alt="ST. JUICE Build Your Mood preview" width="720" height="900" /></div>
           <div class="builder-summary__body">
             <p class="eyebrow">LIVE BUILD</p>
             <h3>${escapeHtml(state.builder.name || `${moodName === "No mood yet" ? "Your" : moodName} mood`)}</h3>
@@ -646,7 +699,7 @@ function renderDrops({ data }) {
       <div class="container">
         ${lead ? `
           <article class="drop-hero">
-            <div class="drop-hero__media"><img src="${productImage(lead)}" alt="${escapeHtml(lead.name)}" width="960" height="960" /></div>
+            <div class="drop-hero__media">${productPhoto(lead, "drop-hero__photo", lead.name)}</div>
             <div class="drop-hero__copy">
               <p class="eyebrow">FEATURED DROP</p>
               <h2>${escapeHtml(lead.name)}</h2>
@@ -660,7 +713,7 @@ function renderDrops({ data }) {
           <div class="drop-grid">
             ${rest.map((product) => `
               <article class="drop-card">
-                <a class="drop-card__media" href="/product/${escapeHtml(product.id)}"><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="720" /></a>
+                <a class="drop-card__media" href="/product/${escapeHtml(product.id)}">${productPhoto(product, "drop-card__photo", product.name)}</a>
                 <div class="drop-card__body"><p class="eyebrow">CURRENT DROP</p><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><a class="text-link" href="/product/${escapeHtml(product.id)}">View drop ${icon("arrow")}</a></div>
               </article>`).join("")}
           </div>` : ""}
@@ -684,14 +737,14 @@ function renderBoxes({ data }) {
       <div class="container box-showcase">
         ${cards.map(({ product, runtime, ...box }) => `
           <article class="party-box-card">
-            <a class="party-box-card__media" href="/product/${escapeHtml(box.productId)}">
+            <a class="party-box-card__media" href="/catering">
               <img src="${productImage(product || { id: box.productId, categoryId: "flights-liters-boxes" })}" alt="${escapeHtml(product?.name || box.productId)}" loading="lazy" width="720" height="620" />
             </a>
             <div class="party-box-card__body">
               <div class="party-box-card__heading"><div><p class="eyebrow">SERVES ${box.serves.min}–${box.serves.max}</p><h3>${escapeHtml(product?.name || box.productId)}</h3></div><strong>${box.startingAt ? "From " : ""}${money(box.basePrice)}</strong></div>
               <ul class="compact-list">${box.includes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-              <div class="party-box-card__meta"><span>${(runtime?.leadTime || box.leadTime).type === "scheduled" ? `${(runtime?.leadTime || box.leadTime).minimumHours} hr minimum prep` : `${(runtime?.leadTime || box.leadTime).minimumMinutes} min minimum prep`}</span><span>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Temporarily unavailable" : "Customize before checkout"}</span></div>
-              <a class="button ${runtime?.status && runtime.status !== "available" ? "is-disabled" : ""}" ${runtime?.status && runtime.status !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="/product/${escapeHtml(box.productId)}"`}>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Unavailable" : "Customize box"}</a>
+              <div class="party-box-card__meta"><span>${(runtime?.leadTime || box.leadTime).type === "scheduled" ? `${(runtime?.leadTime || box.leadTime).minimumHours} hr minimum prep` : `${(runtime?.leadTime || box.leadTime).minimumMinutes} min minimum prep`}</span><span>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Temporarily unavailable" : "Ask for a catering quote"}</span></div>
+              <a class="button ${runtime?.status && runtime.status !== "available" ? "is-disabled" : ""}" ${runtime?.status && runtime.status !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="/catering"`}>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Unavailable" : "Request details"}</a>
             </div>
           </article>`).join("")}
       </div>
@@ -700,7 +753,7 @@ function renderBoxes({ data }) {
 
 function renderCatering({ data, state }) {
   return `
-    ${pageHero("CATERING", data.copy.catering.title, "Drinks, desserts and full-table moments for teams, celebrations and groups.", `<a class="button" href="#catering-form">Start a request</a>`)}
+    ${pageHero("CATERING", data.copy.catering.title, "Drinks, desserts and full-table moments for teams, celebrations and groups.", `<a class="button" href="#catering-form">Start a request</a><a class="button button--outline" href="/boxes">Shop party boxes</a>`)}
     <section class="section section--cream">
       <div class="container">
         <div class="section-heading"><div><p class="eyebrow">CHOOSE YOUR FORMAT</p><h2>Start with the kind of service you need.</h2><p class="lede">Every catering request is reviewed around guest count, date, setup and menu availability before it is confirmed.</p></div></div>
@@ -815,14 +868,14 @@ function renderRewards({ state }) {
 function renderLocation({ data, state }) {
   const location = data.copy.location;
   return `
-    ${pageHero("ONE BRANCH · OPENING DETAILS PENDING", location.title, "Preview the Vandeventer menu and service options while we finalize opening details.", `<a class="button" href="https://www.google.com/maps/search/?api=1&query=11%20S%20Vandeventer%20Ave%2C%20St.%20Louis%2C%20MO" target="_blank" rel="noreferrer">Get directions</a>`)}
+    ${pageHero("ONE BRANCH · OPEN DAILY", location.title, "Fresh mornings, sweet late nights and three ways to get the order.", `<a class="button" href="https://www.google.com/maps/search/?api=1&query=11%20S%20Vandeventer%20Ave%2C%20St.%20Louis%2C%20MO" target="_blank" rel="noreferrer">Get directions</a>`)}
     <section class="section section--cream">
       <div class="container location-layout">
         <div class="location-card">
           <p class="eyebrow">ST. JUICE · VANDEVENTER</p><h2>Meet us here.</h2>
           <div class="location-card__facts">
             <div class="location-fact"><span class="location-fact__icon">${icon("pin")}</span><div><strong>${escapeHtml(location.address)}</strong><span>Confirmed first branch</span></div></div>
-            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(location.hours)}</strong><span>Hours require owner approval before opening.</span></div></div>
+            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(location.hours)}</strong><span>Friday and Saturday run later.</span></div></div>
             <div class="location-fact"><span class="location-fact__icon">${icon("pickup")}</span><div><strong>${escapeHtml(location.services.join(" · "))}</strong><span>Current selection: ${escapeHtml(serviceModes[state.service].label)}</span></div></div>
           </div>
           <p>${escapeHtml(location.parking)}</p>
@@ -1191,9 +1244,9 @@ export function renderPage(route, context) {
   if (path === "/") return renderHome(context);
   if (path === "/menu") return renderMenu(context);
   if (path.startsWith("/product/")) return renderProduct(decodeURIComponent(path.split("/")[2] || ""), context);
-  if (path === "/build") return renderMenu(context);
-  if (path === "/drops") return renderMenu(context);
-  if (path === "/boxes") return renderMenu(context);
+  if (path === "/build") return renderBuilder(context);
+  if (path === "/drops") return renderDrops(context);
+  if (path === "/boxes") return renderBoxes(context);
   if (path === "/catering") return renderCatering(context);
   if (path === "/rewards") return renderRewards(context);
   if (path === "/location") return renderLocation(context);
@@ -1210,7 +1263,7 @@ export function renderFooter(data) {
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand"><img src="../brand/assets/logos/st-juice-lockup-horizontal.svg" alt="ST. JUICE" width="194" height="54" /><p>${escapeHtml(data.copy.footer.line)}</p><p>11 S Vandeventer Ave · St. Louis, Missouri</p></div>
-        <div class="footer-column"><h2>Menu</h2><a href="/menu">Full menu</a><a href="/catering">Catering</a></div>
+        <div class="footer-column"><h2>Menu</h2><a href="/menu">Full menu</a><a href="/build">Build Your Mood</a><a href="/drops">New Drops</a><a href="/boxes">Party Boxes</a><a href="/catering">Catering</a></div>
         <div class="footer-column"><h2>ST. JUICE</h2><a href="/about">Our story</a><a href="/rewards">Rewards</a><a href="/location">Location & hours</a><a href="/account">Account</a></div>
         <div class="footer-column"><h2>Help</h2><a href="/info/allergens">Nutrition & Allergens</a><a href="/info/privacy">Privacy</a><a href="/info/terms">Terms</a><a href="/info/refunds">Refunds</a><a href="/info/cookies">Cookies</a><a href="/info/accessibility">Accessibility</a><a href="/info/contact">Contact</a></div>
       </div>

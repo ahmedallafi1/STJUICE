@@ -12,11 +12,11 @@ mkdirSync(output, { recursive: true });
 const files = [
   "site/index.html", "site/app.js", "site/project-data.js", "site/styles.css", "site/site.webmanifest", "site/robots.txt",
   "content/site-copy.json",
-  "menu/data/catalog.json", "menu/data/bundles-catering.json",
-  "media/motion/st-juice-hero-loop.svg", "media/motion/st-juice-hero-loop-fallback.svg"
+  "menu/data/catalog.json", "menu/data/modifiers.json", "menu/data/build-your-mood.json", "menu/data/bundles-catering.json",
+  "media/manifests/media-manifest.json", "media/motion/st-juice-hero-loop.svg", "media/motion/st-juice-hero-loop-fallback.svg"
 ];
 // The public CDN contains only customer-facing assets. Staff HQ and operations belong behind authenticated local/server routes.
-const directories = ["site/lib", "brand/assets"];
+const directories = ["site/lib", "brand/assets", "media/optimized"];
 
 for (const source of files) {
   const target = resolve(output, source);
@@ -24,14 +24,6 @@ for (const source of files) {
   cpSync(resolve(root, source), target);
 }
 for (const source of directories) cpSync(resolve(root, source), resolve(output, source), { recursive: true });
-// Publish only files actually used by the HQ customer experience.
-// Old 54-product artwork, parties, categories, boxes and builder data stay out.
-for (const subdirectory of ["hero", "account-modes", "hq"]) {
-  const src = resolve(root, "media/optimized/webp", subdirectory);
-  const dest = resolve(output, "media/optimized/webp", subdirectory);
-  mkdirSync(resolve(dest, ".."), { recursive: true });
-  cpSync(src, dest, { recursive: true });
-}
 // Keep a root copy for the conservative public-reference audit; the browser uses /site/project-data.js.
 cpSync(resolve(root, "site/project-data.js"), resolve(output, "project-data.js"));
 // robots.txt must exist at the domain root as well as under /site/.
@@ -101,7 +93,7 @@ if (indexingEnabled) {
 
 // Explicit privacy guardrails: public hosting must not ship internal interfaces,
 // financial HQ documents, environment files, or database schemas.
-for (const forbidden of ["ops", "hq", ".env", ".env.local", "database", "operations", "launch", "accounts", "ordering", "media/optimized/webp/products", "media/optimized/webp/packaging", "media/optimized/webp/categories", "menu/data/build-your-mood.json", "menu/data/modifiers.json", "media/manifests/media-manifest.json"]) {
+for (const forbidden of ["ops", "hq", ".env", ".env.local", "database", "operations", "launch", "accounts", "ordering"]) {
   if (existsSync(resolve(output, forbidden))) throw new Error("Private source leaked into public build: " + forbidden);
 }
 const publicData = readFileSync(resolve(output, "site/project-data.js"), "utf8");

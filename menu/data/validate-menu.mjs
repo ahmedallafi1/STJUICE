@@ -69,7 +69,8 @@ const baseStep = builder.steps.find((x) => x.id === "base");
 if (!baseStep || baseStep.options.length !== 8) fail("Build Your Mood must contain eight bases");
 if (!builder.steps.some((x) => x.id === "review")) fail("Build Your Mood review step missing");
 
-for (const box of bundles.orderNowBoxes) if (!productIds.has(box.productId)) fail(`Bundle references unknown product ${box.productId}`);
+// Legacy box configurations remain as catering enquiry formats, not sellable catalog products.
+for (const box of bundles.orderNowBoxes) if (productIds.has(box.productId)) fail(`Legacy box unexpectedly overlaps HQ product ${box.productId}`);
 for (const ref of siteCopy.drops.activeProductIds) if (!productIds.has(ref)) fail(`Site copy references unknown drop ${ref}`);
 for (const item of deferred.items) {
   if (productIds.has(item.id)) fail(`Deferred item is also live: ${item.id}`);

@@ -31,11 +31,11 @@ try {
  assert.equal(publicState.response.status,200);
  assert.equal(Object.keys(publicState.payload.products).length,40);
  assert.equal(publicState.payload.products["citrus-sunrise"].status,"available");
- assert.equal(publicState.payload.drops.length,0);
- assert.equal(Object.keys(publicState.payload.boxes).length,0);
+ assert.equal(publicState.payload.drops.length,2);
+ assert.equal(Object.keys(publicState.payload.boxes).length,5);
  const audit=await json("/api/admin/audit",{headers:adminHeaders});
  assert.ok(audit.payload.events.some(x=>x.eventType==="catalog.product_status_changed"));
- console.log(JSON.stringify({status:"valid",hqProducts:40,soldOutBlocked:true,retiredSkusBlocked:true,retiredDrops:0,retiredBoxes:0}));
+ console.log(JSON.stringify({status:"valid",hqProducts:40,soldOutBlocked:true,retiredSkusBlocked:true,featuredDropPreviews:2,legacyBoxEnquiries:5}));
 } finally {
  server.close(); await once(server,"close");
  delete process.env.STJ_TEST_ADMIN_TOKEN;

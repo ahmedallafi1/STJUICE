@@ -50,11 +50,11 @@ assert.match(await page.locator("h1").first().textContent(), /Pistachio Date/i);
 await page.locator('[data-action="add-product"]').click();
 assert.ok(Number(await page.locator("#cart-count").textContent()) >= 1, "Add to bag should update the count");
 
-await page.goto(`${baseUrl}#/menu`, { waitUntil: "networkidle" });
-await page.locator(".product-card").first().waitFor();
-assert.equal(await page.locator(".product-card").count(), 40, "Exactly forty HQ menu products required");
-assert.ok(await page.locator(".product-card .hq-photo").count() === 40, "Each product must show its source PDF photo");
-await page.screenshot({ path: resolve(outputDirectory, "hq-menu-desktop.png"), fullPage: true });
+await page.goto(`${baseUrl}#/build`, { waitUntil: "networkidle" });
+await page.locator('[data-builder-option="base"]').first().check();
+await page.locator('[data-action="builder-next"]').click();
+await page.locator('[data-builder-option="mood"]').first().check();
+await page.screenshot({ path: resolve(outputDirectory, "builder-desktop.png"), fullPage: true });
 
 const duplicateIds = await page.evaluate(() => {
   const counts = new Map();

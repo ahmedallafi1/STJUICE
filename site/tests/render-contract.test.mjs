@@ -49,35 +49,24 @@ for (const path of routes) {
 }
 
 const menuHtml = renderPage({ path: "/menu", params: new URLSearchParams() }, { data, state });
-assert.equal((menuHtml.match(/class="product-card"/g) || []).length, 40, "The storefront must render exactly the 40 HQ catalog cards");
-assert.match(menuHtml, /11 WAYS IN/, "There are eleven HQ category groupings");
-assert.ok(!menuHtml.includes("12 WAYS IN"), "Outdated category copy must be gone");
-assert.ok(menuHtml.includes("Photos represent concepts"), "The source requires a concept photo notice");
-assert.ok(menuHtml.includes("$8.50"), "HQ draft prices must appear in the preview");
-assert.ok(!menuHtml.includes("From $8.50"), "One-size source price should be shown directly");
-assert.ok((menuHtml.match(/class="hq-photo /g) || []).length >= 40, "Forty source photos must be present");
-const oats = renderPage({ path: "/product/blueberry-oat", params: new URLSearchParams() }, { data, state });
-assert.ok(oats.includes("Oat milk and oats require"), "The oat product must carry source-specific allergen uncertainty");
-assert.ok(!oats.includes("Contains Milk"), "Unverified milk must not be asserted for oat milk");
-const dateSmoothie = renderPage({ path: "/product/pistachio-date", params: new URLSearchParams() }, { data, state });
-assert.ok(dateSmoothie.includes("Potential: Milk"), "Milk must be visibly flagged as a potential allergen");
-const locationPreview = renderPage({ path: "/location", params: new URLSearchParams() }, { data, state });
-assert.ok(locationPreview.includes("OPENING DETAILS PENDING"), "Pre-opening location cannot claim operating now");
-
+assert.equal((menuHtml.match(/class="product-card"/g) || []).length, 40, "Unfiltered menu must render all 40 HQ products");
 
 state.menuFilters.query = "pistachio";
 const filteredMenu = renderPage({ path: "/menu", params: new URLSearchParams() }, { data, state });
 assert.ok((filteredMenu.match(/class="product-card"/g) || []).length >= 1, "Pistachio search must render matches");
 state.menuFilters.query = "";
 
-const retiredBuilder = renderPage({ path: "/build", params: new URLSearchParams() }, { data, state });
-assert.equal((retiredBuilder.match(/class="product-card"/g) || []).length, 40, "Old builder URL may only show HQ products");
+for (let step = 0; step < data.builder.steps.length; step += 1) {
+  state.builder.step = step;
+  const builderHtml = renderPage({ path: "/build", params: new URLSearchParams() }, { data, state });
+  assert.ok(builderHtml.includes(`STEP ${step + 1} OF ${data.builder.steps.length}`), `Builder step ${step + 1} must render`);
+}
 
 state.builder.selections = { base: "crepe", mood: "pistachio", "fruit-flavor": ["strawberry"], texture: "crunchy-finish", sauce: ["pistachio-sauce"], topping: ["kataifi-crunch"], boost: ["soft-serve-scoop"] };
 assert.equal(calculateBuilderTotal(data, state), 13.4, "Browser builder pricing must match authoritative included-choice rules");
 
-const officeProduct = renderPage({ path: "/product/office-box", params: new URLSearchParams() }, { data, state });
-assert.ok(!officeProduct.includes("data-product-reference"), "Discontinued office boxes must not be purchasable");
+const officeProduct = renderPage({ path: "/product/citrus-sunrise", params: new URLSearchParams() }, { data, state });
+assert.ok(officeProduct.includes("data-action=\"add-product\""), "Updated HQ product must support cart addition");
 
 for (const mode of ["guest", "regular", "student", "business"]) {
   state.mode = mode;

@@ -7,47 +7,47 @@
   },
   "global": {
     "tagline": "Your mood, made fresh.",
-    "shortDescription": "A 40-product ST. JUICE concept menu: fresh juices, smoothies, fruit cups, café drinks and desserts. Pre-opening demo ordering only.",
+    "shortDescription": "Fresh juice, bold dessert and shareable moods—made in St. Louis from morning through late night.",
     "announcementOptions": [
-      "40 HQ catalog favorites available to preview.",
-      "Explore the ST. JUICE menu.",
-      "Pickup, dine-in and delivery checkout simulation."
+      "Open daily on Vandeventer · Pickup and delivery available.",
+      "Friday and Saturday cravings run until 11 PM.",
+      "Two drops are live. When they're gone, they're archived."
     ]
   },
   "home": {
     "hero": {
       "eyebrow": "JUICE · DESSERT · CHOCOLATE · ST. LOUIS",
       "headline": "Your mood, made fresh.",
-      "body": "Explore the 40-item HQ concept menu, with source-matched preview photos and simulated checkout.",
-      "primaryCta": "Explore the 40-item menu",
-      "secondaryCta": "All HQ favorites"
+      "body": "Bright juices for the everyday. Warm desserts, pistachio, chocolate and shareable boxes for everything after.",
+      "primaryCta": "Order now",
+      "secondaryCta": "Explore the menu"
     },
     "signatures": {
-      "headline": "Forty favorites. One ST. JUICE.",
-      "body": "Every item in this menu comes from our 40-product HQ catalog.",
+      "headline": "Start with a Saint.",
+      "body": "The signatures people should know first—fresh, creamy, bright and built to remember.",
       "cta": "See all signatures"
     },
     "dayNight": {
       "headline": "Fresh by day. Sweet after dark.",
       "morning": "Pressed juices, smoothies, protein blends and bowls to get moving.",
-      "evening": "Crepes, chocolate, ten-piece mini pancake boxes and fresh fruit desserts."
+      "evening": "Crepes, chocolate-dipped fruit, mini pancakes and drops worth sharing."
     },
     "builder": {
       "headline": "Pick your base. Set the mood.",
-      "body": "Our first menu is curated from the HQ catalog; choose your favorite from the full 40.",
-      "cta": "See all 40"
+      "body": "Choose the fruit, texture, sauce and crunch. We keep the options compatible, show the live price and flag allergen impact before you add it.",
+      "cta": "Build your mood"
     },
     "location": {
       "headline": "Meet us on Vandeventer.",
       "address": "11 S Vandeventer Ave, St. Louis, MO",
-      "hours": "Opening hours to be announced",
-      "service": "Preview pickup, dine-in and delivery checkout. Availability will be confirmed before opening.",
+      "hours": "Sun–Thu 6:30 AM–9 PM · Fri–Sat 6:30 AM–11 PM",
+      "service": "Dine in, pick up or order delivery. No dedicated private parking is advertised.",
       "cta": "Get directions"
     }
   },
   "menu": {
     "title": "Find your mood.",
-    "intro": "Explore exactly 40 HQ catalog items. Photos represent concepts, not final kitchen-approved products; prices and availability are subject to owner approval.",
+    "intro": "Shop by type, craving or occasion.",
     "searchPlaceholder": "Search juice, pistachio, chocolate…",
     "filters": [
       "Type",
@@ -71,7 +71,7 @@
       "Goes well with"
     ],
     "nutritionUnverified": "Nutrition details will appear after recipe and portion verification.",
-    "allergenNote": "Allergen information is preliminary. Supplier labels and shared-equipment cross-contact must be reviewed before service. Contact the store before ordering if you have allergies."
+    "allergenNote": "Our kitchen handles major allergens and cross-contact is possible. Tell our team about allergies before ordering."
   },
   "buildYourMood": {
     "title": "Build Your Mood",
@@ -88,45 +88,47 @@
     "guestSaveNote": "Create an account after checkout to save this mix."
   },
   "drops": {
-    "title": "Browse the HQ menu",
-    "intro": "The current menu consists of the 40 HQ catalog items only.",
-    "activeProductIds": [],
+    "title": "Here now. Not forever.",
+    "intro": "Two active drops, made for the moment. Expired drops move to the archive instead of sitting sold out.",
+    "activeProductIds": [
+      "mango-passion",
+      "blue-saint"
+    ],
     "cta": "Order the drop",
-    "expiredState": "This drop had its moment. See what's live now.",
-    "archiveProductIds": []
+    "expiredState": "This drop had its moment. See what's live now."
   },
   "boxes": {
-    "title": "Browse the HQ menu",
-    "intro": "Any group-size request is quoted using the 40 existing HQ menu items only.",
+    "title": "One box. Everybody's mood.",
+    "intro": "Study night, date night, game day or the office—start with a format and make it fit the table.",
     "cta": "Start a box"
   },
   "catering": {
     "title": "Bring ST. JUICE to the whole room.",
-    "intro": "Ask us about large quantities of items from the 40-product HQ menu. Availability, timing and price will be confirmed in a custom quote.",
-    "support": "Catering is inquiry-only. No extra pre-built products or party boxes are offered beyond the 40-item HQ menu.",
+    "intro": "Drink drops, dessert tables, full mood bars and corporate gifts for meetings, parties and events.",
+    "support": "Tell us the date, guest count and service style. We'll confirm availability, selections and a final quote.",
     "primaryCta": "Request catering",
     "secondaryCta": "See party boxes",
     "success": "Your request is in. Our team will review the details and contact you at [CUSTOMER EMAIL]. This is not a confirmed booking yet."
   },
   "rewards": {
     "title": "Every mood should count.",
-    "intro": "Preview how points and benefits may work once ST. JUICE opens. Test orders do not accrue redeemable rewards.",
+    "intro": "Earn points on eligible purchases, unlock offers and save the combinations you want again.",
     "disclaimer": "Earning, redemption and expiration rules remain subject to the final rewards terms.",
-    "cta": "Preview future rewards"
+    "cta": "Join rewards"
   },
   "about": {
     "title": "Fresh and indulgent belong together.",
-    "body": "ST. JUICE is developing a 40-product menu of fresh drinks, fruit bowls, cafe favorites and desserts near Saint Louis University. This website is a pre-opening preview.",
-    "story": "ST. JUICE brings fresh juices, signature fruit drinks, smoothies, refreshers, bowls, desserts, coffee and savory favorites into one location. Our recipes and service standards are in test-kitchen development."
+    "body": "ST. JUICE brings bright juices, layered smoothies, fruit-forward bowls and late-night dessert into one clear experience. Our first home on Vandeventer is built for the quick pickup, the slow craving and the whole table.",
+    "story": "ST. JUICE started with one simple idea: fresh and indulgent should belong in the same place. We make bright juices, layered smoothies and fruit-forward bowls for the everyday. Then we turn up the mood with warm crepes, chocolate-dipped fruit, mini pancakes, pistachio finishes and boxes made to share."
   },
   "location": {
     "title": "ST. JUICE · Vandeventer",
     "address": "11 S Vandeventer Ave, St. Louis, MO",
-    "hours": "Hours to be confirmed before opening",
+    "hours": "Sunday–Thursday 6:30 AM–9:00 PM · Friday–Saturday 6:30 AM–11:00 PM",
     "services": [
-      "Dine-in preview",
-      "Pickup preview",
-      "Delivery preview"
+      "Dine-in",
+      "Pickup",
+      "Delivery"
     ],
     "parking": "Street and nearby parking may vary. We do not advertise dedicated private parking.",
     "phone": "[PUBLIC PHONE]",
