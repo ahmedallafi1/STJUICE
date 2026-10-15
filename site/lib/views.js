@@ -161,7 +161,7 @@ function renderHome({ data, state }) {
         <div class="feature-grid">
           ${drops.map((product) => `
             <article class="feature-card">
-              <img src="${productImage(product)}" alt="${escapeHtml(product.name)}" loading="lazy" width="720" height="900" />
+              ${productPhoto(product, "feature-card__photo", product.name)}
               <div class="feature-card__content">
                 <p class="eyebrow">NEW DROP</p>
                 <h3>${escapeHtml(product.name)}</h3>
@@ -699,7 +699,7 @@ function renderDrops({ data }) {
       <div class="container">
         ${lead ? `
           <article class="drop-hero">
-            <div class="drop-hero__media"><img src="${productImage(lead)}" alt="${escapeHtml(lead.name)}" width="960" height="960" /></div>
+            <div class="drop-hero__media">${productPhoto(lead, "drop-hero__photo", lead.name)}</div>
             <div class="drop-hero__copy">
               <p class="eyebrow">FEATURED DROP</p>
               <h2>${escapeHtml(lead.name)}</h2>
@@ -713,7 +713,7 @@ function renderDrops({ data }) {
           <div class="drop-grid">
             ${rest.map((product) => `
               <article class="drop-card">
-                <a class="drop-card__media" href="/product/${escapeHtml(product.id)}"><img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="720" /></a>
+                <a class="drop-card__media" href="/product/${escapeHtml(product.id)}">${productPhoto(product, "drop-card__photo", product.name)}</a>
                 <div class="drop-card__body"><p class="eyebrow">CURRENT DROP</p><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><a class="text-link" href="/product/${escapeHtml(product.id)}">View drop ${icon("arrow")}</a></div>
               </article>`).join("")}
           </div>` : ""}
@@ -737,14 +737,14 @@ function renderBoxes({ data }) {
       <div class="container box-showcase">
         ${cards.map(({ product, runtime, ...box }) => `
           <article class="party-box-card">
-            <a class="party-box-card__media" href="/product/${escapeHtml(box.productId)}">
+            <a class="party-box-card__media" href="/catering">
               <img src="${productImage(product || { id: box.productId, categoryId: "flights-liters-boxes" })}" alt="${escapeHtml(product?.name || box.productId)}" loading="lazy" width="720" height="620" />
             </a>
             <div class="party-box-card__body">
               <div class="party-box-card__heading"><div><p class="eyebrow">SERVES ${box.serves.min}–${box.serves.max}</p><h3>${escapeHtml(product?.name || box.productId)}</h3></div><strong>${box.startingAt ? "From " : ""}${money(box.basePrice)}</strong></div>
               <ul class="compact-list">${box.includes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-              <div class="party-box-card__meta"><span>${(runtime?.leadTime || box.leadTime).type === "scheduled" ? `${(runtime?.leadTime || box.leadTime).minimumHours} hr minimum prep` : `${(runtime?.leadTime || box.leadTime).minimumMinutes} min minimum prep`}</span><span>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Temporarily unavailable" : "Customize before checkout"}</span></div>
-              <a class="button ${runtime?.status && runtime.status !== "available" ? "is-disabled" : ""}" ${runtime?.status && runtime.status !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="/product/${escapeHtml(box.productId)}"`}>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Unavailable" : "Customize box"}</a>
+              <div class="party-box-card__meta"><span>${(runtime?.leadTime || box.leadTime).type === "scheduled" ? `${(runtime?.leadTime || box.leadTime).minimumHours} hr minimum prep` : `${(runtime?.leadTime || box.leadTime).minimumMinutes} min minimum prep`}</span><span>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Temporarily unavailable" : "Ask for a catering quote"}</span></div>
+              <a class="button ${runtime?.status && runtime.status !== "available" ? "is-disabled" : ""}" ${runtime?.status && runtime.status !== "available" ? 'aria-disabled="true" tabindex="-1"' : `href="/catering"`}>${runtime?.status === "sold_out" ? "Sold out" : runtime?.status === "paused" ? "Unavailable" : "Request details"}</a>
             </div>
           </article>`).join("")}
       </div>
