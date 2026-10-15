@@ -10,7 +10,8 @@
     "primaryItemCount": 40,
     "groupFormatCount": 0,
     "activeDropCount": 0,
-    "source": "St_Juice_HQ_Menu_Catalog.pdf; product cards 01-40; September 30 2026; concept images"
+    "source": "St_Juice_HQ_Menu_Catalog.pdf; product cards 01-40; September 30 2026; concept images",
+    "menuSafety": "preopening_concept_only_supplier_allergen_and_recipe_approval_pending"
   },
   "categories": [
     {
@@ -482,7 +483,8 @@
       "pairingIds": [],
       "alternativeIds": [],
       "featuredRank": 8,
-      "hqNumber": 8
+      "hqNumber": 8,
+      "allergenReviewNote": "HQ allergen note is provisional; the blue citrus ingredient requires supplier label verification."
     },
     {
       "id": "kiwi-cucumber",
@@ -727,7 +729,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 13
+      "hqNumber": 13,
+      "allergenReviewNote": "Coconut beverage and garnish labels require allergen verification."
     },
     {
       "id": "blueberry-oat",
@@ -754,9 +757,7 @@
         "evening"
       ],
       "draftIngredients": [],
-      "containsAllergens": [
-        "milk"
-      ],
+      "containsAllergens": [],
       "allergenMode": "selection_dependent",
       "modifierGroupIds": [],
       "availability": {
@@ -777,7 +778,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 14
+      "hqNumber": 14,
+      "allergenReviewNote": "Oat milk and oats require brand-specific allergen and cross-contact checks."
     },
     {
       "id": "cocoa-banana",
@@ -827,7 +829,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 15
+      "hqNumber": 15,
+      "allergenReviewNote": "Protein powder allergens depend on the approved brand."
     },
     {
       "id": "citrus-mint-fizz",
@@ -1116,7 +1119,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 21
+      "hqNumber": 21,
+      "allergenReviewNote": "Granola allergens vary by supplier. Wheat and nut cross-contact must be checked."
     },
     {
       "id": "tropical-sun-bowl",
@@ -1163,7 +1167,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 22
+      "hqNumber": 22,
+      "allergenReviewNote": "Granola allergen content varies by supplier."
     },
     {
       "id": "pistachio-yogurt-bowl",
@@ -1213,7 +1218,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 23
+      "hqNumber": 23,
+      "allergenReviewNote": "Granola supplier labels and cross-contact need review."
     },
     {
       "id": "loaded-fruit-cup",
@@ -1264,7 +1270,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 24
+      "hqNumber": 24,
+      "allergenReviewNote": "Granola, cream and nut cross-contact must be verified against supplier labels."
     },
     {
       "id": "berry-chia-cup",
@@ -1314,7 +1321,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 25
+      "hqNumber": 25,
+      "allergenReviewNote": "Contains milk only when a dairy chia base is used. This choice is not finalized."
     },
     {
       "id": "pistachio-berry-minis",
@@ -1417,7 +1425,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 27
+      "hqNumber": 27,
+      "allergenReviewNote": "Cookie butter and biscuit brand allergen labels need confirmation."
     },
     {
       "id": "strawberry-chocolate-crepe",
@@ -1469,7 +1478,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 28
+      "hqNumber": 28,
+      "allergenReviewNote": "Chocolate and sauce brand allergens must be confirmed."
     },
     {
       "id": "pistachio-kunafa-crepe",
@@ -1522,7 +1532,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 29
+      "hqNumber": 29,
+      "allergenReviewNote": "Chocolate, pistachio and pastry brand labels require final verification."
     },
     {
       "id": "banana-caramel-waffle",
@@ -1627,7 +1638,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 31
+      "hqNumber": 31,
+      "allergenReviewNote": "The chocolate and filling ingredient labels require verification."
     },
     {
       "id": "pistachio-brownie",
@@ -1680,7 +1692,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 32
+      "hqNumber": 32,
+      "allergenReviewNote": "Chocolate and brownie ingredient labels require verification."
     },
     {
       "id": "chocolate-berry-cup",
@@ -1732,7 +1745,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 33
+      "hqNumber": 33,
+      "allergenReviewNote": "Ganache and biscuit brand labels require verification."
     },
     {
       "id": "iced-latte",
@@ -1881,7 +1895,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 36
+      "hqNumber": 36,
+      "allergenReviewNote": "Aioli and bread supplier allergen labels must be checked."
     },
     {
       "id": "caprese-pesto-focaccia",
@@ -1932,7 +1947,8 @@
       },
       "pairingIds": [],
       "alternativeIds": [],
-      "hqNumber": 37
+      "hqNumber": 37,
+      "allergenReviewNote": "Pesto may contain tree nuts; check the supplier label."
     },
     {
       "id": "halloumi-pepper-wrap",
