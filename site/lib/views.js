@@ -133,7 +133,7 @@ function renderHome({ data, state }) {
             <a class="button button--outline" href="/menu?category=fresh-juices">${escapeHtml(copy.home.hero.secondaryCta)}</a>
           </div>
           <div class="hero__meta">
-            <span>Open from 6:30 AM</span>
+            <span>Opening hours to be confirmed</span>
             <span>Dine-in · Pickup · Delivery</span>
             <span>11 S Vandeventer Ave</span>
           </div>
@@ -209,7 +209,7 @@ function renderHome({ data, state }) {
           <h2>${escapeHtml(copy.home.location.headline)}</h2>
           <div class="location-card__facts">
             <div class="location-fact"><span class="location-fact__icon">${icon("pin")}</span><div><strong>${escapeHtml(copy.home.location.address)}</strong><span>St. Louis, Missouri</span></div></div>
-            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(copy.home.location.hours)}</strong><span>Open daily</span></div></div>
+            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(copy.home.location.hours)}</strong><span>Hours not yet confirmed</span></div></div>
             <div class="location-fact"><span class="location-fact__icon">${icon("pickup")}</span><div><strong>Dine-in · Pickup · Delivery</strong><span>Choose the handoff that fits the day.</span></div></div>
           </div>
           <a class="button" href="/location">Location & hours</a>
@@ -242,7 +242,7 @@ function renderMenu({ data, state }) {
     ${pageHero("THE FULL CATALOG", data.copy.menu.title, data.copy.menu.intro)}
     <section class="section section--surface">
       <div class="container">
-        <div class="section-heading"><div><p class="eyebrow">12 WAYS IN</p><h2>Shop by category.</h2></div></div>
+        <div class="section-heading"><div><p class="eyebrow">${data.catalog.categories.length} WAYS IN</p><h2>Shop by category.</h2></div></div>
         <div class="category-grid">${categoryCards(data)}</div>
       </div>
     </section>
@@ -439,7 +439,8 @@ function renderProduct(productId, { data, state }) {
               <div class="info-panel">
                 <h3>Allergen information</h3>
                 <p>${escapeHtml(data.copy.product.allergenNote)}</p>
-                <div class="allergen-row">${(product.containsAllergens || []).length ? product.containsAllergens.map((item) => `<span class="allergen-pill">Contains ${escapeHtml(titleCase(item))}</span>`).join("") : `<span class="chip">Cross-contact may still occur</span>`}</div>
+                ${product.allergenReviewNote ? `<p class="muted">${escapeHtml(product.allergenReviewNote)}</p>` : ""}
+                <div class="allergen-row">${(product.containsAllergens || []).length ? product.containsAllergens.map((item) => `<span class="allergen-pill">Potential: ${escapeHtml(titleCase(item))}</span>`).join("") : `<span class="chip">Supplier and cross-contact review pending</span>`}</div>
               </div>
             </div>
 
@@ -814,14 +815,14 @@ function renderRewards({ state }) {
 function renderLocation({ data, state }) {
   const location = data.copy.location;
   return `
-    ${pageHero("ONE BRANCH · OPEN DAILY", location.title, "Fresh mornings, sweet late nights and three ways to get the order.", `<a class="button" href="https://www.google.com/maps/search/?api=1&query=11%20S%20Vandeventer%20Ave%2C%20St.%20Louis%2C%20MO" target="_blank" rel="noreferrer">Get directions</a>`)}
+    ${pageHero("ONE BRANCH · OPENING DETAILS PENDING", location.title, "Preview the Vandeventer menu and service options while we finalize opening details.", `<a class="button" href="https://www.google.com/maps/search/?api=1&query=11%20S%20Vandeventer%20Ave%2C%20St.%20Louis%2C%20MO" target="_blank" rel="noreferrer">Get directions</a>`)}
     <section class="section section--cream">
       <div class="container location-layout">
         <div class="location-card">
           <p class="eyebrow">ST. JUICE · VANDEVENTER</p><h2>Meet us here.</h2>
           <div class="location-card__facts">
             <div class="location-fact"><span class="location-fact__icon">${icon("pin")}</span><div><strong>${escapeHtml(location.address)}</strong><span>Confirmed first branch</span></div></div>
-            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(location.hours)}</strong><span>Friday and Saturday run later.</span></div></div>
+            <div class="location-fact"><span class="location-fact__icon">${icon("clock")}</span><div><strong>${escapeHtml(location.hours)}</strong><span>Hours require owner approval before opening.</span></div></div>
             <div class="location-fact"><span class="location-fact__icon">${icon("pickup")}</span><div><strong>${escapeHtml(location.services.join(" · "))}</strong><span>Current selection: ${escapeHtml(serviceModes[state.service].label)}</span></div></div>
           </div>
           <p>${escapeHtml(location.parking)}</p>
