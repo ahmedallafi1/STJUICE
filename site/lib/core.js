@@ -61,22 +61,35 @@ export function productStartingPrice(product) {
   return Math.min(...product.sizes.map((size) => Number(size.price)));
 }
 
-export function productPhoto(product, className = "", alt = "") {
-  const i = Number(product?.hqNumber) - 1;
-  if (!Number.isInteger(i) || i < 0 || i >= 40) return '<span class="hq-photo" aria-hidden="true"></span>';
-  const label = escapeHtml(alt || product.name || "ST. JUICE");
-  const x = (i % 5) * 25;
-  const y = Math.floor(i / 5) * 100 / 7;
-  return `<span class="hq-photo ${className}" role="img" aria-label="${label} — HQ catalog concept photo" style="background-image:url('../media/optimized/webp/hq/catalog-atlas.webp');background-size:500% 800%;background-position:${x}% ${y}%"></span>`;
+export function productImage(product) {
+  const direct = {
+    "pistachio-saint": "../media/optimized/webp/products/pistachio-saint-concept-v1.webp",
+    "saint-sunset": "../media/optimized/webp/products/saint-sunset-concept-v1.webp",
+    "dubai-strawberry-cup": "../media/optimized/webp/products/dubai-strawberry-cup-concept-v1.webp",
+    "st-crepe": "../media/optimized/webp/products/st-crepe-concept-v1.webp",
+    "dragon-cloud-cup": "../media/optimized/webp/products/dragon-cloud-cup-concept-v1.webp",
+    "birthday-box": "../media/optimized/webp/packaging/birthday-box-concept-v1.webp"
+  };
+  return direct[product.id] || categoryImage(product.categoryId);
 }
 
-// Legacy product/category concept images must not reappear in the HQ-only storefront.
-// All active product cards and details use productPhoto() with the numbered HQ atlas.
-export function productImage() {
-  return "../media/optimized/webp/hq/catalog-atlas.webp";
-}
-export function categoryImage() {
-  return "../media/optimized/webp/hq/catalog-atlas.webp";
+export function categoryImage(categoryId) {
+  const known = new Set([
+    "signatures",
+    "fresh-juices",
+    "smoothies-protein",
+    "refreshers",
+    "bowls-fruit",
+    "chocolate-lab",
+    "crepes-waffles",
+    "mini-pancakes",
+    "soft-serve-shakes",
+    "dubai-collection",
+    "desserts-drops",
+    "flights-liters-boxes"
+  ]);
+  const safe = known.has(categoryId) ? categoryId : "signatures";
+  return `../media/optimized/webp/categories/${safe}-concept-v1.webp`;
 }
 
 export function uniqueValues(products, key) {
@@ -142,7 +155,7 @@ export function buildProductCard(product, data, options = {}) {
   return `
     <article class="product-card">
       <a class="product-card__media" href="/product/${escapeHtml(product.id)}" aria-label="View ${escapeHtml(product.name)}">
-        ${productPhoto(product, "product-card__photo", product.name)}
+        <img src="${productImage(product)}" alt="${escapeHtml(product.name)}" loading="${loading}" width="720" height="900" />
       </a>
       <div class="product-card__body">
         <div class="product-card__meta">
@@ -152,7 +165,7 @@ export function buildProductCard(product, data, options = {}) {
         <h3><a href="/product/${escapeHtml(product.id)}">${escapeHtml(product.name)}</a></h3>
         <p class="product-card__description">${escapeHtml(product.description)}</p>
         <div class="price-row">
-          <span class="product-card__price">${product.sizes.length === 1 ? money(productStartingPrice(product)) : `From ${money(productStartingPrice(product))}`}</span>
+          <span class="product-card__price">From ${money(productStartingPrice(product))}</span>
           <span class="product-card__type">${escapeHtml(titleCase(product.productType))}</span>
         </div>
         <div class="product-card__actions">

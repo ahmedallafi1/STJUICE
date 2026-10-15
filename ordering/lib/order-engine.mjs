@@ -207,7 +207,7 @@ export function quoteCart(request = {}, pricingContext = {}) {
   if (!sourceItems.length) errors.push({ code: "empty_cart", message: "Add at least one item before checkout." });
   if (sourceItems.length > 50) errors.push({ code: "cart_too_large", message: "This test checkout accepts up to 50 distinct lines." });
   const items = sourceItems.slice(0, 50).map((input, index) => {
-    if (input?.kind === "builder" || input?.productId === "build-your-mood") { errors.push({ code: "product_not_in_hq", itemIndex: index, message: "Only the 40 HQ catalog products are available in this menu." }); return null; }
+    if (input?.kind === "builder" || input?.productId === "build-your-mood") return builderLine(input || {}, index, errors, warnings);
     return catalogLine(input || {}, index, service, errors, warnings);
   }).filter(Boolean);
 
