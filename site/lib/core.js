@@ -61,6 +61,15 @@ export function productStartingPrice(product) {
   return Math.min(...product.sizes.map((size) => Number(size.price)));
 }
 
+export function productPhoto(product, className = "", alt = "") {
+  const i = Number(product?.hqNumber) - 1;
+  if (!Number.isInteger(i) || i < 0 || i >= 40) return '<span class="hq-photo" aria-hidden="true"></span>';
+  const label = escapeHtml(alt || product.name || "ST. JUICE");
+  const x = (i % 5) * 25;
+  const y = Math.floor(i / 5) * 100 / 7;
+  return `<span class="hq-photo ${className}" role="img" aria-label="${label} — HQ catalog concept photo" style="background-image:url('../media/optimized/webp/hq/catalog-atlas.webp');background-size:500% 800%;background-position:${x}% ${y}%"></span>`;
+}
+
 export function productImage(product) {
   const direct = {
     "pistachio-saint": "../media/optimized/webp/products/pistachio-saint-concept-v1.webp",
@@ -155,7 +164,7 @@ export function buildProductCard(product, data, options = {}) {
   return `
     <article class="product-card">
       <a class="product-card__media" href="/product/${escapeHtml(product.id)}" aria-label="View ${escapeHtml(product.name)}">
-        <img src="${productImage(product)}" alt="${escapeHtml(product.name)}" loading="${loading}" width="720" height="900" />
+        ${productPhoto(product, "product-card__photo", product.name)}
       </a>
       <div class="product-card__body">
         <div class="product-card__meta">

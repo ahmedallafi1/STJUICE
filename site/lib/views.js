@@ -5,6 +5,7 @@ import {
   icon,
   money,
   productImage,
+  productPhoto,
   productStartingPrice,
   titleCase,
   uniqueValues
@@ -72,7 +73,7 @@ function categoryCards(data, limit = 12) {
   return data.catalog.categories.slice(0, limit).map((category) => `
     <a class="category-card" href="/menu?category=${escapeHtml(category.id)}">
       <div class="category-card__image">
-        <img src="${categoryImage(category.id)}" alt="${escapeHtml(category.name)}" loading="lazy" width="360" height="360" />
+        ${productPhoto(data.catalog.products.find((p) => p.categoryId === category.id), "category-card__photo", category.name)}
       </div>
       <h3>${escapeHtml(category.name)}</h3>
     </a>`).join("");
@@ -295,7 +296,7 @@ function renderMenu({ data, state }) {
     ${pageHero("THE FULL CATALOG", data.copy.menu.title, data.copy.menu.intro)}
     <section class="section section--surface">
       <div class="container">
-        <div class="section-heading"><div><p class="eyebrow">12 WAYS IN</p><h2>Shop by category.</h2></div></div>
+        <div class="section-heading"><div><p class="eyebrow">${data.catalog.categories.length} WAYS IN</p><h2>Shop by category.</h2></div></div>
         <div class="category-grid">${categoryCards(data)}</div>
       </div>
     </section>
@@ -452,7 +453,7 @@ function renderProduct(productId, { data, state }) {
         <div class="product-detail">
           <div class="product-detail__media">
             <div class="product-detail__image">
-              <img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="720" height="900" fetchpriority="high" />
+              ${productPhoto(product, "product-detail__photo", product.name)}
             </div>
             <div class="product-detail__facts">
               <span>${escapeHtml(prep)}</span>
@@ -1300,7 +1301,7 @@ export function renderCart(data, state) {
     <div class="cart-list">
       ${state.cart.map((item) => `
         <article class="cart-item">
-          <div class="cart-item__image"><img src="${escapeHtml(item.image)}" alt="" width="90" height="100" /></div>
+          <div class="cart-item__image">${productPhoto(data.productById.get(item.productId), "cart-item__photo", item.name)}</div>
           <div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.sizeLabel || "Custom build")}</p>${item.modifiers?.length ? `<p>${escapeHtml(item.modifiers.join(" · "))}</p>` : ""}<div class="quantity-control"><button type="button" data-action="cart-quantity" data-key="${escapeHtml(item.key)}" data-delta="-1" aria-label="Decrease quantity">${icon("minus")}</button><span>${item.quantity}</span><button type="button" data-action="cart-quantity" data-key="${escapeHtml(item.key)}" data-delta="1" aria-label="Increase quantity">${icon("plus")}</button></div></div>
           <div><span class="cart-item__price">${money(item.unitPrice * item.quantity)}</span><button class="icon-button" type="button" data-action="remove-cart-item" data-key="${escapeHtml(item.key)}" aria-label="Remove ${escapeHtml(item.name)}">${icon("close")}</button></div>
         </article>`).join("")}
