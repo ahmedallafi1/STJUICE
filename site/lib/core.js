@@ -174,7 +174,7 @@ export function buildProductCard(product, data, options = {}) {
         <h3><a href="/product/${escapeHtml(product.id)}">${escapeHtml(product.name)}</a></h3>
         <p class="product-card__description">${escapeHtml(product.description)}</p>
         <div class="price-row">
-          <span class="product-card__price">From ${money(productStartingPrice(product))}</span>
+          <span class="product-card__price">${product.sizes.length === 1 ? money(productStartingPrice(product)) : `From ${money(productStartingPrice(product))}`}</span>
           <span class="product-card__type">${escapeHtml(titleCase(product.productType))}</span>
         </div>
         <div class="product-card__actions">
