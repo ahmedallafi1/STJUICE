@@ -45,8 +45,8 @@ await page.waitForTimeout(250);
 assert.ok(await page.locator(".product-card").count() >= 1, "Pistachio search should return products");
 await page.screenshot({ path: resolve(outputDirectory, "menu-filtered-desktop.png"), fullPage: true });
 
-await page.goto(`${baseUrl}#/product/pistachio-saint`, { waitUntil: "networkidle" });
-assert.match(await page.locator("h1").first().textContent(), /Pistachio Saint/i);
+await page.goto(`${baseUrl}#/product/pistachio-date`, { waitUntil: "networkidle" });
+assert.match(await page.locator("h1").first().textContent(), /Pistachio Date/i);
 await page.locator('[data-action="add-product"]').click();
 assert.ok(Number(await page.locator("#cart-count").textContent()) >= 1, "Add to bag should update the count");
 

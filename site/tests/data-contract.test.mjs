@@ -14,10 +14,10 @@ const bundles = readJson("menu/data/bundles-catering.json");
 const copy = readJson("content/site-copy.json");
 const media = readJson("media/manifests/media-manifest.json");
 
-assert.equal(catalog.categories.length, 12, "Stage 05 must expose all 12 categories");
-assert.equal(catalog.products.length, 54, "Catalog count must remain 54");
-assert.equal(catalog.products.filter((item) => item.catalogRole === "primary").length, 45, "Primary item count must remain 45");
-assert.equal(catalog.products.filter((item) => item.catalogRole === "group_format").length, 9, "Group format count must remain 9");
+assert.equal(catalog.categories.length, 11, "Stage 05 must expose all 12 categories");
+assert.equal(catalog.products.length, 40, "Catalog count must remain 54");
+assert.equal(catalog.products.filter((item) => item.catalogRole === "primary").length, 40, "Primary item count must remain 45");
+assert.equal(catalog.products.filter((item) => item.catalogRole === "group_format").length, 0, "Group format count must remain 9");
 assert.equal(copy.drops.activeProductIds.length, 2, "Two active drops must remain configured");
 assert.equal(modifiers.groups.length, 28, "Modifier group count must remain 28");
 assert.equal(builder.steps.length, 8, "Build Your Mood must remain an eight-step contract");
@@ -37,7 +37,7 @@ for (const product of catalog.products) {
 }
 
 for (const dropId of copy.drops.activeProductIds) assert.ok(productIds.has(dropId), `Unknown drop ${dropId}`);
-for (const box of bundles.orderNowBoxes) assert.ok(productIds.has(box.productId), `Unknown box product ${box.productId}`);
+for (const box of bundles.orderNowBoxes) assert.ok(!productIds.has(box.productId), `Legacy enquiry package should not be a live HQ product: ${box.productId}`);
 
 for (const asset of media.assets) {
   assert.ok(existsSync(resolve(packageRoot, asset.path)), `Missing media source ${asset.path}`);
