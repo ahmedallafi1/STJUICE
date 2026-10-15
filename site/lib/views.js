@@ -28,7 +28,7 @@ export const modes = {
     theme: "default",
     icon: "heart",
     announcement: "Your favorites, rewards preview and faster reorder—in one mood.",
-    line: "Save favorites, collect rewards and reorder faster.",
+    line: "Save favorites and preview future rewards; demo orders earn no real points.",
     detail: "Sign in to save favorites, mixes and member activity to your account."
   },
   student: {
@@ -36,8 +36,8 @@ export const modes = {
     short: "Student mode",
     theme: "student",
     icon: "spark",
-    announcement: "Student mode · Study-night picks and eligible offers up front.",
-    line: "Study-night boxes, student-value picks and verification planning.",
+    announcement: "Student mode · Browse the forty HQ items and preview verification.",
+    line: "Explore HQ menu items and student account verification planning.",
     detail: "No university sponsorship or affiliation is implied."
   },
   business: {
@@ -45,16 +45,16 @@ export const modes = {
     short: "Business mode",
     theme: "business",
     icon: "calendar",
-    announcement: "Business mode · Group orders, recurring events and catering tools.",
-    line: "Plan group orders, save event details and request a quote.",
+    announcement: "Business mode · Catering inquiries and group planning previews.",
+    line: "Browse the 40 HQ items and request a group quote.",
     detail: "Rates, delivery and service terms remain subject to confirmation."
   }
 };
 
 export const serviceModes = {
-  pickup: { label: "Pickup", icon: "pickup", detail: "Pick up on Vandeventer" },
-  delivery: { label: "Delivery", icon: "delivery", detail: "Delivery availability is confirmed during checkout" },
-  dine_in: { label: "Dine in", icon: "dine", detail: "Enjoy it at the shop" }
+  pickup: { label: "Pickup", icon: "pickup", detail: "Preview pickup service at Vandeventer" },
+  delivery: { label: "Delivery", icon: "delivery", detail: "Demo delivery; real coverage is not active" },
+  dine_in: { label: "Dine in", icon: "dine", detail: "Preview counter ordering before opening" }
 };
 
 function pageHero(eyebrow, title, intro, actions = "") {
